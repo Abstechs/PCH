@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coinbase</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+    }
+    #coinbase_hd {
+      width: 35px;
+      height: 35px;
+      margin: 0;
+      padding: ;5px;
+      background-color: ;#fff;
+      border-radius: 50%;
+    }
+    .wallet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background-color: #111;
+    }
+    .wallet-header h1 {
+      font-size: 1rem;
+      margin: 0;
+    }
+    .account-section {
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 150px;
+      cursor: pointer;
+    }
+    .account-section span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .account-section i {
+      display: none; /* Hide the dropdown caret */
+    }
+    .dropdown-menu {
+      background-color: #222;
+      border: none;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .dropdown-item {
+      color: #fff;
+      transition: all 0.3s;
+    }
+    .dropdown-item:hover {
+      background-color: gold;
+      color: #000;
+    }
+    .balance-section {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .balance-section h2 {
+      font-size: 2.5rem;
+      margin: 10px 0;
+    }
+    .btn-circle {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      border: none;
+      background-color: #222;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.2rem;
+      margin: 10px;
+    }
+    .btn-circle:hover {
+      background-color: gold;
+      color: #222;
+    }
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .action-item {
+      text-align: center;
+    }
+    .action-item span {
+      display: block;
+      margin-top: 5px;
+      font-size: 0.8rem;
+    }
+    .crypto-card {
+      background-color: #222;
+      border-radius: 20px;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+    }
+    .crypto-card img {
+      width: 40px;
+      height: 40px;
+    }
+    .crypto-card .details {
+      flex-grow: 1;
+      margin-left: 15px;
+    }
+    .crypto-card .details h5 {
+      margin: 0;
+    }
+    .crypto-card .price {
+      text-align: right;
+    }
+    .crypto-card .price span {
+      font-size: 0.9rem;
+      color: #999;
+    }
+    .green{color:green;}.red{color:red;}
+  </style>
+</head>
+<body>
+  <!-- Wallet Header -->
+  <div class="wallet-header">
+    <img id="coinbase_hd" src="  https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDAaw4l8JGDm5-GkzwJuNd9m7vsxf9-5ZtXeN-akM1A82LJq7Re5MOYa0v-3xKpUd4NdM&usqp=CAU" alt="Coinbase">
+    <!--<img id="coinbase_hd" src="https://static-00.iconduck.com/assets.00/coinbase-icon-512x512-rgejvkzh.png" alt="Coinbase"> -->
+    <h1>Coinbase Wallet</h1>
+    <!-- Dropdown for account -->
+    <div class="dropdown">
+      <div class="account-section dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <span id="account-name">Account</span>
+      </div>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#">Profile</a></li>
+        <!--
+        <li><a class="dropdown-item" href="#">Settings</a></li>
+        <li><a class="dropdown-item" href="#">Logout</a></li>
+        -->
+      </ul>
+    </div>
+  </div>
+
+  <!-- Balance Section -->
+  <div class="balance-section">
+    <h2>$76.01</h2>
+    <p>0xA1Ed...3CB4E</p>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <div class="action-item">
+      <button class="btn-circle"><i class="far fa-arrow-up-right"></i></button>
+      <span>Send</span>
+    </div>
+    <div class="action-item">
+      <button class="btn-circle"><i class="far fa-arrow-down-left"></i></button>
+      <span>Receive</span>
+    </div>
+    <div class="action-item">
+      <button class="btn-circle"><i class="fa-regular fa-gift"></i></button>
+      <span>Hot 🔥</span>
+    </div>
+    <div class="action-item">
+      <button class="btn-circle"><i class="fa-regular fa-layer-plus"></i></button>
+      <span>Tasks</span>
+    </div>
+  </div>
+
+  <!-- Crypto Cards -->
+  <div class="container">
+    <div class="crypto-card">
+      <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png" alt="BNB">
+      <div class="details">
+        <h5>BNB</h5>
+        <span>BNB Smart Chain</span>
+      </div>
+      <div class="price">
+        <p>$76.01</p>
+        <span>691.03 $</span>
+      </div>
+    </div>
+
+    <div class="crypto-card">
+      <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="ETH">
+      <div class="details">
+        <h5>ETH</h5>
+        <span>Ethereum</span>
+      </div>
+      <div class="price">
+        <p>$0.00</p>
+        <span>3230.83 $</span>
+      </div>
+    </div>
+
+    <div class="crypto-card">
+      <img src="https://cryptologos.cc/logos/shiba-inu-shib-logo.png" alt="SHIBA">
+      <div class="details">
+        <h5>SHIBA</h5>
+        <span>Ethereum</span>
+      </div>
+      <div class="price">
+        <p>$0.00</p>
+        <span>0.00 $</span>
+      </div>
+    </div>
+
+    <div class="crypto-card">
+      <img src="https://cryptologos.cc/logos/binance-usd-busd-logo.png" alt="BUSD">
+      <div class="details">
+        <h5>BUSD</h5>
+        <span>BNB Smart Chain</span>
+      </div>
+      <div class="price">
+        <p>$0.00</p>
+        <span>1.03 $</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
