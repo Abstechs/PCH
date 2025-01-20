@@ -233,6 +233,33 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script>
+  // Function to simulate real-time price fluctuation
+  const updatePrices = () => {
+    const cryptoCards = document.querySelectorAll('.crypto-card');
+
+    cryptoCards.forEach((card) => {
+      const priceElement = card.querySelector('.price p');
+      const currentPrice = parseFloat(priceElement.textContent.replace('$', ''));
+
+      // Randomly fluctuate price (small changes for realism)
+      const change = (Math.random() * 2 - 1).toFixed(2); // Random number between -1 and 1
+      const newPrice = Math.max(0, currentPrice + parseFloat(change)).toFixed(2); // Avoid negative prices
+
+      // Update the price and add green/red class
+      priceElement.textContent = `$${newPrice}`;
+      priceElement.classList.remove('green', 'red');
+      if (change > 0) {
+        priceElement.classList.add('green');
+      } else if (change < 0) {
+        priceElement.classList.add('red');
+      }
+    });
+  };
+
+  // Update prices every 2 seconds
+  setInterval(updatePrices, 2000);
+</script>
 </body>
 </html>
 
