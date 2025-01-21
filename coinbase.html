@@ -252,92 +252,88 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
-  <script>
-  // Function to simulate real-time price fluctuation
-  const updatePrices = () => {
-    const cryptoCards = document.querySelectorAll('.crypto-card');
-    cryptoCards.forEach((card) => {
-      const priceElement = card.querySelector('.price p');
-      const currentPrice = parseFloat(priceElement.textContent.replace('$', ''));
-      const change = (Math.random() * 2 - 1).toFixed(2); // Random fluctuation
-      const newPrice = Math.max(0, currentPrice + parseFloat(change)).toFixed(2); // Avoid negative prices
+<script>
+// Function to simulate real-time price fluctuation
+const updatePrices = () => {
+  const cryptoCards = document.querySelectorAll('.crypto-card');
+  cryptoCards.forEach((card) => {
+    const priceElement = card.querySelector('.price p');
+    const currentPrice = parseFloat(priceElement.textContent.replace('$', ''));
+    const change = (Math.random() * 2 - 1).toFixed(2); // Random fluctuation
+    const newPrice = Math.max(0, currentPrice + parseFloat(change)).toFixed(2); // Avoid negative prices
 
-      // Update price and class
-      priceElement.textContent = `$${newPrice}`;
-      priceElement.classList.remove('green', 'red');
-      if (change > 0) {
-        priceElement.classList.add('green');
-      } else if (change < 0) {
-        priceElement.classList.add('red');
-      }
-    });
-  };
+    // Update price and class
+    priceElement.textContent = `$${newPrice}`;
+    priceElement.classList.remove('green', 'red');
+    if (change > 0) {
+      priceElement.classList.add('green');
+    } else if (change < 0) {
+      priceElement.classList.add('red');
+    }
+  });
+};
 
-  // Update prices every 2 seconds
-  setInterval(updatePrices, 2000);
+// Update prices every 2 seconds
+setInterval(updatePrices, 2000);
 </script>
 
 <script type="module">
-  // Import the functions you need from the Firebase SDK
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
-  import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+// Import Firebase SDK
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
+import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
-  // Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyACrAgpR14dAu54vW45RKkcFM_wD-f2p-0",
-    authDomain: "coinbase-tgwallet.firebaseapp.com",
-    projectId: "coinbase-tgwallet",
-    storageBucket: "coinbase-tgwallet.firebasestorage.app",
-    messagingSenderId: "441804145305",
-    appId: "1:441804145305:web:1fb586667c0d648c342e08",
-    measurementId: "G-374F8YD4KV"
-  };
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyACrAgpR14dAu54vW45RKkcFM_wD-f2p-0",
+  authDomain: "coinbase-tgwallet.firebaseapp.com",
+  projectId: "coinbase-tgwallet",
+  storageBucket: "coinbase-tgwallet.firebasestorage.app",
+  messagingSenderId: "441804145305",
+  appId: "1:441804145305:web:1fb586667c0d648c342e08",
+  measurementId: "G-374F8YD4KV"
+};
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const database = getDatabase(app);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const database = getDatabase(app);
 </script>
 
 <script>
-  const tg = window.Telegram.WebApp;
+const tg = window.Telegram.WebApp;
 
-  tg.ready();
-  const userId = tg.initDataUnsafe.user.id; // Unique Telegram user ID
-  const username = tg.initDataUnsafe.user.username || "Anonymous";
+tg.ready();
+const userId = tg.initDataUnsafe.user.id; // Unique Telegram user ID
+const username = tg.initDataUnsafe.user.username || "Anonymous";
 
-  // Display the username in the header
-  document.getElementById("account-name").textContent = `@${username}`;
+// Display the username in the header
+document.getElementById("account-name").textContent = `@${username}`;
 
-  // Check if user exists in Firebase, if not create them
-  const userRef = ref(database, `users/${userId}`);
-  get(userRef).then((snapshot) => {
-    if (!snapshot.exists()) {
-      // If the user does not exist, create a new user entry
-      set(userRef, {
-        username: username,
-        balance: 0,
-        referrals: 0,
-        referredBy: null  // No referrer initially
-      });
-    }
-  });
+// Check if user exists in Firebase, if not create them
+const userRef = ref(database, `users/${userId}`);
+get(userRef).then((snapshot) => {
+  if (!snapshot.exists()) {
+    // If the user does not exist, create a new user entry
+    set(userRef, {
+      username: username,
+      balance: 0,
+      referrals: 0,
+      referredBy: null  // No referrer initially
+    });
+  }
+});
 
-  const shareButton = document.getElementById('share-button');
+const shareButton = document.getElementById('share-button');
 
-  // Generate referral link
-  const referralLink = `${window.location.origin}?ref=${userId}`;
+// Generate referral link
+const referralLink = `${window.location.origin}?ref=${userId}`;
 
-  // Handle share button click to share the referral link
-  
-  shareButton.addEventListener('click', () => {
-  if (navigator.share) {
-    navigator.share({
-      title: "Join Coinbase Wallet",
-      text: "Start earning with Coinbase Wallet. Use my referral link:",
-      url: referralLink
-    }).catch(console.error);
+// Handle share button click to share the referral link
+shareButton.addEventListener('click', () => {
+  if (tg.isTelegram) {
+    // Use Telegram's share functionality directly
+    tg.sendData(`share?url=${encodeURIComponent(referralLink)}&title=Join Coinbase Wallet`);
   } else {
     // Fallback: copy the link to clipboard
     navigator.clipboard.writeText(referralLink)
@@ -346,46 +342,45 @@
   }
 });
 
-  // Parse the URL to check if there's a referral code
-  const urlParams = new URLSearchParams(window.location.search);
-  const referrerId = urlParams.get('ref');
+// Parse the URL to check if there's a referral code
+const urlParams = new URLSearchParams(window.location.search);
+const referrerId = urlParams.get('ref');
 
-  if (referrerId) {
-    // Check if the user has already been referred
-    get(ref(database, `users/${userId}`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        const userData = snapshot.val();
+if (referrerId) {
+  // Check if the user has already been referred
+  get(ref(database, `users/${userId}`)).then((snapshot) => {
+    if (snapshot.exists()) {
+      const userData = snapshot.val();
 
-        // If user hasn't been referred yet, assign the referral
-        if (!userData.referredBy) {
-          // Set the referredBy field to the referrer ID
-          update(ref(database, `users/${userId}`), {
-            referredBy: referrerId
-          });
+      // If user hasn't been referred yet, assign the referral
+      if (!userData.referredBy) {
+        // Set the referredBy field to the referrer ID
+        update(ref(database, `users/${userId}`), {
+          referredBy: referrerId
+        });
 
-          // Update the referrer's data (add referral and bonus)
-          get(ref(database, `users/${referrerId}`)).then((refSnapshot) => {
-            if (refSnapshot.exists()) {
-              const referrerData = refSnapshot.val();
-              update(ref(database, `users/${referrerId}`), {
-                referrals: (referrerData.referrals || 0) + 1,
-                balance: (referrerData.balance || 0) + 2.3 // Referral bonus
-              });
-            }
-          });
-        }
+        // Update the referrer's data (add referral and bonus)
+        get(ref(database, `users/${referrerId}`)).then((refSnapshot) => {
+          if (refSnapshot.exists()) {
+            const referrerData = refSnapshot.val();
+            update(ref(database, `users/${referrerId}`), {
+              referrals: (referrerData.referrals || 0) + 1,
+              balance: (referrerData.balance || 0) + 2.3 // Referral bonus
+            });
+          }
+        });
       }
-    });
-  }
-
-  // Real-time balance updates
-  const balanceRef = ref(database, `users/${userId}/balance`);
-  balanceRef.on('value', (snapshot) => {
-    const balance = snapshot.val();
-    document.querySelector('.balance-section h2').textContent = `$${balance.toFixed(2)}`;
+    }
   });
-</script>
+}
 
+// Real-time balance updates
+const balanceRef = ref(database, `users/${userId}/balance`);
+balanceRef.on('value', (snapshot) => {
+  const balance = snapshot.val();
+  document.querySelector('.balance-section h2').textContent = `$${balance.toFixed(2)}`;
+});
+</script>
 </body>
 </html>
 
