@@ -96,6 +96,18 @@
       justify-content: center;
       gap: 10px;
     }
+    /* small screen devices */
+@media only screen and (max-width: 450px) {
+    .action-buttons {
+        justify-content: center;
+        gap: 2px;
+    }
+    
+    .btn-circle {
+        width: 45px;
+        height: 45px;
+    }
+}   
     .action-item {
       text-align: center;
     }
@@ -179,6 +191,12 @@
       <button class="btn-circle"><i class="fa-regular fa-layer-plus"></i></button>
       <span>Tasks</span>
     </div>
+    
+    <div class="action-item">
+      <button class="btn-circle" id="share-button"><i class="fa-regular fa-share-nodes"></i></button>
+      <span>Share</span>
+    </div>
+
   </div>
 
   <!-- Crypto Cards -->
@@ -202,7 +220,7 @@
         <span>Ethereum</span>
       </div>
       <div class="price">
-        <p>$0.00</p>
+        <p>$2.10</p>
         <span>3230.83 $</span>
       </div>
     </div>
@@ -214,8 +232,8 @@
         <span>Ethereum</span>
       </div>
       <div class="price">
-        <p>$0.00</p>
-        <span>0.00 $</span>
+        <p>$1.51</p>
+        <span>234.04 $</span>
       </div>
     </div>
 
@@ -226,27 +244,25 @@
         <span>BNB Smart Chain</span>
       </div>
       <div class="price">
-        <p>$0.00</p>
+        <p>$4.04</p>
         <span>1.03 $</span>
       </div>
     </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
   <script>
   // Function to simulate real-time price fluctuation
   const updatePrices = () => {
     const cryptoCards = document.querySelectorAll('.crypto-card');
-
     cryptoCards.forEach((card) => {
       const priceElement = card.querySelector('.price p');
       const currentPrice = parseFloat(priceElement.textContent.replace('$', ''));
-
-      // Randomly fluctuate price (small changes for realism)
-      const change = (Math.random() * 2 - 1).toFixed(2); // Random number between -1 and 1
+      const change = (Math.random() * 2 - 1).toFixed(2); // Random fluctuation
       const newPrice = Math.max(0, currentPrice + parseFloat(change)).toFixed(2); // Avoid negative prices
 
-      // Update the price and add green/red class
+      // Update price and class
       priceElement.textContent = `$${newPrice}`;
       priceElement.classList.remove('green', 'red');
       if (change > 0) {
@@ -260,6 +276,116 @@
   // Update prices every 2 seconds
   setInterval(updatePrices, 2000);
 </script>
+
+<script type="module">
+  // Import the functions you need from the Firebase SDK
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
+  import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyACrAgpR14dAu54vW45RKkcFM_wD-f2p-0",
+    authDomain: "coinbase-tgwallet.firebaseapp.com",
+    projectId: "coinbase-tgwallet",
+    storageBucket: "coinbase-tgwallet.firebasestorage.app",
+    messagingSenderId: "441804145305",
+    appId: "1:441804145305:web:1fb586667c0d648c342e08",
+    measurementId: "G-374F8YD4KV"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const database = getDatabase(app);
+</script>
+
+<script>
+  const tg = window.Telegram.WebApp;
+
+  tg.ready();
+  const userId = tg.initDataUnsafe.user.id; // Unique Telegram user ID
+  const username = tg.initDataUnsafe.user.username || "Anonymous";
+
+  // Display the username in the header
+  document.getElementById("account-name").textContent = `@${username}`;
+
+  // Check if user exists in Firebase, if not create them
+  const userRef = ref(database, `users/${userId}`);
+  get(userRef).then((snapshot) => {
+    if (!snapshot.exists()) {
+      // If the user does not exist, create a new user entry
+      set(userRef, {
+        username: username,
+        balance: 0,
+        referrals: 0,
+        referredBy: null  // No referrer initially
+      });
+    }
+  });
+
+  const shareButton = document.getElementById('share-button');
+
+  // Generate referral link
+  const referralLink = `${window.location.origin}?ref=${userId}`;
+
+  // Handle share button click to share the referral link
+  
+  shareButton.addEventListener('click', () => {
+  if (navigator.share) {
+    navigator.share({
+      title: "Join Coinbase Wallet",
+      text: "Start earning with Coinbase Wallet. Use my referral link:",
+      url: referralLink
+    }).catch(console.error);
+  } else {
+    // Fallback: copy the link to clipboard
+    navigator.clipboard.writeText(referralLink)
+      .then(() => alert("Referral link copied to clipboard!"))
+      .catch(console.error);
+  }
+});
+
+  // Parse the URL to check if there's a referral code
+  const urlParams = new URLSearchParams(window.location.search);
+  const referrerId = urlParams.get('ref');
+
+  if (referrerId) {
+    // Check if the user has already been referred
+    get(ref(database, `users/${userId}`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        const userData = snapshot.val();
+
+        // If user hasn't been referred yet, assign the referral
+        if (!userData.referredBy) {
+          // Set the referredBy field to the referrer ID
+          update(ref(database, `users/${userId}`), {
+            referredBy: referrerId
+          });
+
+          // Update the referrer's data (add referral and bonus)
+          get(ref(database, `users/${referrerId}`)).then((refSnapshot) => {
+            if (refSnapshot.exists()) {
+              const referrerData = refSnapshot.val();
+              update(ref(database, `users/${referrerId}`), {
+                referrals: (referrerData.referrals || 0) + 1,
+                balance: (referrerData.balance || 0) + 2.3 // Referral bonus
+              });
+            }
+          });
+        }
+      }
+    });
+  }
+
+  // Real-time balance updates
+  const balanceRef = ref(database, `users/${userId}/balance`);
+  balanceRef.on('value', (snapshot) => {
+    const balance = snapshot.val();
+    document.querySelector('.balance-section h2').textContent = `$${balance.toFixed(2)}`;
+  });
+</script>
+
 </body>
 </html>
 
