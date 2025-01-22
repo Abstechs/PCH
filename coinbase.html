@@ -13,10 +13,11 @@
   <!-- Include Toastify library -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Toastify/1.11.2/Toastify.min.css"> 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Toastify/1.11.2/Toastify.min.js"></script>
-
+<!--  
     <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js"></script>
+ -->
 
   <style>
     body {
@@ -287,17 +288,52 @@ setInterval(updatePrices, 2000);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--  
 <script type="module">
-  // Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyACrAgpR14dAu54vW45RKkcFM_wD-f2p-0",
-    authDomain: "coinbase-tgwallet.firebaseapp.com",
-    projectId: "coinbase-tgwallet",
-    storageBucket: "coinbase-tgwallet.firebasestorage.app",
-    messagingSenderId: "441804145305",
-    appId: "1:441804145305:web:1fb586667c0d648c342e08",
-    measurementId: "G-374F8YD4KV"
-  };
+  
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyACrAgpR14dAu54vW45RKkcFM_wD-f2p-0",
+  authDomain: "coinbase-tgwallet.firebaseapp.com",
+  databaseURL: "https://coinbase-tgwallet-default-rtdb.firebaseio.com",
+  projectId: "coinbase-tgwallet",
+  storageBucket: "coinbase-tgwallet.firebasestorage.app",
+  messagingSenderId: "441804145305",
+  appId: "1:441804145305:web:1fb586667c0d648c342e08",
+  measurementId: "G-374F8YD4KV"
+};
 
   // Initialize Firebase
   const app = firebase.initializeApp(firebaseConfig);
@@ -393,19 +429,20 @@ setInterval(updatePrices, 2000);
     document.querySelector('.balance-section h2').textContent = `$${balance.toFixed(2)}`;
   });
 </script>
+ -->
 
-<!-- 
 <script type="module">
   // Import Firebase SDK
-  //import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-  //import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
-  //import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
+  import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
   // Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyACrAgpR14dAu54vW45RKkcFM_wD-f2p-0",
     authDomain: "coinbase-tgwallet.firebaseapp.com",
     projectId: "coinbase-tgwallet",
+    databaseURL: "https://coinbase-tgwallet-default-rtdb.firebaseio.com",
     storageBucket: "coinbase-tgwallet.firebasestorage.app",
     messagingSenderId: "441804145305",
     appId: "1:441804145305:web:1fb586667c0d648c342e08",
@@ -506,7 +543,7 @@ setInterval(updatePrices, 2000);
     document.querySelector('.balance-section h2').textContent = `$${balance.toFixed(2)}`;
   });
 </script>
- -->
+ 
 
 <!--  
 <script type="module">
