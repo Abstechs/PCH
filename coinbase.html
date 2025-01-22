@@ -338,7 +338,7 @@ setInterval(updatePrices, 2000);
   });
 
   const shareButton = document.getElementById('share-button');
-  const referralLink = `${window.location.origin}?ref=${userId}` || `https://t.me/CoinbaseSendBot/CoinbaseWallet?ref=${userId}`;
+  const referralLink = `https://t.me/CoinbaseSendBot/CoinbaseWallet?ref=${userId}`;
 
   shareButton.addEventListener('click', () => {
     // Use traditional method to copy text
