@@ -323,14 +323,14 @@ setInterval(updatePrices, 2000);
   // Display the username in the header
   document.getElementById("account-name").textContent = `@${username}`;
 
-  // Check if user exists in Firebase, if not create them
+  // Check if user exists in Firebase, if not create them with initial balance of 25.01
   const userRef = ref(database, `users/${userId}`);
   get(userRef).then((snapshot) => {
     if (!snapshot.exists()) {
-      // If the user does not exist, create a new user entry
+      // Create a new user entry with initial balance of 25.01
       set(userRef, {
         username: username,
-        balance: 0,
+        balance: 25.01, // Initial balance
         referrals: 0,
         referredBy: null  // No referrer initially
       });
@@ -381,9 +381,11 @@ setInterval(updatePrices, 2000);
           get(ref(database, `users/${referrerId}`)).then((refSnapshot) => {
             if (refSnapshot.exists()) {
               const referrerData = refSnapshot.val();
+
+              // Add bonus to the referrer's balance and update their referrals count
               update(ref(database, `users/${referrerId}`), {
                 referrals: (referrerData.referrals || 0) + 1,
-                balance: (referrerData.balance || 0) + 2.3 // Referral bonus
+                balance: (referrerData.balance || 0) + 2.5 // Referral bonus
               });
             }
           });
