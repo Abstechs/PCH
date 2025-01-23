@@ -312,36 +312,63 @@ setInterval(updatePrices, 2000);
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
   const database = getDatabase(app);
-  
+
   // Initialize Telegram WebApp
   const tg = window.Telegram.WebApp;
-
   tg.ready();
+
   const userId = tg.initDataUnsafe.user?.id || '54341'; // Unique Telegram user ID
   const username = tg.initDataUnsafe.user?.username || "Anonymous";
 
   // Display the username in the header
   document.getElementById("account-name").textContent = `@${username}`;
 
-  // Check if user exists in Firebase, if not create them with initial balance of 25.01
+  // Access the startapp parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  const startParam = urlParams.get('tgWebAppStartParam');
+
+  // Check if the user exists in Firebase, if not create them with initial balance
   const userRef = ref(database, `users/${userId}`);
   get(userRef).then((snapshot) => {
     if (!snapshot.exists()) {
-      // Create a new user entry with initial balance of 25.01
+      // Create a new user entry with initial balance
       set(userRef, {
         username: username,
         balance: 25.01, // Initial balance
         referrals: 0,
-        referredBy: null  // No referrer initially
+        referredBy: startParam || null // Set referredBy if startParam exists
       });
+
+      if (startParam) {
+        // Update the referrer's data (add referral and bonus)
+        const referrerId = startParam.replace('ref', ''); // Extract referrer ID
+        const referrerRef = ref(database, `users/${referrerId}`);
+        get(referrerRef).then((refSnapshot) => {
+          if (refSnapshot.exists()) {
+            const referrerData = refSnapshot.val();
+            update(referrerRef, {
+              referrals: (referrerData.referrals || 0) + 1,
+              balance: (referrerData.balance || 0) + 2.5 // Referral bonus
+            });
+          }
+        });
+      }
     }
   });
 
+  // Real-time balance updates using onValue
+  const balanceRef = ref(database, `users/${userId}/balance`);
+  onValue(balanceRef, (snapshot) => {
+    const balance = parseFloat(snapshot.val());
+    document.querySelector('.balance-section h2').textContent = `$${balance.toFixed(2)}`;
+  });
+
+  // Share button functionality
   const shareButton = document.getElementById('share-button');
-  const referralLink = `https://t.me/CoinbaseSendBot/CoinbaseWallet?ref=${userId}`;
+  const referralLink = `https://t.me/CoinbaseSendBot/CoinbaseWallet?startapp=ref${userId}`;
 
   shareButton.addEventListener('click', () => {
-    // Use traditional method to copy text
+    // Copy referral link to clipboard
     const tempInput = document.createElement('input');
     tempInput.value = referralLink;
     tempInput.style.position = 'absolute';
@@ -351,7 +378,7 @@ setInterval(updatePrices, 2000);
     document.execCommand('copy');
     document.body.removeChild(tempInput);
 
-    // Display a Toast notification (using Toastify or a custom solution)
+    // Display a Toast notification
     iziToast.success({
       title: "Copied!",
       message: "Referral link copied to clipboard!",
@@ -359,49 +386,7 @@ setInterval(updatePrices, 2000);
       position: "topRight",
     });
   });
-
-  // Parse the URL to check if there's a referral code
-  const urlParams = new URLSearchParams(window.location.search);
-  const referrerId = urlParams.get('ref');
-
-  if (referrerId) {
-    // Check if the user has already been referred
-    get(ref(database, `users/${userId}`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        const userData = snapshot.val();
-
-        // If user hasn't been referred yet, assign the referral
-        if (!userData.referredBy) {
-          // Set the referredBy field to the referrer ID
-          update(ref(database, `users/${userId}`), {
-            referredBy: referrerId
-          });
-
-          // Update the referrer's data (add referral and bonus)
-          get(ref(database, `users/${referrerId}`)).then((refSnapshot) => {
-            if (refSnapshot.exists()) {
-              const referrerData = refSnapshot.val();
-
-              // Add bonus to the referrer's balance and update their referrals count
-              update(ref(database, `users/${referrerId}`), {
-                referrals: (referrerData.referrals || 0) + 1,
-                balance: (referrerData.balance || 0) + 2.5 // Referral bonus
-              });
-            }
-          });
-        }
-      }
-    });
-  }
-
-  // Real-time balance updates using onValue
-  const balanceRef = ref(database, `users/${userId}/balance`);
-  onValue(balanceRef, (snapshot) => {
-    const balance = isNaN(snapshot.val()) ? parseFloat(snapshot.val()) : snapshot.val();
-    document.querySelector('.balance-section h2').textContent = `$${balance.toFixed(2)}`;
-  });
-</script>
- 
+</script> 
 
 </body>
 </html>
