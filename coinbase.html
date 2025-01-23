@@ -326,6 +326,7 @@ setInterval(updatePrices, 2000);
   // Access the startapp parameter
   const urlParams = new URLSearchParams(window.location.search);
   const startParam = urlParams.get('tgWebAppStartParam');
+  const referrerId = startParam ? startParam.replace('ref', '') : null; // Extract referrer ID
 
   // Check if the user exists in Firebase, if not create them with initial balance
   const userRef = ref(database, `users/${userId}`);
@@ -336,12 +337,15 @@ setInterval(updatePrices, 2000);
         username: username,
         balance: 25.01, // Initial balance
         referrals: 0,
-        referredBy: startParam || null // Set referredBy if startParam exists
+        referredBy: null // Default value for referredBy
       });
 
-      if (startParam) {
+      // Handle referrals
+      if (referrerId && referrerId !== userId) {
+        // Update the referredBy field for the new user
+        update(userRef, { referredBy: referrerId });
+
         // Update the referrer's data (add referral and bonus)
-        const referrerId = startParam.replace('ref', ''); // Extract referrer ID
         const referrerRef = ref(database, `users/${referrerId}`);
         get(referrerRef).then((refSnapshot) => {
           if (refSnapshot.exists()) {
@@ -386,7 +390,7 @@ setInterval(updatePrices, 2000);
       position: "topRight",
     });
   });
-</script> 
+</script>
 
 </body>
 </html>
