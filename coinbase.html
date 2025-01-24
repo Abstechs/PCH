@@ -312,9 +312,9 @@
         username: username,
         balance: 25.01, // Initial balance
         referrals: 0,
-        referredBy: referrerId || null // Record referrer if provided
+        referredBy: referrerId && referrerId !== userId ? referrerId : null // Ensure no self-referral
       }).then(() => {
-        // Handle referrals
+        // Handle referrals only if referrerId is valid and not the same as userId
         if (referrerId && referrerId !== userId) {
           const referrerRef = ref(database, `users/${referrerId}`);
           get(referrerRef).then((refSnapshot) => {
@@ -331,21 +331,25 @@
       });
     } else {
       // Handle existing user re-registration (if they were deleted and re-added)
-      if (referrerId && referrerId !== userId) {
-        const referrerRef = ref(database, `users/${referrerId}`);
-        get(referrerRef).then((refSnapshot) => {
-          if (refSnapshot.exists()) {
-            const referrerData = refSnapshot.val();
+      get(ref(database, `users`)).then((usersSnapshot) => {
+        if (usersSnapshot.exists()) {
+          const usersData = usersSnapshot.val();
+          let totalReferred = 0;
 
-            // Ensure referrer is recorded if user was previously deleted
-            update(userRef, { referredBy: referrerId });
-            update(referrerRef, {
-              referrals: (referrerData.referrals || 0) + 1,
-              balance: (referrerData.balance || 0) + 2.5 // Referral bonus
-            });
+          // Check all users to see how many were referred by this user
+          for (const key in usersData) {
+            if (usersData[key]?.referredBy === userId) {
+              totalReferred++;
+            }
           }
-        });
-      }
+
+          // Update the user's referrals and balance accordingly
+          update(userRef, {
+            referrals: totalReferred,
+            balance: 25.01 + totalReferred * 2.5 // Initial balance + bonus for all referrals
+          });
+        }
+      });
     }
   });
 
@@ -383,4 +387,3 @@
 
 </body>
 </html>
-
