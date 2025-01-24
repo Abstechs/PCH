@@ -265,31 +265,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
-<script>
-// Function to simulate real-time price fluctuation
-const updatePrices = () => {
-  const cryptoCards = document.querySelectorAll('.crypto-card');
-  cryptoCards.forEach((card) => {
-    const priceElement = card.querySelector('.price p');
-    const currentPrice = parseFloat(priceElement.textContent.replace('$', ''));
-    const change = (Math.random() * 2 - 1).toFixed(2); // Random fluctuation
-    const newPrice = Math.max(0, currentPrice + parseFloat(change)).toFixed(2); // Avoid negative prices
-
-    // Update price and class
-    priceElement.textContent = `$${newPrice}`;
-    priceElement.classList.remove('green', 'red');
-    if (change > 0) {
-      priceElement.classList.add('green');
-    } else if (change < 0) {
-      priceElement.classList.add('red');
-    }
-  });
-};
-
-// Update prices every 2 seconds
-setInterval(updatePrices, 2000);
-</script>
-
 <script type="module">
   // Import Firebase SDK
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
@@ -328,7 +303,7 @@ setInterval(updatePrices, 2000);
   const startParam = urlParams.get('tgWebAppStartParam');
   const referrerId = startParam ? startParam.replace('ref', '') : null; // Extract referrer ID
 
-  // Check if the user exists in Firebase, if not create them with initial balance
+  // Check if the user exists in Firebase
   const userRef = ref(database, `users/${userId}`);
   get(userRef).then((snapshot) => {
     if (!snapshot.exists()) {
@@ -337,19 +312,33 @@ setInterval(updatePrices, 2000);
         username: username,
         balance: 25.01, // Initial balance
         referrals: 0,
-        referredBy: null // Default value for referredBy
+        referredBy: referrerId || null // Record referrer if provided
+      }).then(() => {
+        // Handle referrals
+        if (referrerId && referrerId !== userId) {
+          const referrerRef = ref(database, `users/${referrerId}`);
+          get(referrerRef).then((refSnapshot) => {
+            if (refSnapshot.exists()) {
+              const referrerData = refSnapshot.val();
+              // Update referrer's referrals and balance
+              update(referrerRef, {
+                referrals: (referrerData.referrals || 0) + 1,
+                balance: (referrerData.balance || 0) + 2.5 // Referral bonus
+              });
+            }
+          });
+        }
       });
-
-      // Handle referrals
+    } else {
+      // Handle existing user re-registration (if they were deleted and re-added)
       if (referrerId && referrerId !== userId) {
-        // Update the referredBy field for the new user
-        update(userRef, { referredBy: referrerId });
-
-        // Update the referrer's data (add referral and bonus)
         const referrerRef = ref(database, `users/${referrerId}`);
         get(referrerRef).then((refSnapshot) => {
           if (refSnapshot.exists()) {
             const referrerData = refSnapshot.val();
+
+            // Ensure referrer is recorded if user was previously deleted
+            update(userRef, { referredBy: referrerId });
             update(referrerRef, {
               referrals: (referrerData.referrals || 0) + 1,
               balance: (referrerData.balance || 0) + 2.5 // Referral bonus
