@@ -17,11 +17,12 @@
     <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
         <!-- iziToast CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
-<!--  
-    <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js"></script>
- -->
+    
+      <!-- iziModal CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/css/iziModal.min.css">
+  <!-- Font Awesome (Optional for Icons) 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+   -->
 
   <style>
     body {
@@ -86,6 +87,20 @@
     .balance-section h2 {
       font-size: 2.5rem;
       margin: 10px 0;
+    }
+    .coin-default {
+      border-radius: 16px;
+      padding: 2px 8px;
+      background-color: #808080a6;
+      font-size: 5px;
+      color: #bfbfbfae;
+      margin:0;
+      position:relative;
+      top: -3px;
+      font-weight: 800;
+      opacity:.7;
+           
+      
     }
     .btn-circle {
       width: 55px;
@@ -157,6 +172,32 @@
       color: #999;
     }
     .green{color:green;}.red{color:red;}
+    
+    
+    /* Custom styling for dark popup content */
+    .dark-content {
+      background-color: #222; /* Dark background */
+      color: #fff;          /* Light text for contrast */
+      padding: 20px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    .dark-content button {
+      background-color: #444; /* Dark button */
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 15px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .dark-content button:hover {
+      background-color: #666;
+    }
+    .iziModal{
+      width:80%;
+    }
   </style>
 </head>
 <body>
@@ -183,30 +224,39 @@
   <!-- Balance Section -->
   <div class="balance-section">
     <h2>$25.01</h2>
-    <p>0xA1Ed...3CB4E</p>
+    <p><span id="wallet-address">0xA1Ed...3CB4E</span> <span class="coin-default">Trump</span></p>
   </div>
 
   <!-- Action Buttons -->
   <div class="action-buttons">
     <div class="action-item">
-      <button class="btn-circle"><i class="far fa-arrow-up-right"></i></button>
+      <button class="btn-circle open-btn" data-modal-id="darkModal1"><i class="far fa-arrow-up-right"></i></button>
       <span>Send</span>
     </div>
     <div class="action-item">
-      <button class="btn-circle"><i class="far fa-arrow-down-left"></i></button>
+      <button class="btn-circle open-btn" data-modal-id="darkModal2">
+          <!-- 
+          <i class="far fa-arrow-down-left"></i>
+           -->
+          <i class="far fa-arrow-alt-circle-up"></i>
+      </button>
+      
+      <!-- 
       <span>Receive</span>
+       -->
+      <span>Withdraw</span>
     </div>
     <div class="action-item">
-      <button class="btn-circle"><i class="fa-regular fa-gift"></i></button>
+      <button class="btn-circle open-btn" data-modal-id="darkModal3"><i class="fa-regular fa-gift"></i></button>
       <span>Hot 🔥</span>
     </div>
     <div class="action-item">
-      <button class="btn-circle"><i class="fa-regular fa-layer-plus"></i></button>
+      <button class="btn-circle open-btn" data-modal-id="darkModal4" ><i class="fa-regular fa-layer-plus"></i></button>
       <span>Tasks</span>
     </div>
     
     <div class="action-item">
-      <button class="btn-circle" id="share-button"><i class="fa-regular fa-share-nodes"></i></button>
+      <button class="btn-circle open-btn" id="share-button" data-modal-id="darkModal5"><i class="fa-regular fa-share-nodes"></i></button>
       <span>Share</span>
     </div>
 
@@ -262,9 +312,99 @@
       </div>
     </div>
   </div>
+  
+  
+    <!-- Dark Popup Modal 1 -->
+  <div id="darkModal1" class="iziModal" data-izimodal-title="Send">
+    <div class="dark-content">
+      <p>Kindly complete the task!</p>
+      <p>This action can not be fulfilled yet.</p>
+      <button class="close-btn">Close</button>
+    </div>
+  </div>
+
+  <!-- Dark Popup Modal 2 -->
+  <div id="darkModal2" class="iziModal" data-izimodal-title="Withdraw">
+    <div class="dark-content">
+      <p>Kindly share your referral link to 15 users before attempting to withdraw from your wallet!</p>
+      <p>[You are not eligible: 2137.]</p>
+      <button class="close-btn">Close</button>
+    </div>
+  </div>
+
+  <!-- Dark Popup Modal 3 -->
+  <div id="darkModal3" class="iziModal" data-izimodal-title="Hot 🔥">
+    <div class="dark-content">
+      <p>Congratulation!</p>
+      <p>You've joined the Trump coin bonus. Kindly complete the tasks to reach the threshold withdrawal</p>
+      <button class="close-btn">Close</button>
+    </div>
+  </div>
+  
+  <!-- Dark Popup Modal 4 -->
+  <div id="darkModal4" class="iziModal" data-izimodal-title="Tasks">
+    <div class="dark-content">
+      <p style="text-align: left;">
+          <span>Instructions:</span>
+          <ol type="i" style="text-align:left;">
+              <li>Share your copied referral link</li>
+              <li>Join our channel for updates and reward</li>
+              <li>Complete the daily task posted to boost your earnings</li>.
+          </ol>
+          
+      </p>
+      <p>For more updates or enquires:</p>
+      <button class="close-btn"><a href="">Join our channel</a></button><button class="close-btn">back</button>
+    </div>
+  </div>
+  
+  <!-- Dark Popup Modal 5 -->
+  <div id="darkModal5" class="iziModal" data-izimodal-title="Share">
+    <div class="dark-content">
+      <p>Your referral link has been copied successfully!</p>
+      <p>Share the link to get $2.5 per your referral!</p>
+      <p><strong style="color:red;">Note:</strong> Your widthrawal is subjected to review and verification.</p>
+      <button class="close-btn">Close</button>
+    </div>
+  </div>
+  
+  
+  
+  
+  
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  
+   <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/js/iziModal.min.js"></script>
 
+  <script>
+    $(document).ready(function() {
+      // Initialize all modals with the class `iziModal`
+      $(".iziModal").each(function() {
+        $(this).iziModal({
+          background: '#222', // Popup's dark background color
+          headerColor: '#444', // Header bar color
+          width: 600,
+          radius: 10,
+          transitionIn: 'fadeInUp',
+          transitionOut: 'fadeOutDown',
+        });
+      });
+
+      // Open modal dynamically based on button click
+      $(".open-btn").on("click", function() {
+        const modalId = $(this).data("modal-id"); // Get the modal ID from button
+        $("#" + modalId).iziModal("open"); // Open the modal with that ID
+      });
+
+      // Close modal on button click inside the modal
+      $(".close-btn").on("click", function() {
+        $(this).closest(".iziModal").iziModal("close");
+      });
+    });
+  </script>
 <script type="module">
   // Import Firebase SDK
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
@@ -294,9 +434,24 @@
 
   const userId = tg.initDataUnsafe.user?.id || '54341'; // Unique Telegram user ID
   const username = tg.initDataUnsafe.user?.username || "Anonymous";
+  
+function generateRandomString(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    
+    return result;
+}
+const randomEnding = generateRandomString(5);
+const walletAddress = `0xA1Ed...${randomEnding}`;
 
   // Display the username in the header
   document.getElementById("account-name").textContent = `@${username}`;
+  document.getElementById("wallet-address").textContent = `${walletAddress}`;
 
   // Access the startapp parameter
   const urlParams = new URLSearchParams(window.location.search);
@@ -312,7 +467,8 @@
         username: username,
         balance: 25.01, // Initial balance
         referrals: 0,
-        referredBy: referrerId && referrerId !== userId ? referrerId : null // Ensure no self-referral
+        referredBy: referrerId && referrerId !== userId ? referrerId : null,
+        wallet: walletAddress,
       }).then(() => {
         // Handle referrals only if referrerId is valid and not the same as userId
         if (referrerId && referrerId !== userId) {
@@ -355,9 +511,20 @@
 
   // Real-time balance updates using onValue
   const balanceRef = ref(database, `users/${userId}/balance`);
+  
   onValue(balanceRef, (snapshot) => {
     const balance = parseFloat(snapshot.val());
     document.querySelector('.balance-section h2').textContent = `$${balance.toFixed(2)}`;
+  });
+  
+  const walletAddr = ref(database, `users/${userId}/wallet`);
+  
+  onValue(walletAddr, (snapshot) => {
+  
+    const wallet = snapshot.val() || walletAddress;
+    
+document.getElementById('wallet-address').textContent = wallet;
+    
   });
 
   // Share button functionality
