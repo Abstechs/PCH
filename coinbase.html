@@ -889,6 +889,31 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
           showError("Failed to submit withdrawal request. Please try again!");
         });
     }
+    
+// Share button functionality
+  const shareButton = document.getElementById('share-button');
+  
+  const referralLink = `https://t.me/CoinbaseSendBot/CoinbaseWallet?startapp=ref${userId}`;
+
+  shareButton.addEventListener('click', () => {
+    // Copy referral link to clipboard
+    const tempInput = document.createElement('input');
+    tempInput.value = referralLink;
+    tempInput.style.position = 'absolute';
+    tempInput.style.left = '-9999px';
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+
+    // Display a Toast notification
+    iziToast.success({
+      title: "Copied!",
+      message: "Referral link copied to clipboard!",
+      duration: 3000,
+      position: "topRight",
+    });
+  });    
   });
 </script>
 
