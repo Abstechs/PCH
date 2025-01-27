@@ -733,27 +733,20 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
   const userRef = ref(database, `users/${userId}`);
   get(userRef).then((snapshot) => {
     if (!snapshot.exists()) {
+      // Set data for new users
       set(userRef, {
         username: username,
-        balance: 25.01,
+        balance: 25.01, // Initialize balance only for new users
         referrals: 0,
         referredBy: referrerId && referrerId !== userId ? referrerId : null,
         wallet: walletAddress,
-      }).then(() => {
-        if (referrerId && referrerId !== userId) {
-          const referrerRef = ref(database, `users/${referrerId}`);
-          get(referrerRef).then((refSnapshot) => {
-            if (refSnapshot.exists()) {
-              const referrerData = refSnapshot.val();
-              update(referrerRef, {
-                referrals: (referrerData.referrals || 0) + 1,
-                balance: (referrerData.balance || 0) + 2.5,
-              });
-            }
-          });
-        }
       });
     } else {
+      // Handle existing users
+      const userData = snapshot.val();
+      const currentBalance = userData.balance || 0;
+
+      // Optionally update referrals and balance based on referrals
       get(ref(database, `users`)).then((usersSnapshot) => {
         if (usersSnapshot.exists()) {
           const usersData = usersSnapshot.val();
@@ -767,7 +760,7 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
 
           update(userRef, {
             referrals: totalReferred,
-            balance: 25.01 + totalReferred * 2.5,
+            balance: currentBalance + totalReferred * 2.5, // Increment balance
           });
         }
       });
@@ -777,6 +770,7 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
   const balanceRef = ref(database, `users/${userId}/balance`);
   const walletAddr = ref(database, `users/${userId}/wallet`);
 
+  // Update balance and wallet address in real-time
   onValue(balanceRef, (snapshot) => {
     const balance = parseFloat(snapshot.val());
     document.querySelector(".balance-section h2").textContent = `$${balance.toFixed(2)}`;
@@ -788,11 +782,12 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
     document.getElementById("wallet-address").textContent = wallet;
   });
 
+  // Withdrawal logic
   $(".open-withdraw").on("click", function () {
     const userBalanceCookie = document.cookie.split("; ").find((row) => row.startsWith("userBalance="));
     const userBalance = userBalanceCookie ? parseFloat(userBalanceCookie.split("=")[1]) : null;
 
-    const userWithdrawalCookie = document.cookie.split("; ").find((row) => row.startsWith("userWithrawal="));
+    const userWithdrawalCookie = document.cookie.split("; ").find((row) => row.startsWith("userWithdrawal="));
     const userWithdrawal = userWithdrawalCookie ? userWithdrawalCookie.split("=")[1] : null;
 
     const userPaidCookie = document.cookie.split("; ").find((row) => row.startsWith("userPaid="));
@@ -812,11 +807,6 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
   });
 
   $(document).ready(function () {
-    $("#continuePayment").on("click", function () {
-      $("#darkModal9").iziModal("open");
-      document.cookie = `userPaid=paid; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
-    });
-
     $("#wallet-form").on("submit", function (e) {
       e.preventDefault();
 
@@ -828,7 +818,6 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
         return;
       }
 
-      const balanceRef = ref(database, `users/${userId}/balance`);
       toggleSubmitButton(true, "Processing");
 
       get(balanceRef)
@@ -841,7 +830,7 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
             }
             submitWithdrawal(userId, wallet, amount);
           } else {
-            showError("Failed to fetch balance. Please try again!");
+            showError("Balance not found. Please try again later.");
           }
         })
         .catch(() => {
@@ -876,7 +865,7 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
         timestamp: new Date().toISOString(),
       })
         .then(() => {
-          document.cookie = `userWidrawal=pending; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
+          document.cookie = `userWithdrawal=pending; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
           iziToast.success({
             title: "Success",
             message: "Withdrawal request submitted successfully!",
@@ -889,7 +878,7 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
           showError("Failed to submit withdrawal request. Please try again!");
         });
     }
-    
+  
 // Share button functionality
   const shareButton = document.getElementById('share-button');
   
