@@ -905,10 +905,10 @@ $("#continuePayment").on("click", function () {
       document.cookie = `userPaid=paid; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
     });
     
-    /* 💧💧💧💧 */
+    /* 💧💧💧💧 
     document.cookie = `userWithdrawal=paid; expires=${new Date(Date.now()).toUTCString()}; path=/`;
     document.cookie = `userPaid=paid; expires=${new Date(Date.now()).toUTCString()}; path=/`;
-    
+    */
 
     function showError(message) {
       iziToast.error({ title: "Error", message, position: "topRight" });
