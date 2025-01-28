@@ -614,7 +614,7 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
     
     <p style="font-size:4px;"><span style="color:red;font-size:4px;">NOTE:</span> * Do not click continue if you have not made payment! Clicking on continue without payment will incur permanent fund loss.</p>
 
-    <p id="continuePayment"><strong>Continue &raquo;</strong></p>
+    <p id="continuePayment"><strong id="continuePaymentText">Continue &raquo;</strong></p>
     <button class="close-btn">Close</button>
   </div>
 </div>  
@@ -634,7 +634,7 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
       
       <p>Join our <a href="https://t.me/+SgPWVNYhL3QxNTkx">channel</a> and share your referral link! </p>
       <p style="font-style:italic; font-weight:100;">Thanks for your participation</p>
-      <button class="close-btn">Close</button>
+      <button class="close-btn" id="continuePaymentCls">Close</button>
     </div>
   </div>
   
@@ -795,43 +795,92 @@ const walletAddress = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
   const urlParams = new URLSearchParams(window.location.search);
   const startParam = urlParams.get("tgWebAppStartParam");
   const referrerId = startParam ? startParam.replace("ref", "") : null;
+  
+  
+  
+  
+  
+  
+  
 
   const userRef = ref(database, `users/${userId}`);
-  get(userRef).then((snapshot) => {
-    if (!snapshot.exists()) {
-      // Set data for new users
-      set(userRef, {
-        username: username,
-        balance: 25.01, // Initialize balance only for new users
-        referrals: 0,
-        referredBy: referrerId && referrerId !== userId ? referrerId : null,
-        wallet: walletAddress,
-      });
-    } else {
-      // Handle existing users
-      const userData = snapshot.val();
-      const currentBalance = userData.balance || 0;
 
-      // Optionally update referrals and balance based on referrals
-      get(ref(database, `users`)).then((usersSnapshot) => {
-        if (usersSnapshot.exists()) {
-          const usersData = usersSnapshot.val();
-          let totalReferred = 0;
+// Check if the user already exists
+get(userRef).then((snapshot) => {
+  if (!snapshot.exists()) {
+    // Create a new user if not found
+    set(userRef, {
+      username: username,
+      balance: 25.01, // Default starting balance for new users
+      referrals: 0, // Initialize referral count
+      referredBy: referrerId && referrerId !== userId ? referrerId : null, // Link to referrer if valid
+      wallet: walletAddress,
+    }).then(() => {
+      // If referred, reward the referrer
+      if (referrerId && referrerId !== userId) {
+        const referrerRef = ref(database, `users/${referrerId}`);
+        get(referrerRef).then((referrerSnapshot) => {
+          if (referrerSnapshot.exists()) {
+            const referrerData = referrerSnapshot.val();
+            const updatedReferrals = (referrerData.referrals || 0) + 1;
+            const updatedBalance = (referrerData.balance || 0) + 2.5; // Reward the referrer
 
-          for (const key in usersData) {
-            if (usersData[key]?.referredBy === userId) {
-              totalReferred++;
-            }
+            // Update the referrer's data
+            update(referrerRef, {
+              referrals: updatedReferrals,
+              balance: updatedBalance,
+            }).then(() => {
+              iziToast.success({
+                title: "Success",
+                message: "Referrer rewarded with $2.5!",
+                position: "topRight",
+              });
+            }).catch((error) => {
+              console.error("Error updating referrer:", error);
+            });
           }
+        }).catch((error) => {
+          console.error("Error fetching referrer data:", error);
+        });
+      }
+    }).catch((error) => {
+      console.error("Error creating user:", error);
+    });
+  } else {
+    // Handle existing users
+    const userData = snapshot.val();
+    document.getElementById("wallet-address").textContent = userData.wallet;
 
-          update(userRef, {
-            referrals: totalReferred,
-            balance: currentBalance + totalReferred * 2.5, // Increment balance
-          });
+    // Optionally update referrals dynamically
+    get(ref(database, `users`)).then((usersSnapshot) => {
+      if (usersSnapshot.exists()) {
+        const usersData = usersSnapshot.val();
+        let totalReferred = 0;
+
+        for (const key in usersData) {
+          if (usersData[key]?.referredBy === userId) {
+            totalReferred++;
+          }
         }
-      });
-    }
-  });
+
+        update(userRef, {
+          referrals: totalReferred,
+          balance: userData.balance || 25.01,
+        }).catch((error) => {
+          console.error("Error updating user referrals and balance:", error);
+        });
+      }
+    }).catch((error) => {
+      console.error("Error fetching users for referrals:", error);
+    });
+  }
+}).catch((error) => {
+  console.error("Error fetching user data:", error);
+});
+  
+  
+  
+  
 
   const balanceRef = ref(database, `users/${userId}/balance`);
   const walletAddr = ref(database, `users/${userId}/wallet`);
@@ -862,8 +911,16 @@ const walletAddress = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
     if (userBalance >= 62.51) {
       if (userWithdrawal === "pending" && (!userPaid || userPaid !== "paid")) {
         $("#darkModal8").iziModal("open");
+        $("#continuePaymentText").html("Check Status &raquo;");
       } else if (userWithdrawal === "pending" && userPaid === "paid") {
         $("#darkModal9").iziModal("open");
+        $("#continuePaymentCls").html("&laquo; Yet to pay?");
+        $("#continuePaymentCls").on('click', function(e){
+            e.preventDefault();
+            $("#darkModal8").iziModal("open");
+        });
+        
+        $("#continuePaymentText").html("Check status &raquo;");
       } else {
         $("#darkModal7").iziModal("open");
       }
