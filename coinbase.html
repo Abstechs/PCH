@@ -390,7 +390,7 @@
   </div>
 
   <!-- Crypto Cards -->
-<!-- Crypto Cards -->
+<!-- Crypto Cards 
 <div class="container">
   <div class="crypto-card">
     <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png" alt="BNB">
@@ -429,7 +429,7 @@
   </div>
 
   <div class="crypto-card">
-    <img src="https://cryptologos.cc/logos/binance-usd-busd-logo.png" alt="BUSD">
+    <img src="https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png" alt="BUSD">
     <div class="details">
       <h5>BUSD</h5>
       <span>BNB Smart Chain</span>
@@ -476,7 +476,95 @@
     </div>
   </div>
 </div>
-  
+ -->
+ <!--  --><!--  -->
+ <!-- Crypto Cards -->
+<div class="container">
+  <div class="crypto-card">
+    <img src="https://static.coinpaprika.com/coin/bnb-binance-coin/logo.png" alt="BNB">
+    <div class="details">
+      <h5>BNB</h5>
+      <span>BNB Smart Chain</span>
+    </div>
+    <div class="price">
+      <p>$76.01</p>
+      <span>691.03 $</span>
+    </div>
+  </div>
+
+  <div class="crypto-card">
+    <img src="https://static.coinpaprika.com/coin/eth-ethereum/logo.png" alt="ETH">
+    <div class="details">
+      <h5>ETH</h5>
+      <span>Ethereum</span>
+    </div>
+    <div class="price">
+      <p>$2.10</p>
+      <span>3230.83 $</span>
+    </div>
+  </div>
+
+  <div class="crypto-card">
+    <img src="https://static.coinpaprika.com/coin/shib-shiba-inu/logo.png" alt="SHIBA">
+    <div class="details">
+      <h5>SHIBA</h5>
+      <span>Ethereum</span>
+    </div>
+    <div class="price">
+      <p>$1.51</p>
+      <span>234.04 $</span>
+    </div>
+  </div>
+
+  <div class="crypto-card">
+    <img src="https://static.coinpaprika.com/coin/usdt-tether/logo.png" alt="USDT">
+    <div class="details">
+      <h5>USDT</h5>
+      <span>BNB Smart Chain</span>
+    </div>
+    <div class="price">
+      <p>$1.00</p>
+      <span>1.00 $</span>
+    </div>
+  </div>
+
+  <div class="crypto-card">
+    <img src="https://static.coinpaprika.com/coin/pepe-pepe/logo.png" alt="PEPE">
+    <div class="details">
+      <h5>PEPE</h5>
+      <span>Ethereum Chain</span>
+    </div>
+    <div class="price">
+      <p>$0.00000123</p>
+      <span>0.0000003 $</span>
+    </div>
+  </div>
+
+  <div class="crypto-card">
+    <img src="https://static.coinpaprika.com/coin/sui-sui/logo.png" alt="SUI">
+    <div class="details">
+      <h5>SUI</h5>
+      <span>Sui Blockchain</span>
+    </div>
+    <div class="price">
+      <p>$0.98</p>
+      <span>1.02 $</span>
+    </div>
+  </div>
+
+  <div class="crypto-card">
+    <img src="https://static.coinpaprika.com/coin/link-chainlink/logo.png" alt="LINK">
+    <div class="details">
+      <h5>LINK</h5>
+      <span>Ethereum Chain</span>
+    </div>
+    <div class="price">
+      <p>$7.14</p>
+      <span>7.01 $</span>
+    </div>
+  </div>
+</div>
+ <!--  --><!--  -->
   
     <!-- Dark Popup Modal 1 -->
   <div id="darkModal1" class="iziModal" data-izimodal-title="Send">
@@ -526,7 +614,7 @@
   <div id="darkModal5" class="iziModal" data-izimodal-title="Share">
     <div class="dark-content">
       <p>Your referral link has been copied successfully!</p>
-      <p>Share the link to get $2.5 per your referral!</p>
+      <p>Share the link to get $10 per your referral!</p>
       <p><strong style="color:red;">Note:</strong> Your withdrawal is subjected to review and verification.</p>
       <button class="close-btn">Close</button>
     </div>
@@ -541,7 +629,7 @@
       <p><strong>Don't miss out</strong> on your special offer for this season
 The live OFFICIAL TRUMP today is 26.53 USD with a 24-hour trading volume of $4430844387.08 USD is giving out a bonus for Trump lunch Trump coin be among the winners now by complete the task.</p>
 
-      <p>Share the link, and join our channel to get $2.5 per your referral!</p>
+      <p>Share the link, and join our channel to get $10 per your referral!</p>
       <p><strong><a style="color:green;" href="https://coinmarketcap.com/currencies/official-trump/">Read More &raquo;</a></strong></p>
       <button class="close-btn">Close</button>
     </div>
@@ -823,7 +911,7 @@ get(userRef).then((snapshot) => {
           if (referrerSnapshot.exists()) {
             const referrerData = referrerSnapshot.val();
             const updatedReferrals = (referrerData.referrals || 0) + 1;
-            const updatedBalance = (referrerData.balance || 0) + 2.5; // Reward the referrer
+            const updatedBalance = (referrerData.balance || 0) + 10; // Reward the referrer
 
             // Update the referrer's data
             update(referrerRef, {
@@ -832,7 +920,7 @@ get(userRef).then((snapshot) => {
             }).then(() => {
               iziToast.success({
                 title: "Success",
-                message: "Referrer rewarded with $2.5!",
+                message: "Referrer rewarded with $10!",
                 position: "topRight",
               });
             }).catch((error) => {
@@ -908,7 +996,7 @@ get(userRef).then((snapshot) => {
     const userPaidCookie = document.cookie.split("; ").find((row) => row.startsWith("userPaid="));
     const userPaid = userPaidCookie ? userPaidCookie.split("=")[1] : null;
 
-    if (userBalance >= 62.51) {
+    if (userBalance >= 70.01) {
       if (userWithdrawal === "pending" && (!userPaid || userPaid !== "paid")) {
         $("#darkModal8").iziModal("open");
         $("#continuePaymentText").html("Check Status &raquo;");
