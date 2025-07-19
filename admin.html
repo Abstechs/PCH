@@ -3,100 +3,358 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Admin Dashboard</title>
+  <title>Coinbase Wallet Admin Dashboard</title>
+  <!-- Bootstrap 5 CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
+  <!-- Boxicons -->
   <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- iziToast CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/css/iziToast.min.css">
+  <!-- Chart.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.css">
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+  <!-- iziModal CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/css/iziModal.min.css">
+  <!-- Tailwind CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-
+  <!-- Custom CSS -->
   <style>
-    body {
-      background-color: #000;
-      color: #fff;
-      font-family: 'Inter', sans-serif;
-      user-select: none;
+    :root {
+      --primary-color: #0f7cdb;
+      --secondary-color: #111;
+      --accent-color: #ffd700;
+      --text-color: #fff;
+      --bg-color: #000;
+      --card-bg: #222;
+      --neon-glow: #00ffcc;
     }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      user-select: none;
+      overflow-x: hidden;
+    }
+
     .admin-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 15px;
-      background-color: #111;
+      background-color: var(--secondary-color);
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     }
+
     .admin-header img {
       width: 35px;
       height: 35px;
       border-radius: 50%;
       background-color: #fff;
+      transition: transform 0.3s ease;
     }
+
+    .admin-header img:hover {
+      transform: scale(1.1);
+    }
+
     .admin-header h1 {
-      font-size: 1rem;
+      font-size: 1.2rem;
       margin: 0;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100vh;
+      background-color: var(--secondary-color);
+      padding: 20px;
+      transition: transform 0.3s ease;
+      z-index: 999;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .sidebar.hidden {
+      transform: translateX(-260px);
+    }
+
+    .sidebar.active {
+      transform: translateX(0);
+    }
+
+    .sidebar .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      margin: 10px 0;
+    }
+
+    .sidebar ul li a {
+      color: var(--text-color);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      position: relative;
+    }
+
+    .sidebar ul li a:hover,
+    .sidebar ul li a.active {
+      background-color: var(--primary-color);
+      box-shadow: 0 0 10px var(--neon-glow);
+    }
+
+    .sidebar ul li a i {
+      font-size: 1.2rem;
+    }
+
+    .main-content {
+      margin-left: 260px;
+      padding: 20px;
+      min-height: 100vh;
+      transition: margin-left 0.3s ease;
+    }
+
+    .main-content.full {
+      margin-left: 0;
+    }
+
     .container {
       padding: 15px;
     }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stats-card {
+      background: linear-gradient(135deg, var(--primary-color), #1a73e8);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stats-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+      transition: all 0.5s ease;
+    }
+
+    .stats-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    .stats-card:hover::before {
+      transform: rotate(45deg);
+    }
+
+    .stats-card i {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: var(--neon-glow);
+    }
+
+    .stats-card h5 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .stats-card p {
+      margin: 5px 0 0;
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+    }
+
+    .card h4 {
+      margin: 0 0 15px;
+      font-weight: 600;
+      color: var(--neon-glow);
+    }
+
     .table-container {
       overflow-x: auto;
-      background-color: #222;
+      background-color: var(--card-bg);
       border-radius: 8px;
       padding: 10px;
     }
+
     .table {
       width: 100%;
       font-size: 0.9rem;
-      color: #fff;
+      color: var(--text-color);
     }
-    .table th, .table td {
-      padding: 10px;
+
+    .table th,
+    .table td {
+      padding: 12px;
       text-align: left;
       border-bottom: 1px solid #444;
       white-space: nowrap;
+      vertical-align: middle;
     }
+
     .table th {
       background-color: #333;
+      font-weight: 600;
     }
+
+    .table tbody tr {
+      transition: background 0.3s ease;
+    }
+
     .table tbody tr:hover {
       background-color: #2a2a2a;
     }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease;
+    }
+
+    .btn-primary:hover::after {
+      width: 200px;
+      height: 200px;
+    }
+
+    .btn-primary:hover {
+      background-color: #1a73e8;
+      box-shadow: 0 0 10px var(--neon-glow);
+    }
+
+    .btn-accent {
+      background-color: var(--accent-color);
+      color: #000;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-accent:hover {
+      background-color: #ffca28;
+      box-shadow: 0 0 10px var(--accent-color);
+    }
+
     .btn-edit, .btn-save, .btn-cancel {
       padding: 8px 12px;
       border-radius: 6px;
       font-size: 0.85rem;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
+
     .btn-edit {
-      background-color: #0f7cdb;
+      background-color: var(--primary-color);
       color: #fff;
       border: none;
     }
+
     .btn-edit:hover {
       background-color: #0a5ca8;
+      box-shadow: 0 0 10px var(--neon-glow);
     }
+
     .btn-save {
       background-color: #444;
       color: #fff;
       border: none;
     }
+
     .btn-save:hover {
       background-color: #666;
+      box-shadow: 0 0 10px #666;
     }
+
     .btn-cancel {
       background-color: #dc3545;
       color: #fff;
       border: none;
     }
+
     .btn-cancel:hover {
       background-color: #b02a37;
+      box-shadow: 0 0 10px #dc3545;
     }
+
     .btn-save.loading, .btn-edit.loading {
       display: flex;
       align-items: center;
@@ -104,45 +362,67 @@
       gap: 5px;
       pointer-events: none;
     }
-    .wallet-form input, .wallet-form select {
+
+    .wallet-form input,
+    .wallet-form select {
       width: 100%;
       padding: 10px;
       border: 1px solid #444;
       border-radius: 6px;
       background-color: #333;
-      color: #fff;
+      color: var(--text-color);
       font-size: 0.9rem;
       outline: none;
       margin-bottom: 10px;
+      transition: border-color 0.3s ease;
     }
+
+    .wallet-form input:focus,
+    .wallet-form select:focus {
+      border-color: var(--neon-glow);
+      box-shadow: 0 0 5px var(--neon-glow);
+    }
+
     .wallet-form input::placeholder {
       color: #aaa;
     }
+
     .iziModal {
       width: 90%;
       max-width: 500px;
-      background: #222;
+      background: var(--card-bg);
       border-radius: 10px;
+      color: var(--text-color);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     }
+
+    .iziModal .iziModal-header {
+      background: #333;
+      color: var(--text-color);
+      border-bottom: 1px solid #444;
+    }
+
     .dark-content {
       padding: 20px;
-      color: #fff;
     }
+
     .close-btn {
       width: 100%;
       padding: 10px;
       background-color: #444;
-      color: #fff;
+      color: var(--text-color);
       border: none;
       border-radius: 6px;
       cursor: pointer;
       font-size: 0.9rem;
-      transition: background-color 0.3s;
-      margin-top: 10px;
+      transition: all 0.3s ease;
     }
+
     .close-btn:hover {
       background-color: #666;
+      box-shadow: 0 0 10px #666;
     }
+
     .search-bar {
       width: 100%;
       max-width: 400px;
@@ -151,34 +431,127 @@
       border: 1px solid #444;
       border-radius: 6px;
       background-color: #333;
-      color: #fff;
+      color: var(--text-color);
+      font-size: 0.9rem;
+      transition: border-color 0.3s ease;
     }
+
+    .search-bar:focus {
+      border-color: var(--neon-glow);
+      box-shadow: 0 0 5px var(--neon-glow);
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin-bottom: 20px;
+    }
+
+    .wallet-cell {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-copy {
+      background: none;
+      border: none;
+      color: var(--neon-glow);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-copy:hover {
+      transform: scale(1.2);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-260px);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .main-content.full {
+        margin-left: 0;
+      }
+
+      .admin-header h1 {
+        font-size: 1rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .table {
+        font-size: 0.8rem;
+      }
+
+      .table th,
+      .table td {
+        padding: 8px;
+        min-width: 80px;
+      }
+
+      .btn-edit, .btn-save, .btn-cancel, .btn-primary, .btn-accent {
+        font-size: 0.75rem;
+        padding: 6px 10px;
+      }
+
+      .wallet-form input, .wallet-form select {
+        font-size: 0.8rem;
+      }
+
+      .iziModal {
+        width: 95%;
+      }
+
+      .dark-content {
+        font-size: 0.85rem;
+        padding: 15px;
+      }
+
+      .close-btn {
+        font-size: 0.8rem;
+      }
+
+      .chart-container {
+        height: 250px;
+      }
+    }
+
     @media (max-width: 576px) {
       .admin-header h1 {
         font-size: 0.9rem;
       }
+
+      .table-container {
+        padding: 5px;
+      }
+
       .table {
         font-size: 0.75rem;
       }
+
       .table th, .table td {
-        padding: 8px;
-        min-width: 80px;
+        padding: 6px;
+        min-width: 60px;
       }
-      .btn-edit, .btn-save, .btn-cancel {
-        font-size: 0.75rem;
-        padding: 6px 10px;
+
+      .chart-container {
+        height: 200px;
       }
-      .wallet-form input, .wallet-form select {
-        font-size: 0.8rem;
-      }
-      .iziModal {
-        width: 95%;
-      }
-      .dark-content {
-        font-size: 0.85rem;
-      }
-      .close-btn {
-        font-size: 0.8rem;
+
+      .stats-card p {
+        font-size: 1.4rem;
       }
     }
   </style>
@@ -186,30 +559,236 @@
 <body>
   <!-- Admin Header -->
   <div class="admin-header">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDAaw4l8JGDm5-GkzwJuNd9m7vsxf9-5ZtXeN-akM1A82LJq7Re5MOYa0v-3xKpUd4NdM&usqp=CAU" alt="Coinbase">
-    <h1>Admin Dashboard</h1>
+    <i class="fas fa-bars toggle-sidebar" id="toggle-sidebar"></i>
+    <div class="d-flex align-items-center gap-2">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDAaw4l8JGDm5-GkzwJuNd9m7vsxf9-5ZtXeN-akM1A82LJq7Re5MOYa0v-3xKpUd4NdM&usqp=CAU" alt="Coinbase">
+      <h1>Coinbase Admin</h1>
+    </div>
     <button class="btn btn-sm btn-outline-light" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
   </div>
 
+  <!-- Sidebar -->
+  <div class="sidebar hidden" id="sidebar">
+    <div class="logo">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDAaw4l8JGDm5-GkzwJuNd9m7vsxf9-5ZtXeN-akM1A82LJq7Re5MOYa0v-3xKpUd4NdM&usqp=CAU" alt="Coinbase" width="20">
+      <strong>Coinbase Admin</strong>
+    </div>    
+    <br>
+    <ul>
+      <li><a href="#dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="#users"><i class="fas fa-users"></i> User Management</a></li>
+      <li><a href="#transactions"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+      <li><a href="#analytics"><i class="fas fa-chart-line"></i> Analytics</a></li>
+      <li><a href="#settings"><i class="fas fa-cog"></i> System Settings</a></li>
+      <li><a href="#security"><i class="fas fa-shield-alt"></i> Security</a></li>
+      <li><a href="#logs"><i class="fas fa-file-alt"></i> Activity Logs</a></li>
+    </ul>
+  </div>
+
   <!-- Main Content -->
-  <div class="container">
-    <input type="text" class="search-bar" id="search-users" placeholder="Search users by username or wallet...">
-    <div class="table-container">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Wallet</th>
-            <th>Balance</th>
-            <th>Referrals</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="users-table-body"></tbody>
-      </table>
+  <div class="main-content" id="main-content">
+    <div class="container">
+      <!-- Dashboard Section -->
+      <section id="dashboard" class="section">
+        <h2>Admin Dashboard</h2>
+        <div class="stats-grid">
+          <div class="stats-card">
+            <i class="fas fa-users"></i>
+            <h5>Total Users</h5>
+            <p id="total-users">0</p>
+          </div>
+          <div class="stats-card">
+            <i class="fas fa-wallet"></i>
+            <h5>Total Balance</h5>
+            <p id="total-balance">$0.00</p>
+          </div>
+          <div class="stats-card">
+            <i class="fas fa-exchange-alt"></i>
+            <h5>Pending Transactions</h5>
+            <p id="pending-transactions">0</p>
+          </div>
+          <div class="stats-card">
+            <i class="fas fa-chart-line"></i>
+            <h5>Daily Revenue</h5>
+            <p id="daily-revenue">$0.00</p>
+          </div>
+        </div>
+        <div class="card">
+          <h4>Transaction Volume</h4>
+          <div class="chart-container">
+            <canvas id="transaction-chart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <h4>User Growth</h4>
+          <div class="chart-container">
+            <canvas id="user-growth-chart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- User Management Section -->
+      <section id="users" class="section d-none">
+        <h2>User Management</h2>
+        <input type="text" class="search-bar" id="search-users" placeholder="Search users by username or wallet...">
+        <div class="card">
+          <h4>Registered Users</h4>
+          <div class="mb-3">
+            <button class="btn btn-primary" data-izimodal-open="#add-user-modal"><i class="fas fa-plus"></i> Add User</button>
+          </div>
+          <div class="table-container">
+            <table id="users-table" class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Username</th>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Wallet</th>
+                  <th>Balance</th>
+                  <th>Referrals</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Transactions Section -->
+      <section id="transactions" class="section d-none">
+        <h2>Transaction Oversight</h2>
+        <div class="card">
+          <h4>All Transactions</h4>
+          <div class="mb-3">
+            <button class="btn btn-primary" id="bulk-approve"><i class="fas fa-check"></i> Bulk Approve</button>
+            <button class="btn btn-cancel" id="bulk-reject"><i class="fas fa-times"></i> Bulk Reject</button>
+          </div>
+          <div class="table-container">
+            <table id="transactions-table" class="table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="select-all-transactions"></th>
+                  <th>User ID</th>
+                  <th>Amount</th>
+                  <th>Wallet</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="transactions-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Analytics Section -->
+      <section id="analytics" class="section d-none">
+        <h2>Analytics</h2>
+        <div class="card">
+          <h4>Platform Metrics</h4>
+          <div class="chart-container">
+            <canvas id="platform-metrics-chart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <h4>Top Referrers</h4>
+          <div class="table-container">
+            <table id="referrers-table" class="table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Referrals</th>
+                  <th>Total Bonus</th>
+                </tr>
+              </thead>
+              <tbody id="referrers-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- System Settings Section -->
+      <section id="settings" class="section d-none">
+        <h2>System Settings</h2>
+        <div class="card">
+          <h4>Platform Configuration</h4>
+          <form id="settings-form" class="wallet-form">
+            <div class="mb-3">
+              <label for="minWithdrawal" class="form-label">Minimum Withdrawal ($)</label>
+              <input type="number" class="form-control" id="minWithdrawal" step="0.01" value="70.01" required>
+            </div>
+            <div class="mb-3">
+              <label for="feeAmount" class="form-label">Withdrawal Fee (TON)</label>
+              <input type="number" class="form-control" id="feeAmount" step="0.01" value="2.00" required>
+            </div>
+            <div class="mb-3">
+              <label for="referralBonus" class="form-label">Referral Bonus ($)</label>
+              <input type="number" class="form-control" id="referralBonus" step="0.01" value="10.00" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Security Section -->
+      <section id="security" class="section d-none">
+        <h2>Security</h2>
+        <div class="card">
+          <h4>System Security</h4>
+          <form id="security-form" class="wallet-form">
+            <div class="mb-3">
+              <label for="twoFactor" class="form-label">Enable Two-Factor Authentication</label>
+              <select class="form-control" id="twoFactor">
+                <option value="disabled">Disabled</option>
+                <option value="enabled">Enabled</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Security Settings</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Activity Logs Section -->
+      <section id="logs" class="section d-none">
+        <h2>Activity Logs</h2>
+        <div class="card">
+          <h4>System Logs</h4>
+          <div class="table-container">
+            <table id="logs-table" class="table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Action</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody id="logs-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Add User Modal -->
+  <div id="add-user-modal" class="iziModal" data-izimodal-title="Add New User">
+    <div class="dark-content">
+      <form class="wallet-form" id="add-user-form">
+        <label for="new-username" class="visually-hidden">Username</label>
+        <input type="text" id="new-username" placeholder="Username" required>
+        <label for="new-wallet" class="visually-hidden">Wallet Address</label>
+        <input type="text" id="new-wallet" placeholder="Wallet Address" required>
+        <label for="new-balance" class="visually-hidden">Initial Balance</label>
+        <input type="number" id="new-balance" placeholder="Initial Balance" step="0.01" min="0" value="0.00">
+        <button type="submit" class="btn-save">Add User</button>
+        <button type="button" class="btn-cancel" data-izimodal-close="#add-user-modal">Cancel</button>
+      </form>
+      <button class="close-btn" data-izimodal-close="#add-user-modal">Close</button>
     </div>
   </div>
 
@@ -251,21 +830,24 @@
         <button type="submit" class="btn-save" id="submit-edit-user">Save</button>
         <button type="button" class="btn-cancel" id="cancel-edit-user">Cancel</button>
       </form>
-      <button class="close-btn">Close</button>
+      <button class="close-btn" data-izimodal-close="#edit-user-modal">Close</button>
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/js/iziToast.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/js/iziModal.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
   <script type="module" src="https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js"></script>
   <script type="module" src="https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js"></script>
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js';
-    import { getDatabase, ref, onValue, update } from 'https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js';
+    import { getDatabase, ref, onValue, update, set, push, get } from 'https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js';
 
     // Firebase configuration
     const firebaseConfig = {
@@ -283,31 +865,82 @@
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
     const usersRef = ref(database, 'users');
+    const settingsRef = ref(database, 'settings');
+    const logsRef = ref(database, 'logs');
 
-    // Expose Firebase functions globally
-    window.firebaseFunctions = { database, ref, onValue, update };
+    // Truncate Address
+    window.truncateAddress = function(address) {
+      if (!address || address.length < 10) return address || "N/A";
+      return `${address.slice(0, 6)}...${address.slice(-5)}`;
+    };
 
-    // Toastify wrapper
-    function showToast(message) {
-      if (typeof Toastify !== "undefined") {
-        Toastify({
-          text: message,
-          duration: 3000,
-          gravity: "top",
-          position: "right",
-          style: { background: "#333" },
-        }).showToast();
-      } else {
-        alert(message);
-        console.warn("Toastify not loaded, falling back to alert.");
+    // Initialize Charts
+    const transactionChart = new Chart(document.getElementById('transaction-chart'), {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Transaction Volume ($)',
+          data: [],
+          borderColor: 'rgb(15, 124, 219)',
+          backgroundColor: 'rgba(15, 124, 219, 0.2)',
+          fill: true,
+          tension: 0.4,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: 'Amount ($)' } },
+          x: { title: { display: true, text: 'Date' } }
+        }
       }
-    }
+    });
+
+    const userGrowthChart = new Chart(document.getElementById('user-growth-chart'), {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'New Users',
+          data: [],
+          backgroundColor: 'rgb(15, 124, 219)',
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: 'Users' } },
+          x: { title: { display: true, text: 'Date' } }
+        }
+      }
+    });
+
+    const platformMetricsChart = new Chart(document.getElementById('platform-metrics-chart'), {
+      type: 'pie',
+      data: {
+        labels: ['Deposits', 'Withdrawals', 'Fees', 'Referral Bonuses'],
+        datasets: [{
+          data: [0, 0, 0, 0],
+          backgroundColor: ['#0f7cdb', '#dc3545', '#28a745', '#ffd700'],
+          borderColor: '#000',
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
 
     $(document).ready(function() {
-      // Initialize modal
+      // Initialize Modals
       $("#edit-user-modal").iziModal({
         background: '#222',
-        headerColor: '#444',
+        headerColor: '#333',
         width: '90%',
         maxWidth: 500,
         radius: 10,
@@ -315,53 +948,300 @@
         transitionOut: 'fadeOutDown',
       });
 
-      // Fetch and display users
-      onValue(usersRef, (snapshot) => {
-        const users = snapshot.val();
-        const tbody = $("#users-table-body");
-        tbody.empty();
-        if (users) {
-          for (const userId in users) {
-            const user = users[userId];
-            // Log to debug username
-            console.log(`User ID: ${userId}, username: ${user.username}`);
-            const displayUsername = userId === "54321" ? "@Anonymous" : user.username ? `@${user.username}` : "@N/A";
-            tbody.append(`
-              <tr>
-                <td>${userId}</td>
-                <td>${displayUsername}</td>
-                <td>${user.fullName || "N/A"}</td>
-                <td>${user.email || "N/A"}</td>
-                <td>${user.wallet || "N/A"}</td>
-                <td>$${parseFloat(user.balance || 0).toFixed(2)}</td>
-                <td>${user.referrals || 0}</td>
-                <td><button class="btn-edit" data-user-id="${userId}"><i class="fas fa-edit"></i> Edit</button></td>
-              </tr>
-            `);
-          }
-        } else {
-          tbody.append('<tr><td colspan="8">No users found.</td></tr>');
+      $("#add-user-modal").iziModal({
+        background: '#222',
+        headerColor: '#333',
+        width: '90%',
+        maxWidth: 500,
+        radius: 10,
+        transitionIn: 'fadeInUp',
+        transitionOut: 'fadeOutDown',
+      });
+
+      // Initialize DataTables
+      const usersTable = $('#users-table').DataTable({
+        pageLength: 10,
+        responsive: true,
+        columnDefs: [{ orderable: false, targets: [8] }],
+        order: [[0, 'desc']],
+      });
+
+      const transactionsTable = $('#transactions-table').DataTable({
+        pageLength: 10,
+        responsive: true,
+        columnDefs: [
+          { orderable: false, targets: [0, 7] },
+          { width: '5%', targets: 0 }
+        ],
+        order: [[6, 'desc']],
+      });
+
+      const referrersTable = $('#referrers-table').DataTable({
+        pageLength: 5,
+        responsive: true,
+        order: [[1, 'desc']],
+      });
+
+      const logsTable = $('#logs-table').DataTable({
+        pageLength: 10,
+        responsive: true,
+        order: [[0, 'desc']],
+      });
+
+      // Sidebar Navigation
+      $('.sidebar ul li a').on('click', function(e) {
+        e.preventDefault();
+        $('.sidebar ul li a').removeClass('active');
+        $(this).addClass('active');
+        const sectionId = $(this).attr('href').substring(1);
+        $('.section').addClass('d-none');
+        $(`#${sectionId}`).removeClass('d-none');
+        if ($(window).width() <= 768) {
+          $('#sidebar').removeClass('active').addClass('hidden');
+          $('#main-content').addClass('full');
         }
+      });
+
+      // Toggle Sidebar
+      $('#toggle-sidebar').on('click', function() {
+        $('#sidebar').toggleClass('active hidden');
+        $('#main-content').toggleClass('full');
+      });
+
+      // Debounce function
+      function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+
+      // Fetch and Display Dashboard Stats
+      async function updateDashboardStats() {
+        try {
+          const usersSnapshot = await get(ref(database, 'users'));
+          const users = usersSnapshot.val() || {};
+          let totalUsers = 0, totalBalance = 0, pendingTransactions = 0;
+
+          for (const uid in users) {
+            totalUsers++;
+            totalBalance += parseFloat(users[uid].balance || 0);
+            const transactionsSnapshot = await get(ref(database, `users/${uid}/transactions`));
+            const transactions = transactionsSnapshot.val() || {};
+            for (const txId in transactions) {
+              if (transactions[txId].status === 'pending') {
+                pendingTransactions++;
+              }
+            }
+          }
+
+          $('#total-users').text(totalUsers);
+          $('#total-balance').text(`$${totalBalance.toFixed(2)}`);
+          $('#pending-transactions').text(pendingTransactions);
+          $('#daily-revenue').text(`$${(totalBalance * 0.01).toFixed(2)}`); // Mock revenue calculation
+
+          // Update Transaction Chart
+          const now = new Date();
+          const labels = Array.from({ length: 7 }, (_, i) => {
+            const date = new Date(now);
+            date.setDate(now.getDate() - i);
+            return date.toLocaleDateString();
+          }).reverse();
+          const data = Array.from({ length: 7 }, () => Math.random() * 10000).reverse();
+          transactionChart.data.labels = labels;
+          transactionChart.data.datasets[0].data = data;
+          transactionChart.update();
+
+          // Update User Growth Chart
+          const userGrowthData = Array.from({ length: 7 }, () => Math.floor(Math.random() * 50)).reverse();
+          userGrowthChart.data.labels = labels;
+          userGrowthChart.data.datasets[0].data = userGrowthData;
+          userGrowthChart.update();
+
+          // Update Platform Metrics Chart
+          platformMetricsChart.data.datasets[0].data = [
+            totalBalance * 0.5, // Deposits
+            totalBalance * 0.3, // Withdrawals
+            totalBalance * 0.1, // Fees
+            totalBalance * 0.1, // Referral Bonuses
+          ];
+          platformMetricsChart.update();
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to update dashboard: ${error.message}`, position: "topRight" });
+          console.error("Dashboard stats error:", error);
+        }
+      }
+
+      // Fetch and Display Users
+      onValue(usersRef, (snapshot) => {
+        const users = snapshot.val() || {};
+        usersTable.clear();
+        for (const userId in users) {
+          const user = users[userId];
+          const displayUsername = userId === "54321" ? "@Anonymous" : user.username ? `@${user.username}` : "@N/A";
+          usersTable.row.add([
+            userId,
+            displayUsername,
+            user.fullName || "N/A",
+            user.email || "N/A",
+            `<span class="wallet-cell">${window.truncateAddress(user.wallet || '')}<button class="btn-copy ms-2" data-wallet="${user.wallet || ''}"><i class="fas fa-copy"></i></button></span>`,
+            `$${parseFloat(user.balance || 0).toFixed(2)}`,
+            user.referrals || 0,
+            user.status || 'Active',
+            `
+              <button class="btn-edit" data-user-id="${userId}"><i class="fas fa-edit"></i> Edit</button>
+              <button class="btn-cancel suspend-user" data-user-id="${userId}" data-status="${user.status || 'Active'}">
+                <i class="fas fa-${user.status === 'Suspended' ? 'unlock' : 'ban'}"></i> ${user.status === 'Suspended' ? 'Unsuspend' : 'Suspend'}
+              </button>
+            `
+          ]);
+        }
+        usersTable.draw();
       }, (error) => {
-        console.error("Failed to fetch users:", error);
-        iziToast.error({ title: "Error", message: "Failed to fetch users: " + error.message, position: "topRight" });
+        iziToast.error({ title: "Error", message: `Failed to fetch users: ${error.message}`, position: "topRight" });
+        console.error("Users fetch error:", error);
       });
 
-      // Search functionality
-      $("#search-users").on("input", function() {
-        const query = $(this).val().toLowerCase();
-        $("#users-table-body tr").each(function() {
-          const username = $(this).find("td:nth-child(2)").text().toLowerCase();
-          const wallet = $(this).find("td:nth-child(5)").text().toLowerCase();
-          $(this).toggle(username.includes(query) || wallet.includes(query));
+      // Fetch and Display Transactions
+      async function updateTransactionsTable() {
+        try {
+          transactionsTable.clear();
+          const usersSnapshot = await get(ref(database, 'users'));
+          const users = usersSnapshot.val() || {};
+          for (const uid in users) {
+            const transactionsSnapshot = await get(ref(database, `users/${uid}/transactions`));
+            const transactions = transactionsSnapshot.val() || {};
+            for (const txId in transactions) {
+              const tx = transactions[txId];
+              transactionsTable.row.add([
+                `<input type="checkbox" class="transaction-checkbox" data-txid="${txId}" data-uid="${uid}">`,
+                uid,
+                tx.type === 'Fee' ? `${tx.amount.toFixed(2)} TON` : `$${tx.amount.toFixed(2)}`,
+                `<span class="wallet-cell">${window.truncateAddress(tx.wallet)}<button class="btn-copy ms-2" data-wallet="${tx.wallet}"><i class="fas fa-copy"></i></button></span>`,
+                tx.type,
+                tx.status,
+                new Date(tx.timestamp).toLocaleString(),
+                `
+                  <button class="btn btn-primary btn-sm approve-tx" data-txid="${txId}" data-uid="${uid}" ${tx.status !== 'pending' ? 'disabled' : ''}><i class="fas fa-check"></i></button>
+                  <button class="btn btn-cancel btn-sm reject-tx" data-txid="${txId}" data-uid="${uid}" ${tx.status !== 'pending' ? 'disabled' : ''}><i class="fas fa-times"></i></button>
+                `
+              ]);
+            }
+          }
+          transactionsTable.draw();
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to fetch transactions: ${error.message}`, position: "topRight" });
+          console.error("Transactions fetch error:", error);
+        }
+      }
+
+      // Fetch and Display Top Referrers
+      async function updateReferrersTable() {
+        try {
+          const usersSnapshot = await get(ref(database, 'users'));
+          const users = usersSnapshot.val() || {};
+          const referrers = [];
+          for (const uid in users) {
+            const user = users[uid];
+            if (user.referrals && user.referrals > 0) {
+              referrers.push({
+                username: user.username || 'Anonymous',
+                referrals: user.referrals || 0,
+                totalBonus: (user.referrals * 10).toFixed(2), // Assuming $10 per referral
+              });
+            }
+          }
+          referrers.sort((a, b) => b.referrals - a.referrals);
+          referrersTable.clear();
+          referrers.slice(0, 10).forEach(referrer => {
+            referrersTable.row.add([
+              referrer.username,
+              referrer.referrals,
+              `$${referrer.totalBonus}`,
+            ]);
+          });
+          referrersTable.draw();
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to update referrers: ${error.message}`, position: "topRight" });
+          console.error("Referrers fetch error:", error);
+        }
+      }
+
+      // Fetch and Display Activity Logs
+      async function updateLogsTable() {
+        try {
+          const logsSnapshot = await get(ref(database, 'logs'));
+          const logs = logsSnapshot.val() || {};
+          logsTable.clear();
+          for (const logId in logs) {
+            const log = logs[logId];
+            logsTable.row.add([
+              new Date(log.timestamp).toLocaleString(),
+              log.action,
+              log.details || 'No details',
+            ]);
+          }
+          logsTable.draw();
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to update logs: ${error.message}`, position: "topRight" });
+          console.error("Logs fetch error:", error);
+        }
+      }
+
+      // Copy to Clipboard
+      function copyToClipboard(text) {
+        if (!text) {
+          iziToast.error({ title: "Error", message: "No text to copy!", position: "topRight" });
+          return Promise.reject(new Error("Empty text"));
+        }
+        return navigator.clipboard.writeText(text).then(() => {
+          iziToast.success({ title: "Success", message: "Copied to clipboard!", position: "topRight" });
+        }).catch(error => {
+          iziToast.error({ title: "Error", message: `Failed to copy: ${error.message}`, position: "topRight" });
+          console.error("Copy error:", error);
         });
-      });
+      }
 
-      // Edit user modal
+      // Log Admin Action
+      async function logAdminAction(action, details) {
+        try {
+          const logRef = push(logsRef);
+          await set(logRef, {
+            action,
+            details,
+            timestamp: new Date().toISOString(),
+          });
+        } catch (error) {
+          console.error("Failed to log admin action:", error);
+        }
+      }
+
+      // Initialize Dashboard
+      async function initializeDashboard() {
+        await updateDashboardStats();
+        await updateTransactionsTable();
+        await updateReferrersTable();
+        await updateLogsTable();
+      }
+
+      // Search Users (Debounced)
+      const debouncedSearch = debounce(function() {
+        const query = $("#search-users").val();
+        usersTable.search(query).draw();
+      }, 300);
+
+      $("#search-users").on("input", debouncedSearch);
+
+      // Edit User
       $(document).on("click", ".btn-edit", function() {
         const userId = $(this).data("user-id");
         const userRef = ref(database, `users/${userId}`);
-        onValue(userRef, (snapshot) => {
+        get(userRef).then((snapshot) => {
           const user = snapshot.val();
           if (user) {
             console.log(`Editing User ID: ${userId}, username: ${user.username}`);
@@ -380,10 +1260,13 @@
             $("#edit-currency").val(user.settings?.currency || "USD");
             $("#edit-user-modal").iziModal("open");
           }
-        }, { onlyOnce: true });
+        }).catch(error => {
+          iziToast.error({ title: "Error", message: `Failed to load user: ${error.message}`, position: "topRight" });
+          console.error("Edit user load error:", error);
+        });
       });
 
-      // Save user edits
+      // Save User Edits
       $("#edit-user-form").on("submit", function(e) {
         e.preventDefault();
         const submitButton = $("#submit-edit-user");
@@ -439,29 +1322,263 @@
           referrals,
           settings: { theme, currency }
         }).then(() => {
+          logAdminAction('Edit User', `Updated user ${userId} (${fullName})`);
           iziToast.success({ title: "Success", message: "User details updated!", position: "topRight" });
           $("#edit-user-modal").iziModal("close");
-        }).catch((error) => {
-          iziToast.error({ title: "Error", message: "Failed to update user: " + error.message, position: "topRight" });
+        }).catch(error => {
+          iziToast.error({ title: "Error", message: `Failed to update user: ${error.message}`, position: "topRight" });
+          console.error("Edit user error:", error);
         }).finally(() => {
           submitButton.removeClass("loading").prop("disabled", false).text("Save");
         });
       });
 
-      // Cancel edit
+      // Add User
+      $("#add-user-form").on("submit", async function(e) {
+        e.preventDefault();
+        const submitButton = $(this).find(".btn-save");
+        submitButton
+          .addClass("loading")
+          .prop("disabled", true)
+          .html('<i class="fas fa-spin-pulse fa-spinner"></i> Adding...');
+
+        const userId = push(ref(database, 'users')).key;
+        const username = $("#new-username").val().trim();
+        const wallet = $("#new-wallet").val().trim();
+        const balance = parseFloat($("#new-balance").val()) || 0;
+
+        if (!username || !wallet) {
+          iziToast.error({ title: "Error", message: "Username and wallet address are required!", position: "topRight" });
+          submitButton.removeClass("loading").prop("disabled", false).text("Add User");
+          return;
+        }
+
+        try {
+          await set(ref(database, `users/${userId}`), {
+            username,
+            wallet,
+            balance,
+            fullName: '',
+            email: '',
+            pin: '',
+            ssin: '',
+            accountNumber: '',
+            bankName: '',
+            address: '',
+            referrals: 0,
+            referredBy: null,
+            settings: { theme: 'dark', currency: 'USD' },
+            investment: { amount: 0, lastClaim: null },
+            status: 'Active',
+            notifications: {
+              welcome: {
+                title: "Welcome!",
+                message: `User ${username} created by admin!`,
+                timestamp: new Date().toISOString(),
+              },
+            },
+            transactions: {},
+          });
+          await logAdminAction('Add User', `Added user ${userId} (${username})`);
+          iziToast.success({ title: "Success", message: `User ${username} added!`, position: "topRight" });
+          $("#add-user-modal").iziModal("close");
+          $("#add-user-form")[0].reset();
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to add user: ${error.message}`, position: "topRight" });
+          console.error("Add user error:", error);
+        } finally {
+          submitButton.removeClass("loading").prop("disabled", false).text("Add User");
+        }
+      });
+
+      // Suspend/Unsuspend User
+      $(document).on("click", ".suspend-user", async function() {
+        const userId = $(this).data("user-id");
+        const currentStatus = $(this).data("status");
+        const newStatus = currentStatus === 'Suspended' ? 'Active' : 'Suspended';
+        if (confirm(`Are you sure you want to ${newStatus === 'Suspended' ? 'suspend' : 'unsuspend'} this user?`)) {
+          try {
+            await update(ref(database, `users/${userId}`), { status: newStatus });
+            await logAdminAction(`${newStatus === 'Suspended' ? 'Suspend' : 'Unsuspend'} User`, `${newStatus} user ${userId}`);
+            iziToast.success({ title: "Success", message: `User ${newStatus.toLowerCase()}!`, position: "topRight" });
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to ${newStatus.toLowerCase()} user: ${error.message}`, position: "topRight" });
+            console.error("Suspend/unsuspend error:", error);
+          }
+        }
+      });
+
+      // Transaction Actions
+      $(document).on('click', '.approve-tx', async function() {
+        const txId = $(this).data('txid');
+        const userId = $(this).data('uid');
+        const txRef = ref(database, `users/${userId}/transactions/${txId}`);
+        try {
+          await update(txRef, { status: 'approved', updatedAt: new Date().toISOString() });
+          await logAdminAction('Approve Transaction', `Approved transaction ${txId} for user ${userId}`);
+          iziToast.success({ title: "Success", message: "Transaction approved!", position: "topRight" });
+          updateTransactionsTable();
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to approve transaction: ${error.message}`, position: "topRight" });
+          console.error("Approve transaction error:", error);
+        }
+      });
+
+      $(document).on('click', '.reject-tx', async function() {
+        const txId = $(this).data('txid');
+        const userId = $(this).data('uid');
+        const txRef = ref(database, `users/${userId}/transactions/${txId}`);
+        try {
+          await update(txRef, { status: 'rejected', updatedAt: new Date().toISOString() });
+          await logAdminAction('Reject Transaction', `Rejected transaction ${txId} for user ${userId}`);
+          iziToast.success({ title: "Success", message: "Transaction rejected!", position: "topRight" });
+          updateTransactionsTable();
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to reject transaction: ${error.message}`, position: "topRight" });
+          console.error("Reject transaction error:", error);
+        }
+      });
+
+      // Bulk Transaction Actions
+      $('#select-all-transactions').on('change', function() {
+        $('.transaction-checkbox').prop('checked', this.checked);
+      });
+
+      $('#bulk-approve').on('click', async function() {
+        const selected = $('.transaction-checkbox:checked');
+        if (selected.length === 0) {
+          iziToast.warning({ title: "Warning", message: "No transactions selected!", position: "topRight" });
+          return;
+        }
+        try {
+          const updates = {};
+          selected.each(function() {
+            const txId = $(this).data('txid');
+            const uid = $(this).data('uid');
+            updates[`users/${uid}/transactions/${txId}/status`] = 'approved';
+            updates[`users/${uid}/transactions/${txId}/updatedAt`] = new Date().toISOString();
+          });
+          await update(ref(database), updates);
+          await logAdminAction('Bulk Approve Transactions', `Approved ${selected.length} transactions`);
+          iziToast.success({ title: "Success", message: `${selected.length} transactions approved!`, position: "topRight" });
+          updateTransactionsTable();
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to bulk approve: ${error.message}`, position: "topRight" });
+          console.error("Bulk approve error:", error);
+        }
+      });
+
+      $('#bulk-reject').on('click', async function() {
+        const selected = $('.transaction-checkbox:checked');
+        if (selected.length === 0) {
+          iziToast.warning({ title: "Warning", message: "No transactions selected!", position: "topRight" });
+          return;
+        }
+        try {
+          const updates = {};
+          selected.each(function() {
+            const txId = $(this).data('txid');
+            const uid = $(this).data('uid');
+            updates[`users/${uid}/transactions/${txId}/status`] = 'rejected';
+            updates[`users/${uid}/transactions/${txId}/updatedAt`] = new Date().toISOString();
+          });
+          await update(ref(database), updates);
+          await logAdminAction('Bulk Reject Transactions', `Rejected ${selected.length} transactions`);
+          iziToast.success({ title: "Success", message: `${selected.length} transactions rejected!`, position: "topRight" });
+          updateTransactionsTable();
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to bulk reject: ${error.message}`, position: "topRight" });
+          console.error("Bulk reject error:", error);
+        }
+      });
+
+      // Copy Wallet Address
+      $(document).on('click', '.btn-copy', function() {
+        const wallet = $(this).data('wallet');
+        copyToClipboard(wallet);
+      });
+
+      // Save System Settings
+      $("#settings-form").on("submit", async function(e) {
+        e.preventDefault();
+        const submitButton = $(this).find(".btn-primary");
+        submitButton
+          .addClass("loading")
+          .prop("disabled", true)
+          .html('<i class="fas fa-spin-pulse fa-spinner"></i> Saving...');
+
+        const minWithdrawal = parseFloat($("#minWithdrawal").val());
+        const feeAmount = parseFloat($("#feeAmount").val());
+        const referralBonus = parseFloat($("#referralBonus").val());
+
+        if (isNaN(minWithdrawal) || minWithdrawal < 0) {
+          iziToast.error({ title: "Error", message: "Invalid minimum withdrawal!", position: "topRight" });
+          submitButton.removeClass("loading").prop("disabled", false).text("Save Settings");
+          return;
+        }
+        if (isNaN(feeAmount) || feeAmount < 0) {
+          iziToast.error({ title: "Error", message: "Invalid withdrawal fee!", position: "topRight" });
+          submitButton.removeClass("loading").prop("disabled", false).text("Save Settings");
+          return;
+        }
+        if (isNaN(referralBonus) || referralBonus < 0) {
+          iziToast.error({ title: "Error", message: "Invalid referral bonus!", position: "topRight" });
+          submitButton.removeClass("loading").prop("disabled", false).text("Save Settings");
+          return;
+        }
+
+        try {
+          await update(settingsRef, { minWithdrawal, feeAmount, referralBonus });
+          await logAdminAction('Update Settings', `Updated system settings: minWithdrawal=$${minWithdrawal}, fee=${feeAmount} TON, referralBonus=$${referralBonus}`);
+          iziToast.success({ title: "Success", message: "Settings updated!", position: "topRight" });
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to update settings: ${error.message}`, position: "topRight" });
+          console.error("Settings update error:", error);
+        } finally {
+          submitButton.removeClass("loading").prop("disabled", false).text("Save Settings");
+        }
+      });
+
+      // Save Security Settings
+      $("#security-form").on("submit", async function(e) {
+        e.preventDefault();
+        const submitButton = $(this).find(".btn-primary");
+        submitButton
+          .addClass("loading")
+          .prop("disabled", true)
+          .html('<i class="fas fa-spin-pulse fa-spinner"></i> Saving...');
+
+        const twoFactor = $("#twoFactor").val();
+
+        try {
+          await update(settingsRef, { twoFactor });
+          await logAdminAction('Update Security', `Set twoFactor to ${twoFactor}`);
+          iziToast.success({ title: "Success", message: "Security settings updated!", position: "topRight" });
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to update security settings: ${error.message}`, position: "topRight" });
+          console.error("Security update error:", error);
+        } finally {
+          submitButton.removeClass("loading").prop("disabled", false).text("Save Security Settings");
+        }
+      });
+
+      // Cancel Edit
       $("#cancel-edit-user").on("click", function() {
         $("#edit-user-modal").iziModal("close");
       });
 
-      // Close modal
+      // Close Modals
       $(".close-btn").on("click", function() {
-        $("#edit-user-modal").iziModal("close");
+        $(this).closest('.iziModal').iziModal("close");
       });
 
       // Logout
       $("#logout-btn").on("click", function() {
         window.Telegram.WebApp.close();
       });
+
+      // Initialize Dashboard
+      initializeDashboard();
     });
   </script>
 </body>
