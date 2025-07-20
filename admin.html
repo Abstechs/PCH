@@ -355,7 +355,7 @@
       box-shadow: 0 0 10px #dc3545;
     }
 
-    .btn-save.loading, .btn-edit.loading {
+    .btn-save.loading, .btn-edit.loading, .btn-primary.loading {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -364,7 +364,8 @@
     }
 
     .wallet-form input,
-    .wallet-form select {
+    .wallet-form select,
+    .wallet-form textarea {
       width: 100%;
       padding: 10px;
       border: 1px solid #444;
@@ -377,19 +378,26 @@
       transition: border-color 0.3s ease;
     }
 
+    .wallet-form textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
     .wallet-form input:focus,
-    .wallet-form select:focus {
+    .wallet-form select:focus,
+    .wallet-form textarea:focus {
       border-color: var(--neon-glow);
       box-shadow: 0 0 5px var(--neon-glow);
     }
 
-    .wallet-form input::placeholder {
+    .wallet-form input::placeholder,
+    .wallet-form textarea::placeholder {
       color: #aaa;
     }
 
     .iziModal {
       width: 90%;
-      max-width: 500px;
+      max-width: 600px;
       background: var(--card-bg);
       border-radius: 10px;
       color: var(--text-color);
@@ -466,6 +474,35 @@
       transform: scale(1.2);
     }
 
+    .filter-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    .filter-group select {
+      padding: 8px;
+      border-radius: 6px;
+      background-color: #333;
+      color: var(--text-color);
+      border: 1px solid #444;
+    }
+
+    .btn-export {
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-export:hover {
+      background-color: #218838;
+      box-shadow: 0 0 10px #28a745;
+    }
+
     @media (max-width: 768px) {
       .sidebar {
         transform: translateX(-260px);
@@ -501,12 +538,12 @@
         min-width: 80px;
       }
 
-      .btn-edit, .btn-save, .btn-cancel, .btn-primary, .btn-accent {
+      .btn-edit, .btn-save, .btn-cancel, .btn-primary, .btn-accent, .btn-export {
         font-size: 0.75rem;
         padding: 6px 10px;
       }
 
-      .wallet-form input, .wallet-form select {
+      .wallet-form input, .wallet-form select, .wallet-form textarea {
         font-size: 0.8rem;
       }
 
@@ -553,6 +590,10 @@
       .stats-card p {
         font-size: 1.4rem;
       }
+
+      .filter-group {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -572,12 +613,13 @@
     <div class="logo">
       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDAaw4l8JGDm5-GkzwJuNd9m7vsxf9-5ZtXeN-akM1A82LJq7Re5MOYa0v-3xKpUd4NdM&usqp=CAU" alt="Coinbase" width="20">
       <strong>Coinbase Admin</strong>
-    </div>    
-    <br>
+    </div>
     <ul>
       <li><a href="#dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
       <li><a href="#users"><i class="fas fa-users"></i> User Management</a></li>
       <li><a href="#transactions"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+      <li><a href="#investments"><i class="fas fa-coins"></i> Investments</a></li>
+      <li><a href="#notifications"><i class="fas fa-bell"></i> Notifications</a></li>
       <li><a href="#analytics"><i class="fas fa-chart-line"></i> Analytics</a></li>
       <li><a href="#settings"><i class="fas fa-cog"></i> System Settings</a></li>
       <li><a href="#security"><i class="fas fa-shield-alt"></i> Security</a></li>
@@ -608,6 +650,16 @@
             <p id="pending-transactions">0</p>
           </div>
           <div class="stats-card">
+            <i class="fas fa-coins"></i>
+            <h5>Total Investments</h5>
+            <p id="total-investments">$0.00</p>
+          </div>
+          <div class="stats-card">
+            <i class="fas fa-bell"></i>
+            <h5>Unread Notifications</h5>
+            <p id="unread-notifications">0</p>
+          </div>
+          <div class="stats-card">
             <i class="fas fa-chart-line"></i>
             <h5>Daily Revenue</h5>
             <p id="daily-revenue">$0.00</p>
@@ -630,16 +682,33 @@
       <!-- User Management Section -->
       <section id="users" class="section d-none">
         <h2>User Management</h2>
-        <input type="text" class="search-bar" id="search-users" placeholder="Search users by username or wallet...">
+        <div class="filter-group">
+          <input type="text" class="search-bar" id="search-users" placeholder="Search users by username or wallet...">
+          <select id="filter-status" class="form-select">
+            <option value="">All Statuses</option>
+            <option value="Active">Active</option>
+            <option value="Suspended">Suspended</option>
+          </select>
+          <select id="filter-currency" class="form-select">
+            <option value="">All Currencies</option>
+            <option value="USD">USD</option>
+            <option value="BTC">BTC</option>
+            <option value="ETH">ETH</option>
+          </select>
+        </div>
         <div class="card">
           <h4>Registered Users</h4>
           <div class="mb-3">
             <button class="btn btn-primary" data-izimodal-open="#add-user-modal"><i class="fas fa-plus"></i> Add User</button>
+            <button class="btn btn-accent" id="bulk-suspend"><i class="fas fa-ban"></i> Bulk Suspend</button>
+            <button class="btn btn-accent" id="bulk-unsuspend"><i class="fas fa-unlock"></i> Bulk Unsuspend</button>
+            <button class="btn btn-export" id="export-users"><i class="fas fa-download"></i> Export Users</button>
           </div>
           <div class="table-container">
             <table id="users-table" class="table">
               <thead>
                 <tr>
+                  <th><input type="checkbox" id="select-all-users"></th>
                   <th>ID</th>
                   <th>Username</th>
                   <th>Full Name</th>
@@ -647,6 +716,7 @@
                   <th>Wallet</th>
                   <th>Balance</th>
                   <th>Referrals</th>
+                  <th>Investment</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
@@ -660,6 +730,23 @@
       <!-- Transactions Section -->
       <section id="transactions" class="section d-none">
         <h2>Transaction Oversight</h2>
+        <div class="filter-group">
+          <select id="filter-tx-type" class="form-select">
+            <option value="">All Types</option>
+            <option value="Send">Send</option>
+            <option value="Withdraw">Withdraw</option>
+            <option value="Fee">Fee</option>
+            <option value="Investment">Investment</option>
+            <option value="Reward">Reward</option>
+          </select>
+          <select id="filter-tx-status" class="form-select">
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <button class="btn btn-export" id="export-transactions"><i class="fas fa-download"></i> Export Transactions</button>
+        </div>
         <div class="card">
           <h4>All Transactions</h4>
           <div class="mb-3">
@@ -674,6 +761,7 @@
                   <th>User ID</th>
                   <th>Amount</th>
                   <th>Wallet</th>
+                  <th>Network</th>
                   <th>Type</th>
                   <th>Status</th>
                   <th>Date</th>
@@ -681,6 +769,70 @@
                 </tr>
               </thead>
               <tbody id="transactions-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Investments Section -->
+      <section id="investments" class="section d-none">
+        <h2>Investment Oversight</h2>
+        <div class="filter-group">
+          <input type="text" class="search-bar" id="search-investments" placeholder="Search by user ID or username...">
+          <button class="btn btn-export" id="export-investments"><i class="fas fa-download"></i> Export Investments</button>
+        </div>
+        <div class="card">
+          <h4>Active Investments</h4>
+          <div class="table-container">
+            <table id="investments-table" class="table">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Username</th>
+                  <th>Amount ($)</th>
+                  <th>Last Claim</th>
+                  <th>Next Claim</th>
+                  <th>Auto-Renew</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="investments-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notifications Section -->
+      <section id="notifications" class="section d-none">
+        <h2>Notification Management</h2>
+        <div class="card">
+          <h4>Broadcast Notification</h4>
+          <form id="broadcast-form" class="wallet-form">
+            <label for="broadcast-title" class="visually-hidden">Title</label>
+            <input type="text" id="broadcast-title" placeholder="Notification Title" required>
+            <label for="broadcast-message" class="visually-hidden">Message</label>
+            <textarea id="broadcast-message" placeholder="Notification Message" required></textarea>
+            <select id="broadcast-target" class="form-select">
+              <option value="all">All Users</option>
+              <option value="active">Active Users</option>
+              <option value="suspended">Suspended Users</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Send Notification</button>
+          </form>
+        </div>
+        <div class="card">
+          <h4>Sent Notifications</h4>
+          <div class="table-container">
+            <table id="notifications-table" class="table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Title</th>
+                  <th>Message</th>
+                  <th>Target</th>
+                </tr>
+              </thead>
+              <tbody id="notifications-table-body"></tbody>
             </table>
           </div>
         </div>
@@ -710,6 +862,22 @@
             </table>
           </div>
         </div>
+        <div class="card">
+          <h4>User Activity</h4>
+          <div class="table-container">
+            <table id="activity-table" class="table">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Username</th>
+                  <th>Last Login</th>
+                  <th>Actions Performed</th>
+                </tr>
+              </thead>
+              <tbody id="activity-table-body"></tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <!-- System Settings Section -->
@@ -730,6 +898,10 @@
               <label for="referralBonus" class="form-label">Referral Bonus ($)</label>
               <input type="number" class="form-control" id="referralBonus" step="0.01" value="10.00" required>
             </div>
+            <div class="mb-3">
+              <label for="investmentRewardRate" class="form-label">Investment Reward Rate (%)</label>
+              <input type="number" class="form-control" id="investmentRewardRate" step="0.01" value="50.00" required>
+            </div>
             <button type="submit" class="btn btn-primary">Save Settings</button>
           </form>
         </div>
@@ -747,6 +919,10 @@
                 <option value="disabled">Disabled</option>
                 <option value="enabled">Enabled</option>
               </select>
+            </div>
+            <div class="mb-3">
+              <label for="ipWhitelist" class="form-label">IP Whitelist (comma-separated)</label>
+              <input type="text" class="form-control" id="ipWhitelist" placeholder="e.g., 192.168.1.1, 10.0.0.1">
             </div>
             <button type="submit" class="btn btn-primary">Save Security Settings</button>
           </form>
@@ -785,6 +961,12 @@
         <input type="text" id="new-wallet" placeholder="Wallet Address" required>
         <label for="new-balance" class="visually-hidden">Initial Balance</label>
         <input type="number" id="new-balance" placeholder="Initial Balance" step="0.01" min="0" value="0.00">
+        <label for="new-pin" class="visually-hidden">PIN</label>
+        <input type="password" id="new-pin" placeholder="4 or 6-digit PIN" pattern="[0-9]{4}|[0-9]{6}">
+        <label for="new-email" class="visually-hidden">Email</label>
+        <input type="email" id="new-email" placeholder="Email (optional)">
+        <label for="new-fullName" class="visually-hidden">Full Name</label>
+        <input type="text" id="new-fullName" placeholder="Full Name (optional)">
         <button type="submit" class="btn-save">Add User</button>
         <button type="button" class="btn-cancel" data-izimodal-close="#add-user-modal">Cancel</button>
       </form>
@@ -800,11 +982,11 @@
         <label for="edit-username" class="visually-hidden">Username</label>
         <input type="text" id="edit-username" placeholder="Username" disabled>
         <label for="edit-fullName" class="visually-hidden">Full Name</label>
-        <input type="text" id="edit-fullName" placeholder="Full Name" required>
+        <input type="text" id="edit-fullName" placeholder="Full Name (optional)">
         <label for="edit-email" class="visually-hidden">Email</label>
         <input type="email" id="edit-email" placeholder="Email (optional)">
         <label for="edit-pin" class="visually-hidden">PIN</label>
-        <input type="password" id="edit-pin" placeholder="4 or 6-digit PIN" pattern="[0-9]{4}|[0-9]{6}" required>
+        <input type="password" id="edit-pin" placeholder="4 or 6-digit PIN" pattern="[0-9]{4}|[0-9]{6}">
         <label for="edit-ssin" class="visually-hidden">SSIN</label>
         <input type="text" id="edit-ssin" placeholder="SSIN (optional)">
         <label for="edit-accountNumber" class="visually-hidden">Account Number</label>
@@ -813,7 +995,7 @@
         <input type="text" id="edit-bankName" placeholder="Bank Name (optional)">
         <label for="edit-address" class="visually-hidden">Full Address</label>
         <input type="text" id="edit-address" placeholder="Full Address (optional)">
-        <label for="edit-balance" class="visually-hidden">Balance</label>
+        <label for="edit-balance" class="visually-hidden" class="visually-hidden">Balance</label>
         <input type="number" id="edit-balance" placeholder="Balance" step="0.01" min="0" required>
         <label for="edit-referrals" class="visually-hidden">Referrals</label>
         <input type="number" id="edit-referrals" placeholder="Referrals" min="0" required>
@@ -826,11 +1008,33 @@
         <select id="edit-currency" class="form-select">
           <option value="USD">USD</option>
           <option value="BTC">BTC</option>
+          <option value="ETH">ETH</option>
         </select>
         <button type="submit" class="btn-save" id="submit-edit-user">Save</button>
         <button type="button" class="btn-cancel" id="cancel-edit-user">Cancel</button>
       </form>
       <button class="close-btn" data-izimodal-close="#edit-user-modal">Close</button>
+    </div>
+  </div>
+
+  <!-- Edit Investment Modal -->
+  <div id="edit-investment-modal" class="iziModal" data-izimodal-title="Edit Investment">
+    <div class="dark-content">
+      <form class="wallet-form" id="edit-investment-form">
+        <input type="hidden" id="edit-investment-user-id">
+        <label for="edit-investment-amount" class="visually-hidden">Investment Amount</label>
+        <input type="number" id="edit-investment-amount" placeholder="Investment Amount ($)" step="0.01" min="0" required>
+        <label for="edit-investment-last-claim" class="visually-hidden">Last Claim</label>
+        <input type="datetime-local" id="edit-investment-last-claim" placeholder="Last Claim">
+        <label for="edit-investment-auto-renew" class="visually-hidden">Auto-Renew</label>
+        <select id="edit-investment-auto-renew" class="form-select">
+          <option value="true">Enabled</option>
+          <option value="false">Disabled</option>
+        </select>
+        <button type="submit" class="btn-save">Save Investment</button>
+        <button type="button" class="btn-cancel" data-izimodal-close="#edit-investment-modal">Cancel</button>
+      </form>
+      <button class="close-btn" data-izimodal-close="#edit-investment-modal">Close</button>
     </div>
   </div>
 
@@ -842,12 +1046,13 @@
   <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.0/js/iziModal.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script type="module" src="https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js"></script>
   <script type="module" src="https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js"></script>
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js';
-    import { getDatabase, ref, onValue, update, set, push, get } from 'https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js';
+    import { getDatabase, ref, onValue, update, set, push, get, query, limitToLast } from 'https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js';
 
     // Firebase configuration
     const firebaseConfig = {
@@ -867,12 +1072,36 @@
     const usersRef = ref(database, 'users');
     const settingsRef = ref(database, 'settings');
     const logsRef = ref(database, 'logs');
+    const notificationsRef = ref(database, 'notifications');
 
-    // Truncate Address
+    // Security Warning
+    console.warn("WARNING: Firebase configuration is exposed in client-side code. Move to a secure backend for production use.");
+
+    // Utility Functions
     window.truncateAddress = function(address) {
       if (!address || address.length < 10) return address || "N/A";
       return `${address.slice(0, 6)}...${address.slice(-5)}`;
     };
+
+    function generateEthAddress() {
+      const wallet = ethers.Wallet.createRandom();
+      return wallet.address;
+    }
+
+    function formatDate(timestamp) {
+      return timestamp ? new Date(timestamp).toLocaleString() : 'N/A';
+    }
+
+    function downloadCSV(data, filename) {
+      const csv = data.map(row => Object.values(row).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', filename);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
 
     // Initialize Charts
     const transactionChart = new Chart(document.getElementById('transaction-chart'), {
@@ -921,10 +1150,10 @@
     const platformMetricsChart = new Chart(document.getElementById('platform-metrics-chart'), {
       type: 'pie',
       data: {
-        labels: ['Deposits', 'Withdrawals', 'Fees', 'Referral Bonuses'],
+        labels: ['Deposits', 'Withdrawals', 'Fees', 'Referral Bonuses', 'Investments'],
         datasets: [{
-          data: [0, 0, 0, 0],
-          backgroundColor: ['#0f7cdb', '#dc3545', '#28a745', '#ffd700'],
+          data: [0, 0, 0, 0, 0],
+          backgroundColor: ['#0f7cdb', '#dc3545', '#28a745', '#ffd700', '#17a2b8'],
           borderColor: '#000',
           borderWidth: 1,
         }]
@@ -938,21 +1167,11 @@
 
     $(document).ready(function() {
       // Initialize Modals
-      $("#edit-user-modal").iziModal({
+      $("#add-user-modal, #edit-user-modal, #edit-investment-modal").iziModal({
         background: '#222',
         headerColor: '#333',
         width: '90%',
-        maxWidth: 500,
-        radius: 10,
-        transitionIn: 'fadeInUp',
-        transitionOut: 'fadeOutDown',
-      });
-
-      $("#add-user-modal").iziModal({
-        background: '#222',
-        headerColor: '#333',
-        width: '90%',
-        maxWidth: 500,
+        maxWidth: 600,
         radius: 10,
         transitionIn: 'fadeInUp',
         transitionOut: 'fadeOutDown',
@@ -962,24 +1181,43 @@
       const usersTable = $('#users-table').DataTable({
         pageLength: 10,
         responsive: true,
-        columnDefs: [{ orderable: false, targets: [8] }],
-        order: [[0, 'desc']],
+        columnDefs: [{ orderable: false, targets: [0, 10] }],
+        order: [[1, 'desc']],
       });
 
       const transactionsTable = $('#transactions-table').DataTable({
         pageLength: 10,
         responsive: true,
         columnDefs: [
-          { orderable: false, targets: [0, 7] },
+          { orderable: false, targets: [0, 8] },
           { width: '5%', targets: 0 }
         ],
-        order: [[6, 'desc']],
+        order: [[7, 'desc']],
+      });
+
+      const investmentsTable = $('#investments-table').DataTable({
+        pageLength: 10,
+        responsive: true,
+        columnDefs: [{ orderable: false, targets: [6] }],
+        order: [[2, 'desc']],
+      });
+
+      const notificationsTable = $('#notifications-table').DataTable({
+        pageLength: 5,
+        responsive: true,
+        order: [[0, 'desc']],
       });
 
       const referrersTable = $('#referrers-table').DataTable({
         pageLength: 5,
         responsive: true,
         order: [[1, 'desc']],
+      });
+
+      const activityTable = $('#activity-table').DataTable({
+        pageLength: 10,
+        responsive: true,
+        order: [[2, 'desc']],
       });
 
       const logsTable = $('#logs-table').DataTable({
@@ -1024,52 +1262,72 @@
       // Fetch and Display Dashboard Stats
       async function updateDashboardStats() {
         try {
-          const usersSnapshot = await get(ref(database, 'users'));
+          const usersSnapshot = await get(usersRef);
           const users = usersSnapshot.val() || {};
-          let totalUsers = 0, totalBalance = 0, pendingTransactions = 0;
+          let totalUsers = 0, totalBalance = 0, pendingTransactions = 0, totalInvestments = 0, unreadNotifications = 0;
 
           for (const uid in users) {
             totalUsers++;
             totalBalance += parseFloat(users[uid].balance || 0);
+            totalInvestments += parseFloat(users[uid].investment?.amount || 0);
             const transactionsSnapshot = await get(ref(database, `users/${uid}/transactions`));
             const transactions = transactionsSnapshot.val() || {};
             for (const txId in transactions) {
-              if (transactions[txId].status === 'pending') {
-                pendingTransactions++;
-              }
+              if (transactions[txId].status === 'pending') pendingTransactions++;
+            }
+            const notificationsSnapshot = await get(ref(database, `users/${uid}/notifications`));
+            const notifications = notificationsSnapshot.val() || {};
+            for (const notifId in notifications) {
+              if (!notifications[notifId].read) unreadNotifications++;
             }
           }
 
           $('#total-users').text(totalUsers);
           $('#total-balance').text(`$${totalBalance.toFixed(2)}`);
           $('#pending-transactions').text(pendingTransactions);
-          $('#daily-revenue').text(`$${(totalBalance * 0.01).toFixed(2)}`); // Mock revenue calculation
+          $('#total-investments').text(`$${totalInvestments.toFixed(2)}`);
+          $('#unread-notifications').text(unreadNotifications);
+          $('#daily-revenue').text(`$${(totalBalance * 0.01).toFixed(2)}`);
 
           // Update Transaction Chart
-          const now = new Date();
-          const labels = Array.from({ length: 7 }, (_, i) => {
-            const date = new Date(now);
-            date.setDate(now.getDate() - i);
-            return date.toLocaleDateString();
-          }).reverse();
-          const data = Array.from({ length: 7 }, () => Math.random() * 10000).reverse();
+          const transactionData = {};
+          for (const uid in users) {
+            const transactionsSnapshot = await get(query(ref(database, `users/${uid}/transactions`), limitToLast(100)));
+            const transactions = transactionsSnapshot.val() || {};
+            for (const txId in transactions) {
+              const tx = transactions[txId];
+              if (tx.type !== 'Fee') {
+                const date = new Date(tx.timestamp).toLocaleDateString();
+                transactionData[date] = (transactionData[date] || 0) + (tx.amount || 0);
+              }
+            }
+          }
+          const labels = Object.keys(transactionData).sort().slice(-7);
+          const data = labels.map(date => transactionData[date] || 0);
           transactionChart.data.labels = labels;
           transactionChart.data.datasets[0].data = data;
           transactionChart.update();
 
           // Update User Growth Chart
-          const userGrowthData = Array.from({ length: 7 }, () => Math.floor(Math.random() * 50)).reverse();
-          userGrowthChart.data.labels = labels;
-          userGrowthChart.data.datasets[0].data = userGrowthData;
+          const userGrowthData = {};
+          for (const uid in users) {
+            const createdAt = users[uid].createdAt || new Date().toISOString();
+            const date = new Date(createdAt).toLocaleDateString();
+            userGrowthData[date] = (userGrowthData[date] || 0) + 1;
+          }
+          const growthLabels = Object.keys(userGrowthData).sort().slice(-7);
+          const growthData = growthLabels.map(date => userGrowthData[date] || 0);
+          userGrowthChart.data.labels = growthLabels;
+          userGrowthChart.data.datasets[0].data = growthData;
           userGrowthChart.update();
 
           // Update Platform Metrics Chart
-          platformMetricsChart.data.datasets[0].data = [
-            totalBalance * 0.5, // Deposits
-            totalBalance * 0.3, // Withdrawals
-            totalBalance * 0.1, // Fees
-            totalBalance * 0.1, // Referral Bonuses
-          ];
+          const deposits = totalBalance * 0.5;
+          const withdrawals = totalBalance * 0.3;
+          const fees = totalBalance * 0.1;
+          const referralBonuses = totalBalance * 0.05;
+          const investments = totalInvestments;
+          platformMetricsChart.data.datasets[0].data = [deposits, withdrawals, fees, referralBonuses, investments];
           platformMetricsChart.update();
         } catch (error) {
           iziToast.error({ title: "Error", message: `Failed to update dashboard: ${error.message}`, position: "topRight" });
@@ -1085,13 +1343,15 @@
           const user = users[userId];
           const displayUsername = userId === "54321" ? "@Anonymous" : user.username ? `@${user.username}` : "@N/A";
           usersTable.row.add([
+            `<input type="checkbox" class="user-checkbox" data-user-id="${userId}">`,
             userId,
             displayUsername,
             user.fullName || "N/A",
             user.email || "N/A",
-            `<span class="wallet-cell">${window.truncateAddress(user.wallet || '')}<button class="btn-copy ms-2" data-wallet="${user.wallet || ''}"><i class="fas fa-copy"></i></button></span>`,
+            `<span class="wallet-cell">${truncateAddress(user.wallet || '')}<button class="btn-copy ms-2" data-wallet="${user.wallet || ''}"><i class="fas fa-copy"></i></button></span>`,
             `$${parseFloat(user.balance || 0).toFixed(2)}`,
             user.referrals || 0,
+            `$${parseFloat(user.investment?.amount || 0).toFixed(2)}`,
             user.status || 'Active',
             `
               <button class="btn-edit" data-user-id="${userId}"><i class="fas fa-edit"></i> Edit</button>
@@ -1102,19 +1362,16 @@
           ]);
         }
         usersTable.draw();
-      }, (error) => {
-        iziToast.error({ title: "Error", message: `Failed to fetch users: ${error.message}`, position: "topRight" });
-        console.error("Users fetch error:", error);
-      });
+      }, { onlyOnce: false });
 
       // Fetch and Display Transactions
       async function updateTransactionsTable() {
         try {
           transactionsTable.clear();
-          const usersSnapshot = await get(ref(database, 'users'));
+          const usersSnapshot = await get(usersRef);
           const users = usersSnapshot.val() || {};
           for (const uid in users) {
-            const transactionsSnapshot = await get(ref(database, `users/${uid}/transactions`));
+            const transactionsSnapshot = await get(query(ref(database, `users/${uid}/transactions`), limitToLast(100)));
             const transactions = transactionsSnapshot.val() || {};
             for (const txId in transactions) {
               const tx = transactions[txId];
@@ -1122,10 +1379,11 @@
                 `<input type="checkbox" class="transaction-checkbox" data-txid="${txId}" data-uid="${uid}">`,
                 uid,
                 tx.type === 'Fee' ? `${tx.amount.toFixed(2)} TON` : `$${tx.amount.toFixed(2)}`,
-                `<span class="wallet-cell">${window.truncateAddress(tx.wallet)}<button class="btn-copy ms-2" data-wallet="${tx.wallet}"><i class="fas fa-copy"></i></button></span>`,
+                `<span class="wallet-cell">${truncateAddress(tx.wallet)}<button class="btn-copy ms-2" data-wallet="${tx.wallet}"><i class="fas fa-copy"></i></button></span>`,
+                tx.network || 'N/A',
                 tx.type,
                 tx.status,
-                new Date(tx.timestamp).toLocaleString(),
+                formatDate(tx.timestamp),
                 `
                   <button class="btn btn-primary btn-sm approve-tx" data-txid="${txId}" data-uid="${uid}" ${tx.status !== 'pending' ? 'disabled' : ''}><i class="fas fa-check"></i></button>
                   <button class="btn btn-cancel btn-sm reject-tx" data-txid="${txId}" data-uid="${uid}" ${tx.status !== 'pending' ? 'disabled' : ''}><i class="fas fa-times"></i></button>
@@ -1140,10 +1398,61 @@
         }
       }
 
+      // Fetch and Display Investments
+      async function updateInvestmentsTable() {
+        try {
+          investmentsTable.clear();
+          const usersSnapshot = await get(usersRef);
+          const users = usersSnapshot.val() || {};
+          for (const uid in users) {
+            const user = users[uid];
+            if (user.investment?.amount > 0) {
+              const lastClaim = user.investment.lastClaim ? new Date(user.investment.lastClaim) : null;
+              const nextClaim = lastClaim ? new Date(lastClaim.getTime() + 24 * 60 * 60 * 1000) : null;
+              investmentsTable.row.add([
+                uid,
+                user.username || 'Anonymous',
+                `$${parseFloat(user.investment.amount).toFixed(2)}`,
+                formatDate(user.investment.lastClaim),
+                nextClaim ? nextClaim.toLocaleString() : 'N/A',
+                user.investment.autoRenew ? 'Enabled' : 'Disabled',
+                `<button class="btn-edit edit-investment" data-user-id="${uid}"><i class="fas fa-edit"></i> Edit</button>`
+              ]);
+            }
+          }
+          investmentsTable.draw();
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to fetch investments: ${error.message}`, position: "topRight" });
+          console.error("Investments fetch error:", error);
+        }
+      }
+
+      // Fetch and Display Notifications
+      async function updateNotificationsTable() {
+        try {
+          const notificationsSnapshot = await get(notificationsRef);
+          const notifications = notificationsSnapshot.val() || {};
+          notificationsTable.clear();
+          for (const notifId in notifications) {
+            const notif = notifications[notifId];
+            notificationsTable.row.add([
+              formatDate(notif.timestamp),
+              notif.title,
+              notif.message,
+              notif.target || 'All',
+            ]);
+          }
+          notificationsTable.draw();
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to fetch notifications: ${error.message}`, position: "topRight" });
+          console.error("Notifications fetch error:", error);
+        }
+      }
+
       // Fetch and Display Top Referrers
       async function updateReferrersTable() {
         try {
-          const usersSnapshot = await get(ref(database, 'users'));
+          const usersSnapshot = await get(usersRef);
           const users = usersSnapshot.val() || {};
           const referrers = [];
           for (const uid in users) {
@@ -1152,7 +1461,7 @@
               referrers.push({
                 username: user.username || 'Anonymous',
                 referrals: user.referrals || 0,
-                totalBonus: (user.referrals * 10).toFixed(2), // Assuming $10 per referral
+                totalBonus: (user.referrals * 10).toFixed(2),
               });
             }
           }
@@ -1172,16 +1481,41 @@
         }
       }
 
+      // Fetch and Display User Activity
+      async function updateActivityTable() {
+        try {
+          const usersSnapshot = await get(usersRef);
+          const users = usersSnapshot.val() || {};
+          activityTable.clear();
+          for (const uid in users) {
+            const user = users[uid];
+            const transactionsSnapshot = await get(query(ref(database, `users/${uid}/transactions`), limitToLast(100)));
+            const transactions = transactionsSnapshot.val() || {};
+            const actionCount = Object.keys(transactions).length;
+            activityTable.row.add([
+              uid,
+              user.username || 'Anonymous',
+              formatDate(user.lastLogin),
+              actionCount,
+            ]);
+          }
+          activityTable.draw();
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to update activity: ${error.message}`, position: "topRight" });
+          console.error("Activity fetch error:", error);
+        }
+      }
+
       // Fetch and Display Activity Logs
       async function updateLogsTable() {
         try {
-          const logsSnapshot = await get(ref(database, 'logs'));
+          const logsSnapshot = await get(query(logsRef, limitToLast(100)));
           const logs = logsSnapshot.val() || {};
           logsTable.clear();
           for (const logId in logs) {
             const log = logs[logId];
             logsTable.row.add([
-              new Date(log.timestamp).toLocaleString(),
+              formatDate(log.timestamp),
               log.action,
               log.details || 'No details',
             ]);
@@ -1225,17 +1559,150 @@
       async function initializeDashboard() {
         await updateDashboardStats();
         await updateTransactionsTable();
+        await updateInvestmentsTable();
+        await updateNotificationsTable();
         await updateReferrersTable();
+        await updateActivityTable();
         await updateLogsTable();
       }
 
-      // Search Users (Debounced)
-      const debouncedSearch = debounce(function() {
+      // Search and Filter Users
+      const debouncedUserSearch = debounce(function() {
         const query = $("#search-users").val();
+        const status = $("#filter-status").val();
+        const currency = $("#filter-currency").val();
         usersTable.search(query).draw();
+        if (status || currency) {
+          usersTable.rows().every(function() {
+            const data = this.data();
+            const userStatus = data[9];
+            const userCurrency = data[6].includes('BTC') ? 'BTC' : data[6].includes('ETH') ? 'ETH' : 'USD';
+            if ((status && userStatus !== status) || (currency && userCurrency !== currency)) {
+              this.nodes().to$().hide();
+            } else {
+              this.nodes().to$().show();
+            }
+          });
+        }
       }, 300);
 
-      $("#search-users").on("input", debouncedSearch);
+      $("#search-users, #filter-status, #filter-currency").on("input change", debouncedUserSearch);
+
+      // Search and Filter Transactions
+      const debouncedTxSearch = debounce(function() {
+        const type = $("#filter-tx-type").val();
+        const status = $("#filter-tx-status").val();
+        transactionsTable.rows().every(function() {
+          const data = this.data();
+          const txType = data[5];
+          const txStatus = data[6];
+          if ((type && txType !== type) || (status && txStatus !== status)) {
+            this.nodes().to$().hide();
+          } else {
+            this.nodes().to$().show();
+          }
+        });
+      }, 300);
+
+      $("#filter-tx-type, #filter-tx-status").on("change", debouncedTxSearch);
+
+      // Search Investments
+      const debouncedInvestmentSearch = debounce(function() {
+        const query = $("#search-investments").val();
+        investmentsTable.search(query).draw();
+      }, 300);
+
+      $("#search-investments").on("input", debouncedInvestmentSearch);
+
+      // Export Users
+      $("#export-users").on("click", async function() {
+        try {
+          const usersSnapshot = await get(usersRef);
+          const users = usersSnapshot.val() || {};
+          const csvData = [['ID', 'Username', 'Full Name', 'Email', 'Wallet', 'Balance', 'Referrals', 'Investment', 'Status']];
+          for (const uid in users) {
+            const user = users[uid];
+            csvData.push([
+              uid,
+              user.username || 'Anonymous',
+              user.fullName || 'N/A',
+              user.email || 'N/A',
+              user.wallet || 'N/A',
+              parseFloat(user.balance || 0).toFixed(2),
+              user.referrals || 0,
+              parseFloat(user.investment?.amount || 0).toFixed(2),
+              user.status || 'Active',
+            ]);
+          }
+          downloadCSV(csvData, 'users_export.csv');
+          await logAdminAction('Export Users', 'Exported user data to CSV');
+          iziToast.success({ title: "Success", message: "Users exported to CSV!", position: "topRight" });
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to export users: ${error.message}`, position: "topRight" });
+          console.error("Export users error:", error);
+        }
+      });
+
+      // Export Transactions
+      $("#export-transactions").on("click", async function() {
+        try {
+          const csvData = [['User ID', 'Amount', 'Wallet', 'Network', 'Type', 'Status', 'Date']];
+          const usersSnapshot = await get(usersRef);
+          const users = usersSnapshot.val() || {};
+          for (const uid in users) {
+            const transactionsSnapshot = await get(query(ref(database, `users/${uid}/transactions`), limitToLast(100)));
+            const transactions = transactionsSnapshot.val() || {};
+            for (const txId in transactions) {
+              const tx = transactions[txId];
+              csvData.push([
+                uid,
+                tx.type === 'Fee' ? `${tx.amount.toFixed(2)} TON` : `$${tx.amount.toFixed(2)}`,
+                tx.wallet,
+                tx.network || 'N/A',
+                tx.type,
+                tx.status,
+                formatDate(tx.timestamp),
+              ]);
+            }
+          }
+          downloadCSV(csvData, 'transactions_export.csv');
+          await logAdminAction('Export Transactions', 'Exported transaction data to CSV');
+          iziToast.success({ title: "Success", message: "Transactions exported to CSV!", position: "topRight" });
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to export transactions: ${error.message}`, position: "topRight" });
+          console.error("Export transactions error:", error);
+        }
+      });
+
+      // Export Investments
+      $("#export-investments").on("click", async function() {
+        try {
+          const csvData = [['User ID', 'Username', 'Amount', 'Last Claim', 'Next Claim', 'Auto-Renew']];
+          const usersSnapshot = await get(usersRef);
+          const users = usersSnapshot.val() || {};
+          for (const uid in users) {
+            const user = users[uid];
+            if (user.investment?.amount > 0) {
+              const lastClaim = user.investment.lastClaim ? new Date(user.investment.lastClaim) : null;
+              const nextClaim = lastClaim ? new Date(lastClaim.getTime() + 24 * 60 * 60 * 1000) : null;
+              csvData.push([
+                uid,
+                user.username || 'Anonymous',
+                parseFloat(user.investment.amount).toFixed(2),
+                formatDate(user.investment.lastClaim),
+                nextClaim ? nextClaim.toLocaleString() : 'N/A',
+                user.investment.autoRenew ? 'Enabled' : 'Disabled',
+              ]);
+            }
+          }
+          downloadCSV(csvData, 'investments_export.csv');
+          await logAdminAction('Export Investments', 'Exported investment data to CSV');
+          iziToast.success({ title: "Success", message: "Investments exported to CSV!", position: "topRight" });
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to export investments: ${error.message}`, position: "topRight" });
+          console.error("Export investments error:", error);
+        }
+      });
 
       // Edit User
       $(document).on("click", ".btn-edit", function() {
@@ -1244,7 +1711,6 @@
         get(userRef).then((snapshot) => {
           const user = snapshot.val();
           if (user) {
-            console.log(`Editing User ID: ${userId}, username: ${user.username}`);
             $("#edit-user-id").val(userId);
             $("#edit-username").val(user.username || "");
             $("#edit-fullName").val(user.fullName || "");
@@ -1289,12 +1755,7 @@
         const theme = $("#edit-theme").val();
         const currency = $("#edit-currency").val();
 
-        if (!fullName) {
-          iziToast.error({ title: "Error", message: "Full Name is required!", position: "topRight" });
-          submitButton.removeClass("loading").prop("disabled", false).text("Save");
-          return;
-        }
-        if (!/^[0-9]{4}$|^[0-9]{6}$/.test(pin)) {
+        if (pin && !/^[0-9]{4}$|^[0-9]{6}$/.test(pin)) {
           iziToast.error({ title: "Error", message: "PIN must be 4 or 6 digits!", position: "topRight" });
           submitButton.removeClass("loading").prop("disabled", false).text("Save");
           return;
@@ -1310,26 +1771,38 @@
           return;
         }
 
-        update(userRef, {
-          fullName,
-          email,
-          pin,
-          ssin,
-          accountNumber,
-          bankName,
-          address,
-          balance,
-          referrals,
-          settings: { theme, currency }
-        }).then(() => {
-          logAdminAction('Edit User', `Updated user ${userId} (${fullName})`);
-          iziToast.success({ title: "Success", message: "User details updated!", position: "topRight" });
-          $("#edit-user-modal").iziModal("close");
-        }).catch(error => {
-          iziToast.error({ title: "Error", message: `Failed to update user: ${error.message}`, position: "topRight" });
-          console.error("Edit user error:", error);
-        }).finally(() => {
-          submitButton.removeClass("loading").prop("disabled", false).text("Save");
+        get(userRef).then(snapshot => {
+          const user = snapshot.val();
+          update(userRef, {
+            fullName,
+            email,
+            pin,
+            ssin,
+            accountNumber,
+            bankName,
+            address,
+            balance,
+            referrals,
+            settings: { theme, currency },
+            notifications: {
+              ...user.notifications,
+              [`edit_${Date.now()}`]: {
+                title: "Account Updated",
+                message: "Your account details were updated by an admin.",
+                timestamp: new Date().toISOString(),
+                read: false
+              }
+            }
+          }).then(() => {
+            logAdminAction('Edit User', `Updated user ${userId} (${fullName || user.username})`);
+            iziToast.success({ title: "Success", message: "User details updated!", position: "topRight" });
+            $("#edit-user-modal").iziModal("close");
+          }).catch(error => {
+            iziToast.error({ title: "Error", message: `Failed to update user: ${error.message}`, position: "topRight" });
+            console.error("Edit user error:", error);
+          }).finally(() => {
+            submitButton.removeClass("loading").prop("disabled", false).text("Save");
+          });
         });
       });
 
@@ -1344,45 +1817,51 @@
 
         const userId = push(ref(database, 'users')).key;
         const username = $("#new-username").val().trim();
-        const wallet = $("#new-wallet").val().trim();
+        const wallet = $("#new-wallet").val().trim() || generateEthAddress();
         const balance = parseFloat($("#new-balance").val()) || 0;
+        const pin = $("#new-pin").val().trim();
+        const email = $("#new-email").val().trim();
+        const fullName = $("#new-fullName").val().trim();
 
-        if (!username || !wallet) {
-          iziToast.error({ title: "Error", message: "Username and wallet address are required!", position: "topRight" });
+        if (!username) {
+          iziToast.error({ title: "Error", message: "Username is required!", position: "topRight" });
+          submitButton.removeClass("loading").prop("disabled", false).text("Add User");
+          return;
+        }
+        if (pin && !/^[0-9]{4}$|^[0-9]{6}$/.test(pin)) {
+          iziToast.error({ title: "Error", message: "PIN must be 4 or 6 digits!", position: "topRight" });
+          submitButton.removeClass("loading").prop("disabled", false).text("Add User");
+          return;
+        }
+        if (isNaN(balance) || balance < 0) {
+          iziToast.error({ title: "Error", message: "Invalid balance!", position: "topRight" });
           submitButton.removeClass("loading").prop("disabled", false).text("Add User");
           return;
         }
 
         try {
-          await set(ref(database, `users/${userId}`), {
+          const userRef = ref(database, `users/${userId}`);
+          await set(userRef, {
             username,
             wallet,
             balance,
-            fullName: '',
-            email: '',
-            pin: '',
-            ssin: '',
-            accountNumber: '',
-            bankName: '',
-            address: '',
-            referrals: 0,
-            referredBy: null,
-            settings: { theme: 'dark', currency: 'USD' },
-            investment: { amount: 0, lastClaim: null },
-            status: 'Active',
-            notifications: {
-              welcome: {
+            pin,
+            email,
+            fullName,
+            status: "Active",
+            createdAt: new Date().toISOString(),
+            settings: { theme: "dark", currency: "USD" },
+            notifications: {[`welcome_${Date.now()}`]: {
                 title: "Welcome!",
-                message: `User ${username} created by admin!`,
+                message: "Your account has been created by an admin.",
                 timestamp: new Date().toISOString(),
+                read: false,
               },
             },
-            transactions: {},
           });
-          await logAdminAction('Add User', `Added user ${userId} (${username})`);
-          iziToast.success({ title: "Success", message: `User ${username} added!`, position: "topRight" });
+          await logAdminAction("Add User", `Created user ${userId} (${username})`);
+          iziToast.success({ title: "Success", message: "User added successfully!", position: "topRight" });
           $("#add-user-modal").iziModal("close");
-          $("#add-user-form")[0].reset();
         } catch (error) {
           iziToast.error({ title: "Error", message: `Failed to add user: ${error.message}`, position: "topRight" });
           console.error("Add user error:", error);
@@ -1391,114 +1870,339 @@
         }
       });
 
+      // Auto-generate wallet address for new user
+      $("#new-wallet").val(generateEthAddress());
+
       // Suspend/Unsuspend User
       $(document).on("click", ".suspend-user", async function() {
         const userId = $(this).data("user-id");
         const currentStatus = $(this).data("status");
-        const newStatus = currentStatus === 'Suspended' ? 'Active' : 'Suspended';
-        if (confirm(`Are you sure you want to ${newStatus === 'Suspended' ? 'suspend' : 'unsuspend'} this user?`)) {
-          try {
-            await update(ref(database, `users/${userId}`), { status: newStatus });
-            await logAdminAction(`${newStatus === 'Suspended' ? 'Suspend' : 'Unsuspend'} User`, `${newStatus} user ${userId}`);
-            iziToast.success({ title: "Success", message: `User ${newStatus.toLowerCase()}!`, position: "topRight" });
-          } catch (error) {
-            iziToast.error({ title: "Error", message: `Failed to ${newStatus.toLowerCase()} user: ${error.message}`, position: "topRight" });
-            console.error("Suspend/unsuspend error:", error);
+        const newStatus = currentStatus === "Suspended" ? "Active" : "Suspended";
+        try {
+          const userRef = ref(database, `users/${userId}`);
+          const snapshot = await get(userRef);
+          const user = snapshot.val();
+          await update(userRef, {
+            status: newStatus,
+            notifications: {
+              ...user.notifications,
+              [`status_${Date.now()}`]: {
+                title: `Account ${newStatus}`,
+                message: `Your account was ${newStatus.toLowerCase()} by an admin.`,
+                timestamp: new Date().toISOString(),
+                read: false,
+              },
+            },
+          });
+          await logAdminAction(
+            `${newStatus} User`,
+            `${newStatus} user ${userId} (${user.username || "Anonymous"})`
+          );
+          iziToast.success({
+            title: "Success",
+            message: `User ${newStatus.toLowerCase()} successfully!`,
+            position: "topRight",
+          });
+        } catch (error) {
+          iziToast.error({
+            title: "Error",
+            message: `Failed to update user status: ${error.message}`,
+            position: "topRight",
+          });
+          console.error("Suspend user error:", error);
+        }
+      });
+
+      // Bulk Suspend/Unsuspend Users
+      $("#bulk-suspend, #bulk-unsuspend").on("click", async function() {
+        const isSuspend = $(this).attr("id") === "bulk-suspend";
+        const selectedUsers = $(".user-checkbox:checked").map(function() {
+          return $(this).data("user-id");
+        }).get();
+        if (selectedUsers.length === 0) {
+          iziToast.warning({ title: "Warning", message: "No users selected!", position: "topRight" });
+          return;
+        }
+        try {
+          const updates = {};
+          for (const userId of selectedUsers) {
+            const userRef = ref(database, `users/${userId}`);
+            const snapshot = await get(userRef);
+            const user = snapshot.val();
+            updates[`users/${userId}/status`] = isSuspend ? "Suspended" : "Active";
+            updates[`users/${userId}/notifications/status_${Date.now()}_${userId}`] = {
+              title: `Account ${isSuspend ? "Suspended" : "Active"}`,
+              message: `Your account was ${isSuspend ? "suspended" : "activated"} by an admin.`,
+              timestamp: new Date().toISOString(),
+              read: false,
+            };
+            await logAdminAction(
+              `${isSuspend ? "Suspend" : "Unsuspend"} User`,
+              `${isSuspend ? "Suspended" : "Unsuspened"} user ${userId} (${user.username || "Anonymous"})`
+            );
           }
-        }
-      });
-
-      // Transaction Actions
-      $(document).on('click', '.approve-tx', async function() {
-        const txId = $(this).data('txid');
-        const userId = $(this).data('uid');
-        const txRef = ref(database, `users/${userId}/transactions/${txId}`);
-        try {
-          await update(txRef, { status: 'approved', updatedAt: new Date().toISOString() });
-          await logAdminAction('Approve Transaction', `Approved transaction ${txId} for user ${userId}`);
-          iziToast.success({ title: "Success", message: "Transaction approved!", position: "topRight" });
-          updateTransactionsTable();
+          await update(ref(database), updates);
+          iziToast.success({
+            title: "Success",
+            message: `${selectedUsers.length} user(s) ${isSuspend ? "suspended" : "unsuspended"}!`,
+            position: "topRight",
+          });
         } catch (error) {
-          iziToast.error({ title: "Error", message: `Failed to approve transaction: ${error.message}`, position: "topRight" });
-          console.error("Approve transaction error:", error);
+          iziToast.error({
+            title: "Error",
+            message: `Failed to update users: ${error.message}`,
+            position: "topRight",
+          });
+          console.error("Bulk suspend error:", error);
         }
       });
 
-      $(document).on('click', '.reject-tx', async function() {
-        const txId = $(this).data('txid');
-        const userId = $(this).data('uid');
-        const txRef = ref(database, `users/${userId}/transactions/${txId}`);
+      // Approve/Reject Transaction
+      $(document).on("click", ".approve-tx, .reject-tx", async function() {
+        const txId = $(this).data("txid");
+        const uid = $(this).data("uid");
+        const action = $(this).hasClass("approve-tx") ? "approved" : "rejected";
+        const button = $(this);
+        button
+          .addClass("loading")
+          .prop("disabled", true)
+          .html('<i class="fas fa-spin-pulse fa-spinner"></i>');
+
         try {
-          await update(txRef, { status: 'rejected', updatedAt: new Date().toISOString() });
-          await logAdminAction('Reject Transaction', `Rejected transaction ${txId} for user ${userId}`);
-          iziToast.success({ title: "Success", message: "Transaction rejected!", position: "topRight" });
-          updateTransactionsTable();
+          const txRef = ref(database, `users/${uid}/transactions/${txId}`);
+          const snapshot = await get(txRef);
+          const tx = snapshot.val();
+          const userRef = ref(database, `users/${uid}`);
+          const userSnapshot = await get(userRef);
+          const user = userSnapshot.val();
+
+          if (tx.status !== "pending") {
+            iziToast.warning({
+              title: "Warning",
+              message: "Transaction is no longer pending!",
+              position: "topRight",
+            });
+            return;
+          }
+
+          const updates = {
+            [`users/${uid}/transactions/${txId}/status`]: action,
+            [`users/${uid}/notifications/tx_${txId}_${Date.now()}`]: {
+              title: `Transaction ${action.charAt(0).toUpperCase() + action.slice(1)}`,
+              message: `Your ${tx.type.toLowerCase()} of $${tx.amount.toFixed(2)} was ${action}.`,
+              timestamp: new Date().toISOString(),
+              read: false,
+            },
+          };
+
+          if (action === "approved" && tx.type === "Withdraw") {
+            updates[`users/${uid}/balance`] = (user.balance || 0) - tx.amount;
+          } else if (action === "rejected" && (tx.type === "Send" || tx.type === "Withdraw")) {
+            updates[`users/${uid}/balance`] = (user.balance || 0) + tx.amount;
+          }
+
+          await update(ref(database), updates);
+          await logAdminAction(
+            `${action.charAt(0).toUpperCase() + action.slice(1)} Transaction`,
+            `${action.charAt(0).toUpperCase() + action.slice(1)} transaction ${txId} for user ${uid}`
+          );
+          iziToast.success({
+            title: "Success",
+            message: `Transaction ${action}!`,
+            position: "topRight",
+          });
         } catch (error) {
-          iziToast.error({ title: "Error", message: `Failed to reject transaction: ${error.message}`, position: "topRight" });
-          console.error("Reject transaction error:", error);
+          iziToast.error({
+            title: "Error",
+            message: `Failed to ${action} transaction: ${error.message}`,
+            position: "topRight",
+          });
+          console.error(`${action} transaction error:`, error);
+        } finally {
+          button.removeClass("loading").prop("disabled", false);
+          button.html(`<i class="fas fa-${action === "approved" ? "check" : "times"}"></i>`);
         }
       });
 
-      // Bulk Transaction Actions
-      $('#select-all-transactions').on('change', function() {
-        $('.transaction-checkbox').prop('checked', this.checked);
-      });
-
-      $('#bulk-approve').on('click', async function() {
-        const selected = $('.transaction-checkbox:checked');
-        if (selected.length === 0) {
+      // Bulk Approve/Reject Transactions
+      $("#bulk-approve, #bulk-reject").on("click", async function() {
+        const isApprove = $(this).attr("id") === "bulk-approve";
+        const selectedTxs = $(".transaction-checkbox:checked").map(function() {
+          return { txId: $(this).data("txid"), uid: $(this).data("uid") };
+        }).get();
+        if (selectedTxs.length === 0) {
           iziToast.warning({ title: "Warning", message: "No transactions selected!", position: "topRight" });
           return;
         }
         try {
           const updates = {};
-          selected.each(function() {
-            const txId = $(this).data('txid');
-            const uid = $(this).data('uid');
-            updates[`users/${uid}/transactions/${txId}/status`] = 'approved';
-            updates[`users/${uid}/transactions/${txId}/updatedAt`] = new Date().toISOString();
-          });
+          for (const { txId, uid } of selectedTxs) {
+            const txRef = ref(database, `users/${uid}/transactions/${txId}`);
+            const snapshot = await get(txRef);
+            const tx = snapshot.val();
+            if (tx.status !== "pending") continue;
+            const userRef = ref(database, `users/${uid}`);
+            const userSnapshot = await get(userRef);
+            const user = userSnapshot.val();
+            updates[`users/${uid}/transactions/${txId}/status`] = isApprove ? "approved" : "rejected";
+            updates[`users/${uid}/notifications/tx_${txId}_${Date.now()}`] = {
+              title: `Transaction ${isApprove ? "Approved" : "Rejected"}`,
+              message: `Your ${tx.type.toLowerCase()} of $${tx.amount.toFixed(2)} was ${isApprove ? "approved" : "rejected"}.`,
+              timestamp: new Date().toISOString(),
+              read: false,
+            };
+            if (isApprove && tx.type === "Withdraw") {
+              updates[`users/${uid}/balance`] = (user.balance || 0) - tx.amount;
+            } else if (!isApprove && (tx.type === "Send" || tx.type === "Withdraw")) {
+              updates[`users/${uid}/balance`] = (user.balance || 0) + tx.amount;
+            }
+            await logAdminAction(
+              `${isApprove ? "Approve" : "Reject"} Transaction`,
+              `${isApprove ? "Approved" : "Rejected"} transaction ${txId} for user ${uid}`
+            );
+          }
           await update(ref(database), updates);
-          await logAdminAction('Bulk Approve Transactions', `Approved ${selected.length} transactions`);
-          iziToast.success({ title: "Success", message: `${selected.length} transactions approved!`, position: "topRight" });
-          updateTransactionsTable();
+          iziToast.success({
+            title: "Success",
+            message: `${selectedTxs.length} transaction(s) ${isApprove ? "approved" : "rejected"}!`,
+            position: "topRight",
+          });
         } catch (error) {
-          iziToast.error({ title: "Error", message: `Failed to bulk approve: ${error.message}`, position: "topRight" });
-          console.error("Bulk approve error:", error);
+          iziToast.error({
+            title: "Error",
+            message: `Failed to process transactions: ${error.message}`,
+            position: "topRight",
+          });
+          console.error("Bulk transaction error:", error);
         }
       });
 
-      $('#bulk-reject').on('click', async function() {
-        const selected = $('.transaction-checkbox:checked');
-        if (selected.length === 0) {
-          iziToast.warning({ title: "Warning", message: "No transactions selected!", position: "topRight" });
+      // Edit Investment
+      $(document).on("click", ".edit-investment", async function() {
+        const userId = $(this).data("user-id");
+        const userRef = ref(database, `users/${userId}`);
+        try {
+          const snapshot = await get(userRef);
+          const user = snapshot.val();
+          if (user.investment) {
+            $("#edit-investment-user-id").val(userId);
+            $("#edit-investment-amount").val(user.investment.amount || 0);
+            $("#edit-investment-last-claim").val(
+              user.investment.lastClaim ? new Date(user.investment.lastClaim).toISOString().slice(0, 16) : ""
+            );
+            $("#edit-investment-auto-renew").val(user.investment.autoRenew ? "true" : "false");
+            $("#edit-investment-modal").iziModal("open");
+          }
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to load investment: ${error.message}`, position: "topRight" });
+          console.error("Edit investment load error:", error);
+        }
+      });
+
+      // Save Investment
+      $("#edit-investment-form").on("submit", async function(e) {
+        e.preventDefault();
+        const submitButton = $(this).find(".btn-save");
+        submitButton
+          .addClass("loading")
+          .prop("disabled", true)
+          .html('<i class="fas fa-spin-pulse fa-spinner"></i> Saving...');
+
+        const userId = $("#edit-investment-user-id").val();
+        const amount = parseFloat($("#edit-investment-amount").val());
+        const lastClaim = $("#edit-investment-last-claim").val() || null;
+        const autoRenew = $("#edit-investment-auto-renew").val() === "true";
+
+        if (isNaN(amount) || amount < 0) {
+          iziToast.error({ title: "Error", message: "Invalid investment amount!", position: "topRight" });
+          submitButton.removeClass("loading").prop("disabled", false).text("Save Investment");
           return;
         }
+
         try {
-          const updates = {};
-          selected.each(function() {
-            const txId = $(this).data('txid');
-            const uid = $(this).data('uid');
-            updates[`users/${uid}/transactions/${txId}/status`] = 'rejected';
-            updates[`users/${uid}/transactions/${txId}/updatedAt`] = new Date().toISOString();
+          const userRef = ref(database, `users/${userId}`);
+          const snapshot = await get(userRef);
+          const user = snapshot.val();
+          await update(userRef, {
+            investment: { amount, lastClaim, autoRenew },
+            notifications: {
+              ...user.notifications,
+              [`investment_${Date.now()}`]: {
+                title: "Investment Updated",
+                message: `Your investment of $${amount.toFixed(2)} was updated by an admin.`,
+                timestamp: new Date().toISOString(),
+                read: false,
+              },
+            },
           });
-          await update(ref(database), updates);
-          await logAdminAction('Bulk Reject Transactions', `Rejected ${selected.length} transactions`);
-          iziToast.success({ title: "Success", message: `${selected.length} transactions rejected!`, position: "topRight" });
-          updateTransactionsTable();
+          await logAdminAction("Edit Investment", `Updated investment for user ${userId} to $${amount.toFixed(2)}`);
+          iziToast.success({ title: "Success", message: "Investment updated!", position: "topRight" });
+          $("#edit-investment-modal").iziModal("close");
         } catch (error) {
-          iziToast.error({ title: "Error", message: `Failed to bulk reject: ${error.message}`, position: "topRight" });
-          console.error("Bulk reject error:", error);
+          iziToast.error({ title: "Error", message: `Failed to update investment: ${error.message}`, position: "topRight" });
+          console.error("Edit investment error:", error);
+        } finally {
+          submitButton.removeClass("loading").prop("disabled", false).text("Save Investment");
         }
       });
 
-      // Copy Wallet Address
-      $(document).on('click', '.btn-copy', function() {
-        const wallet = $(this).data('wallet');
-        copyToClipboard(wallet);
+      // Broadcast Notification
+      $("#broadcast-form").on("submit", async function(e) {
+        e.preventDefault();
+        const submitButton = $(this).find(".btn-primary");
+        submitButton
+          .addClass("loading")
+          .prop("disabled", true)
+          .html('<i class="fas fa-spin-pulse fa-spinner"></i> Sending...');
+
+        const title = $("#broadcast-title").val().trim();
+        const message = $("#broadcast-message").val().trim();
+        const target = $("#broadcast-target").val();
+
+        if (!title || !message) {
+          iziToast.error({ title: "Error", message: "Title and message are required!", position: "topRight" });
+          submitButton.removeClass("loading").prop("disabled", false).text("Send Notification");
+          return;
+        }
+
+        try {
+          const usersSnapshot = await get(usersRef);
+          const users = usersSnapshot.val() || {};
+          const updates = {};
+          for (const uid in users) {
+            if (
+              target === "all" ||
+              (target === "active" && users[uid].status !== "Suspended") ||
+              (target === "suspended" && users[uid].status === "Suspended")
+            ) {
+              updates[`users/${uid}/notifications/broadcast_${Date.now()}_${uid}`] = {
+                title,
+                message,
+                timestamp: new Date().toISOString(),
+                read: false,
+              };
+            }
+          }
+          await update(ref(database), updates);
+          const notificationRef = push(notificationsRef);
+          await set(notificationRef, {
+            title,
+            message,
+            target,
+            timestamp: new Date().toISOString(),
+          });
+          await logAdminAction("Broadcast Notification", `Sent notification "${title}" to ${target} users`);
+          iziToast.success({ title: "Success", message: "Notification sent!", position: "topRight" });
+          $("#broadcast-form")[0].reset();
+        } catch (error) {
+          iziToast.error({ title: "Error", message: `Failed to send notification: ${error.message}`, position: "topRight" });
+          console.error("Broadcast error:", error);
+        } finally {
+          submitButton.removeClass("loading").prop("disabled", false).text("Send Notification");
+        }
       });
 
-      // Save System Settings
+      // System Settings
       $("#settings-form").on("submit", async function(e) {
         e.preventDefault();
         const submitButton = $(this).find(".btn-primary");
@@ -1510,26 +2214,31 @@
         const minWithdrawal = parseFloat($("#minWithdrawal").val());
         const feeAmount = parseFloat($("#feeAmount").val());
         const referralBonus = parseFloat($("#referralBonus").val());
+        const investmentRewardRate = parseFloat($("#investmentRewardRate").val());
 
-        if (isNaN(minWithdrawal) || minWithdrawal < 0) {
-          iziToast.error({ title: "Error", message: "Invalid minimum withdrawal!", position: "topRight" });
-          submitButton.removeClass("loading").prop("disabled", false).text("Save Settings");
-          return;
-        }
-        if (isNaN(feeAmount) || feeAmount < 0) {
-          iziToast.error({ title: "Error", message: "Invalid withdrawal fee!", position: "topRight" });
-          submitButton.removeClass("loading").prop("disabled", false).text("Save Settings");
-          return;
-        }
-        if (isNaN(referralBonus) || referralBonus < 0) {
-          iziToast.error({ title: "Error", message: "Invalid referral bonus!", position: "topRight" });
+        if (
+          isNaN(minWithdrawal) ||
+          isNaN(feeAmount) ||
+          isNaN(referralBonus) ||
+          isNaN(investmentRewardRate) ||
+          minWithdrawal < 0 ||
+          feeAmount < 0 ||
+          referralBonus < 0 ||
+          investmentRewardRate < 0
+        ) {
+          iziToast.error({ title: "Error", message: "Invalid settings values!", position: "topRight" });
           submitButton.removeClass("loading").prop("disabled", false).text("Save Settings");
           return;
         }
 
         try {
-          await update(settingsRef, { minWithdrawal, feeAmount, referralBonus });
-          await logAdminAction('Update Settings', `Updated system settings: minWithdrawal=$${minWithdrawal}, fee=${feeAmount} TON, referralBonus=$${referralBonus}`);
+          await update(settingsRef, {
+            minWithdrawal,
+            feeAmount,
+            referralBonus,
+            investmentRewardRate,
+          });
+          await logAdminAction("Update Settings", `Updated system settings: minWithdrawal=$${minWithdrawal}, feeAmount=${feeAmount} TON, referralBonus=$${referralBonus}, investmentRewardRate=${investmentRewardRate}%`);
           iziToast.success({ title: "Success", message: "Settings updated!", position: "topRight" });
         } catch (error) {
           iziToast.error({ title: "Error", message: `Failed to update settings: ${error.message}`, position: "topRight" });
@@ -1539,7 +2248,7 @@
         }
       });
 
-      // Save Security Settings
+      // Security Settings
       $("#security-form").on("submit", async function(e) {
         e.preventDefault();
         const submitButton = $(this).find(".btn-primary");
@@ -1549,32 +2258,47 @@
           .html('<i class="fas fa-spin-pulse fa-spinner"></i> Saving...');
 
         const twoFactor = $("#twoFactor").val();
+        const ipWhitelist = $("#ipWhitelist").val().trim().split(",").map(ip => ip.trim()).filter(ip => ip);
 
         try {
-          await update(settingsRef, { twoFactor });
-          await logAdminAction('Update Security', `Set twoFactor to ${twoFactor}`);
+          await update(ref(database, "security"), {
+            twoFactor,
+            ipWhitelist,
+          });
+          await logAdminAction("Update Security", `Updated security settings: twoFactor=${twoFactor}, ipWhitelist=${ipWhitelist.join(", ")}`);
           iziToast.success({ title: "Success", message: "Security settings updated!", position: "topRight" });
         } catch (error) {
           iziToast.error({ title: "Error", message: `Failed to update security settings: ${error.message}`, position: "topRight" });
-          console.error("Security update error:", error);
+          console.error("Security settings update error:", error);
         } finally {
           submitButton.removeClass("loading").prop("disabled", false).text("Save Security Settings");
         }
       });
 
-      // Cancel Edit
-      $("#cancel-edit-user").on("click", function() {
-        $("#edit-user-modal").iziModal("close");
+      // Copy Wallet Address
+      $(document).on("click", ".btn-copy", function() {
+        const wallet = $(this).data("wallet");
+        copyToClipboard(wallet);
       });
 
-      // Close Modals
-      $(".close-btn").on("click", function() {
-        $(this).closest('.iziModal').iziModal("close");
+      // Select All Users
+      $("#select-all-users").on("change", function() {
+        $(".user-checkbox").prop("checked", this.checked);
+      });
+
+      // Select All Transactions
+      $("#select-all-transactions").on("change", function() {
+        $(".transaction-checkbox").prop("checked", this.checked);
       });
 
       // Logout
-      $("#logout-btn").on("click", function() {
-        window.Telegram.WebApp.close();
+      $("#logout-btn").on("click", async function() {
+        try {
+          await logAdminAction("Logout", "Admin logged out");
+          window.Telegram.WebApp.close();
+        } catch (error) {
+          console.error("Logout error:", error);
+        }
       });
 
       // Initialize Dashboard
