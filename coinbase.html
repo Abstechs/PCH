@@ -761,6 +761,169 @@
       }
     }
   </style>
+  <style>
+/* 🔒 All styles scoped to cryptoprogress-wrapper */
+.cryptoprogress-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* horizontal center */
+  margin: 20px 0; /* sits in flow naturally */
+}
+
+.cryptoprogress-wrapper .cryptoprogress-container {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 12px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.cryptoprogress-wrapper .cryptoprogress-card {
+  background: #1c1c1e;
+  border-radius: 12px;
+  padding: 12px;
+  flex: 1;
+  min-width: 0;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Typography */
+.cryptoprogress-wrapper .cryptoprogress-title {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+.cryptoprogress-wrapper .cryptoprogress-subtitle.cryptoprogress-buy {
+  display: inline-block;
+  background: #01b26f;
+  color: #fff;
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  margin-bottom: 6px;
+}
+.cryptoprogress-wrapper .cryptoprogress-value {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 6px;
+}
+
+/* Gauge header */
+.cryptoprogress-wrapper .cryptoprogress-gauge-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.cryptoprogress-wrapper .cryptoprogress-gauge-header i {
+  font-size: 14px;
+  color: #888;
+}
+.cryptoprogress-wrapper .cryptoprogress-gauge {
+  width: 100%;
+  height: 60px;
+  margin-bottom: 6px;
+}
+.cryptoprogress-wrapper .cryptoprogress-score {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+.cryptoprogress-wrapper .cryptoprogress-text {
+  font-size: 12px;
+  opacity: 0.8;
+  text-align: center;
+}
+
+/* Responsive scaling */
+@media (max-width: 360px) {
+  .cryptoprogress-wrapper .cryptoprogress-container {
+    max-width: 320px;
+    gap: 8px;
+  }
+  .cryptoprogress-wrapper .cryptoprogress-card {
+    padding: 10px;
+    width: 150px;
+  }
+  .cryptoprogress-wrapper .cryptoprogress-value,
+  .cryptoprogress-wrapper .cryptoprogress-score {
+    font-size: 16px;
+  }
+  .cryptoprogress-wrapper .cryptoprogress-gauge {
+    height: 50px;
+  }
+}
+</style>
+
+<!-- ✅ Progressbar.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/progressbar.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const priceEl = document.getElementById('cryptoprogressPrice');
+  const scoreEl = document.getElementById('cryptoprogressScore');
+  const moodEl  = document.getElementById('cryptoprogressMood');
+
+  let price = 0.985;
+  let score = 69;
+
+  // Initialize the gauge
+  const bar = new ProgressBar.SemiCircle('#cryptoprogressGauge', {
+    strokeWidth: 8,
+    trailWidth: 8,
+    color: '#52c41a',
+    trailColor: '#333',
+    easing: 'easeInOut',
+    duration: 1000,
+    svgStyle: {width: '100%', height: '100%'},
+    from: { color: '#ff4d4f' },
+    to: { color: '#52c41a' },
+    step: (state, circle) => {
+      circle.path.setAttribute('stroke', state.color);
+    }
+  });
+  bar.animate(score / 100);
+
+  function moodText(val){
+    if(val < 30) return 'Extreme Fear';
+    if(val < 50) return 'Fear';
+    if(val < 60) return 'Neutral';
+    if(val < 80) return 'Greed';
+    return 'Extreme Greed';
+  }
+
+  function fluctuate() {
+    // fluctuate price slightly
+    price += (Math.random() * 0.006 - 0.003);
+    if(price < 0.97) price = 0.97;
+    if(price > 1.03) price = 1.03;
+    priceEl.textContent = '$' + price.toFixed(3);
+
+    // fluctuate score slightly
+    score += Math.floor(Math.random() * 7 - 3); // ±3
+    if(score < 0) score = 0;
+    if(score > 100) score = 100;
+    scoreEl.textContent = score;
+    moodEl.textContent = moodText(score);
+
+    bar.animate(score / 100);
+
+    // random interval for next update
+    const intervals = [2000, 3000, 5000, 6000];
+    const next = intervals[Math.floor(Math.random() * intervals.length)];
+    setTimeout(fluctuate, next);
+  }
+
+  // start fluctuation
+  setTimeout(fluctuate, 2000);
+});
+</script>
 </head>
 <body>
   <!-- Wallet Header -->
@@ -791,6 +954,40 @@
       <span class="coin-default"><span class="coin-defaults">Trump</span></span>
     </p>
   </div>
+
+
+<!-- 🌟 CryptoProgress Component Start -->
+<div class="cryptoprogress-wrapper">
+  <div class="cryptoprogress-container">
+    <!-- USDT Card -->
+    <div class="cryptoprogress-card">
+      <div>
+        <div class="cryptoprogress-title">USDT/USD</div>
+        <div class="cryptoprogress-subtitle cryptoprogress-buy">Buy</div>
+      </div>
+      <div class="cryptoprogress-value" id="cryptoprogressPrice">$0.989</div>
+    </div>
+
+    <!-- Fear & Greed Card -->
+    <div class="cryptoprogress-card">
+      <div>
+        <div class="cryptoprogress-gauge-header">
+          <span class="cryptoprogress-title">Fear & Greed</span>
+          <i class="fa-solid fa-angle-right"></i>
+        </div>
+        <div class="cryptoprogress-gauge" id="cryptoprogressGauge"></div>
+      </div>
+      <div>
+        <div class="cryptoprogress-score" id="cryptoprogressScore">69</div>
+        <div class="cryptoprogress-text" id="cryptoprogressMood">Greed</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 🌟 CryptoProgress Component End -->
+
+
+
 
   <!-- Action Buttons -->
   <div class="action-buttons">
