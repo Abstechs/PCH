@@ -141,6 +141,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      align-self: center;
       margin: 10px 0;
     }
     .crypto-card img {
@@ -761,6 +762,8 @@
       }
     }
   </style>
+  
+  <!--  
   <style>
 /* 🔒 All styles scoped to cryptoprogress-wrapper */
 .cryptoprogress-wrapper {
@@ -854,6 +857,109 @@
   .cryptoprogress-wrapper .cryptoprogress-value,
   .cryptoprogress-wrapper .cryptoprogress-score {
     font-size: 16px;
+  }
+  .cryptoprogress-wrapper .cryptoprogress-gauge {
+    height: 50px;
+  }
+}
+</style>
+ -->
+<style>
+    /* 🔒 All styles scoped to cryptoprogress-wrapper */
+.cryptoprogress-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* horizontal center */
+  margin: 20px 0; /* sits in flow naturally */
+}
+
+.cryptoprogress-wrapper .cryptoprogress-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Three equal columns */
+  align-items: stretch;
+  justify-content: center;
+  gap: 12px;
+  max-width: 600px; /* Increased to fit three cards */
+  width: 100%;
+}
+
+.cryptoprogress-wrapper .cryptoprogress-card {
+  background: #1c1c1e;
+  border-radius: 12px;
+  padding: 12px;
+  flex: 1;
+  min-width: 0;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Typography */
+.cryptoprogress-wrapper .cryptoprogress-title {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+.cryptoprogress-wrapper .cryptoprogress-subtitle {
+  display: inline-block;
+  background: #444;
+  color: #fff;
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  margin-bottom: 6px;
+}
+.cryptoprogress-wrapper .cryptoprogress-subtitle.cryptoprogress-buy {
+  background: #01b26f;
+}
+.cryptoprogress-wrapper .cryptoprogress-value {
+  font-size: 16px; /* Slightly smaller for balance */
+  font-weight: bold;
+  margin-top: 6px;
+}
+
+/* Gauge header */
+.cryptoprogress-wrapper .cryptoprogress-gauge-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.cryptoprogress-wrapper .cryptoprogress-gauge-header i {
+  font-size: 14px;
+  color: #888;
+}
+.cryptoprogress-wrapper .cryptoprogress-gauge {
+  width: 100%;
+  height: 60px;
+  margin-bottom: 6px;
+}
+.cryptoprogress-wrapper .cryptoprogress-score {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+.cryptoprogress-wrapper .cryptoprogress-text {
+  font-size: 12px;
+  opacity: 0.8;
+  text-align: center;
+}
+
+/* Responsive scaling */
+@media (max-width: 576px) {
+  .cryptoprogress-wrapper .cryptoprogress-container {
+    grid-template-columns: 1fr 1fr 1fr; /* Stack cards vertically */
+    max-width: 320px;
+    gap: 8px;
+  }
+  .cryptoprogress-wrapper .cryptoprogress-card {
+    padding: 10px;
+  }
+  .cryptoprogress-wrapper .cryptoprogress-value,
+  .cryptoprogress-wrapper .cryptoprogress-score {
+    font-size: 14px;
   }
   .cryptoprogress-wrapper .cryptoprogress-gauge {
     height: 50px;
@@ -956,6 +1062,36 @@ document.addEventListener('DOMContentLoaded', function () {
   </div>
 
 
+<!-- 🌟 CryptoProgress Component Start --
+<div class="cryptoprogress-wrapper">
+  <div class="cryptoprogress-container">
+    -- USDT Card --
+    <div class="cryptoprogress-card">
+      <div>
+        <div class="cryptoprogress-title">USDT/USD</div>
+        <div class="cryptoprogress-subtitle cryptoprogress-buy">Buy</div>
+      </div>
+      <div class="cryptoprogress-value" id="cryptoprogressPrice">$0.989</div>
+    </div>
+
+    -- Fear & Greed Card --
+    <div class="cryptoprogress-card">
+      <div>
+        <div class="cryptoprogress-gauge-header">
+          <span class="cryptoprogress-title">Fear & Greed</span>
+          <i class="fa-solid fa-angle-right"></i>
+        </div>
+        <div class="cryptoprogress-gauge" id="cryptoprogressGauge"></div>
+      </div>
+      <div>
+        <div class="cryptoprogress-score" id="cryptoprogressScore">69</div>
+        <div class="cryptoprogress-text" id="cryptoprogressMood">Greed</div>
+      </div>
+    </div>
+  </div>
+</div>
+ 🌟 CryptoProgress Component End -->
+
 <!-- 🌟 CryptoProgress Component Start -->
 <div class="cryptoprogress-wrapper">
   <div class="cryptoprogress-container">
@@ -967,7 +1103,14 @@ document.addEventListener('DOMContentLoaded', function () {
       </div>
       <div class="cryptoprogress-value" id="cryptoprogressPrice">$0.989</div>
     </div>
-
+    <!-- Investment Status Card -->
+    <div class="cryptoprogress-card">
+      <div>
+        <div class="cryptoprogress-title">Investment Status</div>
+        <div class="cryptoprogress-subtitle" id="investment-status-title">No Active Investment</div>
+      </div>
+      <div class="cryptoprogress-value" id="investment-status-amount"></div>
+    </div>
     <!-- Fear & Greed Card -->
     <div class="cryptoprogress-card">
       <div>
@@ -985,7 +1128,6 @@ document.addEventListener('DOMContentLoaded', function () {
   </div>
 </div>
 <!-- 🌟 CryptoProgress Component End -->
-
 
 
 
@@ -1129,46 +1271,47 @@ document.addEventListener('DOMContentLoaded', function () {
   </div>
 
   <!-- Dark Popup Modal 4 (Tasks) -->
-  <div id="darkModal4" class="iziModal" data-izimodal-title="Tasks">
-    <div class="dark-content">
-      <p style="text-align: left;">
-        <span>Instructions & Rules:</span>
-        <ol type="i" style="text-align:left;">
-          <li>Complete daily trades to increase your balance and unlock withdrawals.</li>
-          <li>Ensure your profile details are complete and accurate to avoid delays in withdrawal processing.</li>
-          <li>Monitor your transaction history to track deposits, withdrawals, and earnings.</li>
-        </ol>
-      </p>
-      <p style="text-align: left;">
-        <span>Trade & Invest:</span>
-        <p>Select an investment amount to start trading and earn daily returns:</p>
-        <div class="investment-options">
-          <button class="investment-btn" data-amount="3500">$3500</button>
-          <button class="investment-btn" data-amount="5000">$5000</button>
-          <button class="investment-btn" data-amount="10000">$10000</button>
-          <button class="investment-btn" data-amount="20000">$20000</button>
-          <button class="investment-btn" data-amount="30000">$30000</button>
-          <button class="investment-btn" data-amount="50000">$50k - $1m</button>
-        </div>
-        <div id="investment-status" style="margin-top: 15px;"></div>
-        <div class="countdown-container">
-          <p>Next claim available in: <span id="countdown-timer" class="countdown-timer">24:00:00</span></p>
-          <button id="claim-reward" class="investment-btn" disabled>Claim Reward</button>
-        </div>
-      </p>
-      <p style="text-align: left;">
-        <span>Guides:</span>
-        <ul style="text-align:left;">
-          <li>Monitor your referral count in the Profile section to track your progress.</li>
-          <li>Check the Transaction History regularly to confirm deposits, withdrawals, and fees.</li>
-          <li>Contact support via the Chat option in Settings for issues with payments or account verification.</li>
-        </ul>
-      </p>
-      <p>For support or inquiries:</p>
-      <button class="close-btn open-btn" data-modal-id="chat-iziModal">Contact Support</button>
-      <button class="close-btn">Close</button>
-    </div>
+<div id="darkModal4" class="iziModal" data-izimodal-title="Tasks">
+  <div class="dark-content">
+    <p style="text-align: left;">
+      <span>Instructions & Rules:</span>
+      <ol type="i" style="text-align:left;">
+        <li>Complete daily trades to increase your balance and unlock withdrawals.</li>
+        <li>Ensure your profile details are complete and accurate to avoid delays in withdrawal processing.</li>
+        <li>Monitor your transaction history to track deposits, withdrawals, and earnings.</li>
+      </ol>
+    </p>
+    <p style="text-align: left;">
+      <span>Trade & Invest:</span>
+      <p>Select an investment amount to start trading and earn daily returns:</p>
+      <div class="investment-options">
+        <button class="investment-btn" data-amount="3500">$3500</button>
+        <button class="investment-btn" data-amount="5000">$5000</button>
+        <button class="investment-btn" data-amount="10000">$10000</button>
+        <button class="investment-btn" data-amount="20000">$20000</button>
+        <button class="investment-btn" data-amount="30000">$30000</button>
+        <button class="investment-btn" data-amount="50000">$50000</button>
+      </div>
+      <div id="investment-status" style="margin-top: 15px;"></div>
+      <div class="countdown-container">
+        <p>Next claim available in: <span id="countdown-timer" class="countdown-timer">24:00:00</span></p>
+        <button id="claim-reward" class="investment-btn" disabled>Claim Reward</button>
+        <button id="cancel-investment" class="cancel-investment-btn" style="background-color: #d9534f;" disabled>Cancel Investment</button>
+      </div>
+    </p>
+    <p style="text-align: left;">
+      <span>Guides:</span>
+      <ul style="text-align:left;">
+        <li>Monitor your referral count in the Profile section to track your progress.</li>
+        <li>Check the Transaction History regularly to confirm deposits, withdrawals, and fees.</li>
+        <li>Contact support via the Chat option in Settings for issues with payments or account verification.</li>
+      </ul>
+    </p>
+    <p>For support or inquiries:</p>
+    <button class="close-btn open-btn" data-modal-id="chat-iziModal">Contact Support</button>
+    <button class="close-btn">Close</button>
   </div>
+</div>
 
   <!-- Dark Popup Modal 5 -->
   <div id="darkModal5" class="iziModal" data-izimodal-title="Share">
@@ -1243,6 +1386,17 @@ document.addEventListener('DOMContentLoaded', function () {
       <button class="close-btn" id="continuePaymentCls">Close</button>
     </div>
   </div>
+  
+  <!-- Cancel Investment Confirmation Modal -->
+  <!-- Dark Popup Modal 10 -->
+<div id="darkModal10" class="iziModal" data-izimodal-title="Confirm Cancel Investment">
+  <div class="dark-content">
+    <p><strong>Warning:</strong> Canceling your investment will result in the loss of all accrued yields. A breakout fee of <span id="cancel-fee-amount">$50.00</span> <span id="cancel-fee-currency">USD</span> will be deducted from your balance.</p>
+    <p>Are you sure you want to proceed?</p>
+    <button id="confirm-cancel-investment-btn" class="cancel-investment-btn">Confirm Cancellation</button>
+    <button class="close-btn">Cancel</button>
+  </div>
+</div>
 
   <!-- Profile iziModal -->
   <div id="profile-iziModal" class="iziModal" data-izimodal-title="<strong>Profile</strong>">
@@ -1369,7 +1523,7 @@ document.addEventListener('DOMContentLoaded', function () {
   <!-- Confirmation Modal for Investment -->
   <div id="investment-confirm-modal" class="iziModal" data-izimodal-title="Confirm Investment">
     <div class="dark-content">
-      <p>Are you sure you want to invest <span id="confirm-investment-amount"></span>?</p>
+      <p>Are you sure you want to invest <span id="confirm-investment-amount"> an amount</span>?</p>
       <p>This will deduct the amount from your balance and start your investment plan.</p>
       <button id="confirm-investment-btn" class="investment-btn">Confirm</button>
       <button class="close-btn">Cancel</button>
@@ -1384,6 +1538,66 @@ document.addEventListener('DOMContentLoaded', function () {
 
   <!-- Firebase Module Script -->
   <script type="module">
+ // Modal state tracker
+let activeModal = null;
+let modalOpening = false;
+
+// Utility to manage modal opening with exclusivity and debouncing
+function openModal(modalId) {
+  if (modalOpening) {
+    return Promise.reject(new Error("Modal opening in progress"));
+  }
+  if (!$('#' + modalId).hasClass('iziModal')) {
+    showToast(`Modal ${modalId} is not properly initialized`);
+    return Promise.reject(new Error(`Modal ${modalId} is not an iziModal instance`));
+  }
+  if (activeModal && activeModal !== modalId) {
+    return closeModal(activeModal).then(() => {
+      modalOpening = true;
+      try {
+        $('#' + modalId).iziModal("open");
+        activeModal = modalId;
+        return Promise.resolve();
+      } catch (error) {
+        showToast(`Failed to open modal ${modalId}`);
+        return Promise.reject(error);
+      } finally {
+        modalOpening = false;
+      }
+    });
+  }
+  modalOpening = true;
+  try {
+    $('#' + modalId).iziModal("open");
+    activeModal = modalId;
+    return Promise.resolve();
+  } catch (error) {
+    showToast(`Failed to open modal ${modalId}`);
+    return Promise.reject(error);
+  } finally {
+    modalOpening = false;
+  }
+}
+
+// Utility to close modal
+function closeModal(modalId) {
+  if (!$('#' + modalId).hasClass('iziModal')) {
+    showToast(`Modal ${modalId} is not properly initialized`);
+    return Promise.reject(new Error(`Modal ${modalId} is not an iziModal instance`));
+  }
+  try {
+    $('#' + modalId).iziModal("close");
+    if (activeModal === modalId) {
+      activeModal = null;
+    }
+    return Promise.resolve();
+  } catch (error) {
+    showToast(`Failed to close modal ${modalId}`);
+    return Promise.reject(error);
+  }
+}     
+   
+   
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js';
     import { getDatabase, ref, set, get, update, onValue, push } from 'https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js';
 
@@ -1472,7 +1686,7 @@ document.addEventListener('DOMContentLoaded', function () {
               referrals: 0,
               referredBy: null,
               settings: { theme: "dark", currency: "USD", network: "ERC20", autoRenew: false },
-              investment: { amount: 0, lastClaim: null, startDate: null, lastRenewal: null },
+              investment: { investmentAmount: 0, lastClaim: null, startDate: null, lastRenewal: null },
               tradeHistory: {},
               notifications: {
                 welcome: {
@@ -1491,7 +1705,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return true;
           }
         } catch (error) {
-          console.error(`Initialize attempt ${i + 1} failed:`, error);
           if (i === attempts - 1) {
             iziToast.error({ title: "Error", message: `Failed to initialize user data: ${error.message}`, position: "topRight" });
             return false;
@@ -1507,31 +1720,69 @@ document.addEventListener('DOMContentLoaded', function () {
   <script>
     document.cookie = `userWithdrawal=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
     document.cookie = `userPaid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+    
+            // Utility function for number parsing
+function parseNumber(value, defaultValue = 0) {
+  if (value === null || value === undefined || value === "") {
+    return defaultValue;
+  }
+  const cleanedValue = String(value).replace(/[^0-9.-]+/g, "");
+  const result = parseFloat(cleanedValue);
+  if (isNaN(result)) {
+    return defaultValue;
+  }
+  return result;
+}
 
     async function fetchBTCPrice(attempts = 3, baseDelay = 1000) {
-      for (let i = 0; i < attempts; i++) {
-        try {
-          const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd', { signal: AbortSignal.timeout(5000) });
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          const data = await response.json();
-          const price = data.bitcoin?.usd;
-          if (!price) throw new Error('Invalid BTC price data');
+  // Check cache (valid for 5 minutes)
+  if (window.lastBtcPrice && Date.now() - window.lastBtcPriceFetch < 5 * 60 * 1000) {
+    return window.lastBtcPrice;
+  }
+
+  const endpoints = [
+    { url: 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd', key: 'bitcoin.usd' },
+    { url: 'https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD', key: 'USD' }
+  ];
+
+  for (let i = 0; i < attempts; i++) {
+    for (const endpoint of endpoints) {
+      try {
+        const response = await fetch(endpoint.url, { signal: AbortSignal.timeout(10000) });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        let price = endpoint.key.split('.').reduce((obj, key) => obj?.[key], data);
+        if (!price || isNaN(price)) throw new Error('Invalid BTC price data');
+        window.lastBtcPrice = Number(price);
+        window.lastBtcPriceFetch = Date.now();
+        return window.lastBtcPrice;
+      } catch (error) {
+        if (i === attempts - 1 && endpoint === endpoints[endpoints.length - 1]) {
+          // Simulation fallback
+          const simulatedPrice = simulateBTCPrice();
+          window.lastBtcPrice = simulatedPrice;
           window.lastBtcPriceFetch = Date.now();
-          return price;
-        } catch (error) {
-          console.error(`BTC price fetch attempt ${i + 1} failed:`, error);
-          if (i === attempts - 1) return 60000;
-          await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, i)));
+          return simulatedPrice;
         }
+        await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, i)));
       }
-      return 60000;
     }
+  }
+  return window.lastBtcPrice || 60000;
+}
+
+function simulateBTCPrice() {
+  const basePrice = window.lastBtcPrice || 60000;
+  const volatility = 0.05; // ±5% volatility
+  const randomFactor = 1 + (Math.random() * volatility * 2 - volatility);
+  const simulatedPrice = basePrice * randomFactor;
+  return Math.max(10000, Math.min(100000, simulatedPrice)); // Clamp between $10k and $100k
+}
 
     async function updateBalanceDisplay() {
       try {
         const snapshot = await window.firebaseFunctions.get(window.firebaseFunctions.userRef);
         if (!snapshot.exists()) {
-          console.error("User data not found in Firebase");
           iziToast.error({ title: "Error", message: "Failed to fetch user data!", position: "topRight" });
           return;
         }
@@ -1554,7 +1805,6 @@ document.addEventListener('DOMContentLoaded', function () {
           $balanceDisplay.text(`$${balance.toFixed(2)}`);
         }
       } catch (error) {
-        console.error('Failed to update balance display:', error);
         iziToast.error({ title: "Error", message: "Failed to update balance display!", position: "topRight" });
       }
     }
@@ -1593,7 +1843,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }).showToast();
       } else {
         iziToast.info({ title: "Info", message, position: "topRight" });
-        console.warn("Toastify not loaded, using iziToast.");
       }
     }
 
@@ -1636,29 +1885,75 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     };
 
-    function updateCountdown(lastClaim, callback) {
-      const now = new Date().getTime();
-      const lastClaimTime = lastClaim ? new Date(lastClaim).getTime() : 0;
-      const oneDay = 24 * 60 * 60 * 1000;
-      const nextClaimTime = lastClaimTime + oneDay;
-      const timeLeft = nextClaimTime - now;
+    async function updateCountdown() {
+  const { database, userId, ref, get, update } = window.firebaseFunctions || {};
+  if (!userId || !database) {
+    $("#countdown-timer").text("24:00:00");
+    $("#claim-reward").prop("disabled", true);
+    $("#cancel-investment").prop("disabled", true);
+    setTimeout(updateCountdown, 1000); // Retry after 1 second
+    return;
+  }
+  try {
+    const investmentRef = ref(database, `users/${userId}/investment`);
+    const snapshot = await get(investmentRef);
+    const investmentData = snapshot.exists() ? snapshot.val() || {} : {};
+    const now = new Date().getTime();
+    let timeLeft = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    let timerText = "24:00:00";
+    let shouldUpdateFirebase = false;
 
-      if (timeLeft <= 0) {
-        $("#countdown-timer").text("00:00:00");
-        $("#claim-reward").prop("disabled", false);
-        return;
+    // Initialize default values if missing
+    if (!investmentData.hasOwnProperty('investmentAmount') || !investmentData.startDate) {
+      investmentData.investmentAmount = 0;
+      investmentData.startDate = null;
+      investmentData.lastClaim = null;
+      investmentData.lastRenewal = null;
+      shouldUpdateFirebase = true;
+    }
+
+    const investmentAmount = parseNumber(investmentData.investmentAmount, 0);
+
+    if (investmentAmount > 0) {
+      let referenceTime = now;
+      if (investmentData.lastClaim && !isNaN(new Date(investmentData.lastClaim).getTime())) {
+        referenceTime = new Date(investmentData.lastClaim).getTime();
+      } else if (investmentData.startDate && !isNaN(new Date(investmentData.startDate).getTime())) {
+        referenceTime = new Date(investmentData.startDate).getTime();
+      } else {
+        investmentData.startDate = new Date().toISOString();
+        shouldUpdateFirebase = true;
       }
 
-      const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      timeLeft = referenceTime + 24 * 60 * 60 * 1000 - now;
+      if (timeLeft <= 0) {
+        timeLeft = 0; // Allow claim
+      }
+
+      const hours = Math.floor(timeLeft / (1000 * 60 * 60));
       const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-      $("#countdown-timer").text(
-        `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-      );
-      $("#claim-reward").prop("disabled", true);
-
-      setTimeout(() => updateCountdown(lastClaim, callback), 1000);
+      timerText = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    } else {
+      
     }
+
+    if (shouldUpdateFirebase) {
+      await update(ref(database), { [`users/${userId}/investment`]: investmentData });
+      
+    }
+
+    $("#countdown-timer").text(timerText);
+    $("#claim-reward").prop("disabled", investmentAmount <= 0 || timeLeft > 0);
+    $("#cancel-investment").prop("disabled", investmentAmount <= 0);
+    setTimeout(updateCountdown, 1000);
+  } catch (error) {
+    $("#countdown-timer").text("24:00:00");
+    $("#claim-reward").prop("disabled", true);
+    $("#cancel-investment").prop("disabled", true);
+    setTimeout(updateCountdown, 1000); // Retry after error
+  }
+}
 
     function formatChatDate(timestamp) {
       const date = new Date(timestamp);
@@ -1692,8 +1987,14 @@ document.addEventListener('DOMContentLoaded', function () {
           transitionIn: 'fadeInUp',
           transitionOut: 'fadeOutDown',
           onOpening: function() {
+            activeModal = this.id;
             $(this).css('display', 'block');
-          }
+          },
+          onClosed: function() {
+            if (activeModal === this.id) {
+            activeModal = null;
+              }
+            }
         });
       });
 
@@ -1789,71 +2090,70 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         onValue(userRef, async (snapshot) => {
-          if (!snapshot.exists()) {
-            console.error("User data snapshot not found");
-            iziToast.error({ title: "Error", message: "Failed to load user data!", position: "topRight" });
-            return;
-          }
-          const userData = snapshot.val() || {};
-          window.firebaseFunctions.userData = userData;
-          $("#usernameInput").val(userData.username || username);
-          $("#fullNameInput").val(userData.fullName || "");
-          $("#emailInput").val(userData.email || "");
-          $("#pinInput").val(userData.pin || "");
-          $("#ssinInput").val(userData.ssin || "");
-          $("#accountNumberInput").val(userData.accountNumber || "");
-          $("#bankNameInput").val(userData.bankName || "");
-          $("#addressInput").val(userData.address || "");
-          $("#account-name").text(`@${userData.username || "Anonymous"}`);
-          const walletAddress = userData.wallet || userWalletAddress;
-          $("#wallet-address").text(window.truncateAddress(walletAddress));
-          $("#wallet-address").data("wallet", walletAddress);
-          userWalletAddress = walletAddress;
-          $("#themeSelect").val(userData.settings?.theme || "dark");
-          $("#currencySelect").val(userData.settings?.currency || "USD");
-          $("#networkSelect").val(userData.settings?.network || "ERC20");
-          $("#autoRenew").prop('checked', userData.settings?.autoRenew || false);
-          $("body").removeClass("light dark").addClass(userData.settings?.theme || "dark");
-          updateNetworkOptions(userData.settings?.currency || "USD");
-          await updateBalanceDisplay();
+  if (!snapshot.exists()) {
+    iziToast.error({ title: "Error", message: "Failed to load user data!", position: "topRight" });
+    return;
+  }
+  const userData = snapshot.val() || {};
+  window.firebaseFunctions.userData = userData;
+  $("#usernameInput").val(userData.username || username);
+  $("#fullNameInput").val(userData.fullName || "");
+  $("#emailInput").val(userData.email || "");
+  $("#pinInput").val(userData.pin || "");
+  $("#ssinInput").val(userData.ssin || "");
+  $("#accountNumberInput").val(userData.accountNumber || "");
+  $("#bankNameInput").val(userData.bankName || "");
+  $("#addressInput").val(userData.address || "");
+  $("#account-name").text(`@${userData.username || "Anonymous"}`);
+  const walletAddress = userData.wallet || userWalletAddress;
+  $("#wallet-address").text(window.truncateAddress(walletAddress));
+  $("#wallet-address").data("wallet", walletAddress);
+  userWalletAddress = walletAddress;
+  $("#themeSelect").val(userData.settings?.theme || "dark");
+  $("#currencySelect").val(userData.settings?.currency || "USD");
+  $("#networkSelect").val(userData.settings?.network || "ERC20");
+  $("#autoRenew").prop("checked", userData.settings?.autoRenew || false);
+  $("body").removeClass("light dark").addClass(userData.settings?.theme || "dark");
+  updateNetworkOptions(userData.settings?.currency || "USD");
+  await updateBalanceDisplay();
 
-          if (userData.settings?.autoRenew && userData.investment?.startDate) {
-            const lastRenewal = userData.investment.lastRenewal ? new Date(userData.investment.lastRenewal) : new Date(userData.investment.startDate);
-            const now = new Date();
-            const daysSinceRenewal = Math.floor((now - lastRenewal) / (1000 * 60 * 60 * 24));
-            if (daysSinceRenewal >= 30) {
-              const txRef = push(ref(database, `users/${userId}/transactions`));
-              await set(txRef, {
-                amount: userData.investment.amount,
-                currency: userData.settings?.currency || "USD",
-                wallet: userData.wallet,
-                network: userData.settings?.network || "ERC20",
-                type: "Investment Renewal",
-                status: "completed",
-                timestamp: now.toISOString(),
-              });
-              await update(userRef, {
-                'investment/lastRenewal': now.toISOString(),
-              });
-              iziToast.success({ title: "Success", message: "Investment renewed!", position: "topRight" });
-            }
-          }
+  const investmentRef = ref(database, `users/${userId}/investment`);
+  const investmentSnapshot = await get(investmentRef);
+  const investmentData = investmentSnapshot.exists() ? investmentSnapshot.val() || {} : {};
+  const investmentAmount = parseNumber(investmentData.investmentAmount, 0);
+  const currency = userData.settings?.currency || "USD";
 
-          const investmentAmount = userData.investment?.amount || 0;
-          const lastClaim = userData.investment?.lastClaim;
-          if (investmentAmount > 0) {
-            const currency = userData.settings?.currency || "USD";
-            const reward = (investmentAmount / 2) * (conversionRates.USD[currency] || 1);
-            $("#investment-status").html(`Current Investment: ${investmentAmount.toLocaleString()} ${currency}<br>Daily Reward: ${reward.toFixed(2)} ${currency}`);
-            $(".investment-btn").prop("disabled", true);
-            updateCountdown(lastClaim);
-          } else {
-            $("#investment-status").html("Select an investment amount to start trading.");
-            $(".investment-btn").prop("disabled", false);
-            $("#claim-reward").prop("disabled", true);
-            $("#countdown-timer").text("24:00:00");
-          }
-        });
+  if (investmentAmount > 0) {
+    const reward = (investmentAmount / 2) * (conversionRates.USD[currency] || 1);
+    $("#investment-status").html(
+      `Current Investment: ${investmentAmount.toLocaleString()} ${currency}<br>Daily Reward: ${reward.toFixed(2)} ${currency}`
+    );
+    $("#investment-status-title").text("Active Investment");
+    $("#investment-status-amount").text(`${investmentAmount.toLocaleString()} ${currency}`);
+    $(".investment-btn").prop("disabled", true);
+    $("#cancel-investment").prop("disabled", false);
+    waitForFirebase(() => updateCountdown()); // Delay until Firebase is ready
+  } else {
+    $("#investment-status").html("Select an investment amount to start trading.");
+    $("#investment-status-title").text("No Active Investment");
+    $("#investment-status-amount").text("");
+    $(".investment-btn").prop("disabled", false);
+    $("#claim-reward").prop("disabled", true);
+    $("#cancel-investment").prop("disabled", true);
+    $("#countdown-timer").text("24:00:00");
+    // Initialize investment data if missing
+    if (!investmentData.investmentAmount) {
+      await update(ref(database), {
+        [`users/${userId}/investment`]: {
+          investmentAmount: 0,
+          startDate: null,
+          lastClaim: null,
+          lastRenewal: null,
+        },
+      });
+    }
+  }
+});
 
         $("#profile-form").on("submit", async (e) => {
           e.preventDefault();
@@ -1918,122 +2218,307 @@ document.addEventListener('DOMContentLoaded', function () {
           } finally {
             submitButton.prop("disabled", false).removeClass("loading").val("Save");
           }
-        });
+        });    
 
-        let pendingInvestmentAmount = 0;
-        $(".investment-btn").on("click", async function() {
-          pendingInvestmentAmount = parseFloat($(this).data("amount"));
-          const currency = window.firebaseFunctions.userData?.settings?.currency || "USD";
-          $("#confirm-investment-amount").text(`${pendingInvestmentAmount.toFixed(2)} ${currency}`);
-          $("#investment-confirm-modal").iziModal("open");
-        });
+$("#confirm-investment-btn").on("click", async function () {
+  const submitButton = $(this);
+  submitButton.prop("disabled", true).html('<i class="fas fa-spinner fa-spin-pulse"></i> Confirming...');
 
-        $("#confirm-investment-btn").on("click", async function() {
-          const submitButton = $(this);
-          submitButton
-            .prop("disabled", true)
-            .html('<i class="fas fa-spinner fa-spin-pulse"></i> Confirming...');
+  try {
+    const snapshot = await get(userRef);
+    if (!snapshot.exists()) throw new Error("User data not found");
+    const userData = snapshot.val() || {};
+    const currency = userData.settings?.currency || "USD";
+    const currentBalance = parseNumber(userData.balance, 0);
+    const investmentAmount = parseNumber(pendingInvestmentAmount, 0);
 
-          try {
-            const snapshot = await get(userRef);
-            if (!snapshot.exists()) {
-              iziToast.error({ title: "Error", message: "User data not found!", position: "topRight" });
-              return;
-            }
-            const userData = snapshot.val() || {};
-            const currentBalance = userData.balance || 0;
-            const currency = userData.settings?.currency || "USD";
+    if (isNaN(investmentAmount) || investmentAmount <= 0) throw new Error(`Invalid investment amount: ${pendingInvestmentAmount}`);
+    if (investmentAmount > currentBalance) throw new Error(`Insufficient balance: ${currentBalance.toFixed(2)} ${currency}`);
 
-            if (pendingInvestmentAmount <= 0 || pendingInvestmentAmount > currentBalance) {
-              iziToast.error({ title: "Error", message: "Invalid investment amount or insufficient balance!", position: "topRight" });
-              return;
-            }
+    const newBalance = currentBalance - investmentAmount;
+    const updates = {
+      [`users/${userId}/balance`]: newBalance,
+      [`users/${userId}/investment`]: {
+        investmentAmount,
+        startDate: new Date().toISOString(),
+        lastClaim: null,
+      },
+      [`users/${userId}/transactions/${push(ref(database, `users/${userId}/transactions`)).key}`]: {
+        amount: investmentAmount,
+        currency,
+        wallet: userData.wallet || userWalletAddress || "unknown",
+        network: userData.settings?.network || "ERC20",
+        type: "Investment",
+        status: "completed",
+        timestamp: new Date().toISOString(),
+      },
+      [`users/${userId}/notifications/${Date.now()}`]: {
+        title: "Investment Started",
+        message: `You invested ${investmentAmount.toFixed(2)} ${currency}!`,
+        timestamp: new Date().toISOString(),
+      },
+    };
 
-            const updates = {
-              [`users/${userId}/balance`]: currentBalance - pendingInvestmentAmount,
-              [`users/${userId}/investment`]: {
-                amount: pendingInvestmentAmount,
-                lastClaim: null,
-                startDate: new Date().toISOString(),
-                lastRenewal: new Date().toISOString(),
-              },
-              [`users/${userId}/transactions/${push(ref(database, `users/${userId}/transactions`)).key}`]: {
-                amount: pendingInvestmentAmount,
-                currency: currency,
-                wallet: userData.wallet || userWalletAddress,
-                network: userData.settings?.network || "ERC20",
-                type: "Investment",
-                status: "completed",
-                timestamp: new Date().toISOString(),
-              },
-              [`users/${userId}/notifications/${Date.now()}`]: {
-                title: "Investment Started",
-                message: `You invested ${pendingInvestmentAmount.toFixed(2)} ${currency}!`,
-                timestamp: new Date().toISOString(),
-              },
-            };
+    await update(ref(database), updates);
+    iziToast.success({
+      title: "Success",
+      message: `Investment of ${investmentAmount.toFixed(2)} ${currency} started!`,
+      position: "topRight",
+    });
 
-            await update(ref(database), updates);
-            iziToast.success({ title: "Success", message: `Investment of ${pendingInvestmentAmount.toFixed(2)} ${currency} started!`, position: "topRight" });
-            $("#investment-confirm-modal").iziModal("close");
-          } catch (error) {
-            iziToast.error({ title: "Error", message: `Failed to process investment: ${error.message}`, position: "topRight" });
-          } finally {
-            submitButton.prop("disabled", false).html("Confirm");
-          }
-        });
+    const reward = (investmentAmount / 2) * (conversionRates.USD[currency] || 1);
+    $("#investment-status").html(
+      `Current Investment: ${investmentAmount.toLocaleString()} ${currency}<br>Daily Reward: ${reward.toFixed(2)} ${currency}`
+    );
+    $("#investment-status-title").text("Active Investment");
+    $("#investment-status-amount").text(`${investmentAmount.toLocaleString()} ${currency}`);
+    $(".investment-btn").prop("disabled", true);
+    $("#cancel-investment").prop("disabled", false);
+    pendingInvestmentAmount = 0;
+    $("#confirm-investment-amount").text("an amount");
+    $("#investment-confirm-modal").iziModal("close");
+    updateCountdown();
+  } catch (error) {
+    iziToast.error({ title: "Error", message: `Failed to process investment: ${error.message}`, position: "topRight" });
+  } finally {
+    submitButton.prop("disabled", false).html("Confirm");
+  }
+});
 
-        $("#claim-reward").on("click", async function() {
-          const submitButton = $(this);
-          submitButton
-            .prop("disabled", true)
-            .html('<i class="fas fa-spinner fa-spin-pulse"></i> Claiming...');
 
-          try {
-            const snapshot = await get(userRef);
-            if (!snapshot.exists()) {
-              iziToast.error({ title: "Error", message: "User data not found!", position: "topRight" });
-              return;
-            }
-            const userData = snapshot.val() || {};
-            const investmentAmount = userData.investment?.amount || 0;
-            const currency = userData.settings?.currency || "USD";
-            const currentBalance = userData.balance || 0;
+let investmentClickTimeout = null;
+$("#darkModal4").on("click", ".investment-btn[data-amount]", async function(e) {
+  e.preventDefault();
+  if (investmentClickTimeout) {
+    return;
+  }
+  if (activeModal === "darkModal10") {
+    return;
+  }
+  investmentClickTimeout = setTimeout(() => { investmentClickTimeout = null; }, 500);
 
-            if (investmentAmount <= 0) {
-              iziToast.error({ title: "Error", message: "No active investment to claim!", position: "topRight" });
-              return;
-            }
+  // Get and validate data-amount
+  const rawAmount = $(this).data("amount");
 
-            const reward = (investmentAmount / 2) * (conversionRates.USD[currency] || 1);
-            const updates = {
-              [`users/${userId}/balance`]: currentBalance + reward,
-              [`users/${userId}/investment/lastClaim`]: new Date().toISOString(),
-              [`users/${userId}/transactions/${push(ref(database, `users/${userId}/transactions`)).key}`]: {
-                amount: reward,
-                currency: currency,
-                wallet: userData.wallet || userWalletAddress,
-                network: userData.settings?.network || "ERC20",
-                type: "Reward Claim",
-                status: "completed",
-                timestamp: new Date().toISOString(),
-              },
-              [`users/${userId}/notifications/${Date.now()}`]: {
-                title: "Reward Claimed",
-                message: `You claimed ${reward.toFixed(2)} ${currency}!`,
-                timestamp: new Date().toISOString(),
-              },
-            };
+  // Early validation
+  if (rawAmount === undefined || rawAmount === null || rawAmount === "") {
+    iziToast.error({
+      title: "Error",
+      message: "Investment button has no valid amount defined",
+      position: "topRight"
+    });
+    pendingInvestmentAmount = 0;
+    $("#confirm-investment-amount").text("an amount");
+    return;
+  }
 
-            await update(ref(database), updates);
-            iziToast.success({ title: "Success", message: `Claimed ${reward.toFixed(2)} ${currency}!`, position: "topRight" });
-            updateCountdown(new Date().toISOString());
-          } catch (error) {
-            iziToast.error({ title: "Error", message: `Failed to claim reward: ${error.message}`, position: "topRight" });
-          } finally {
-            submitButton.prop("disabled", true).html("Claim Reward");
-          }
-        });
+  // Parse amount
+  pendingInvestmentAmount = parseNumber(rawAmount, 0);
+  if (isNaN(pendingInvestmentAmount) || pendingInvestmentAmount <= 0) {
+    iziToast.error({
+      title: "Error",
+      message: `Invalid investment amount: ${rawAmount}`,
+      position: "topRight"
+    });
+    pendingInvestmentAmount = 0;
+    $("#confirm-investment-amount").text("an amount");
+    return;
+  }
+
+  // Set display amount
+  const currency = window.firebaseFunctions.userData?.settings?.currency || "USD";
+  const formattedAmount = pendingInvestmentAmount.toFixed(currency === "BTC" || currency === "ETH" ? 6 : 2);
+  $("#confirm-investment-amount").text(`${formattedAmount} ${currency}`);
+
+  try {
+    $("#investment-confirm-modal").iziModal("open");
+  } catch (error) {
+    iziToast.error({
+      title: "Error",
+      message: `Failed to open confirmation modal: ${error.message}`,
+      position: "topRight"
+    });
+    pendingInvestmentAmount = 0;
+    $("#confirm-investment-amount").text("an amount");
+  }
+  
+});
+
+function updateInvestmentButtonStates(investmentAmount, lastClaim, currency = "USD") {
+
+  // Disable investment amount buttons if there's an active investment
+  $(".investment-btn[data-amount]").prop("disabled", investmentAmount > 0);
+
+  // Set claim button state
+  const now = new Date().getTime();
+  const claimDisabled = !lastClaim
+    ? investmentAmount <= 0 // Disable if no investment
+    : (now - new Date(lastClaim).getTime()) < 24 * 60 * 60 * 1000; // Disable if < 24 hours
+  $("#claim-reward").prop("disabled", claimDisabled);
+
+  // Update investment status display
+  if (investmentAmount > 0) {
+    const reward = (investmentAmount / 2) * (conversionRates.USD[currency] || 1);
+    $("#investment-status").html(
+      `Current Investment: ${investmentAmount.toLocaleString()} ${currency}<br>Daily Reward: ${reward.toFixed(2)} ${currency}`
+    );
+    updateCountdown(lastClaim);
+  } else {
+    $("#investment-status").html("Select an investment amount to start trading.");
+    $("#countdown-timer").text("24:00:00");
+  }
+}
+
+function updateCancelButtonState(investmentAmount) {
+  $("#cancel-investment").prop("disabled", investmentAmount <= 0);
+}
+// Cancel Investment Button Handler
+$("#cancel-investment").on("click", async function() {
+  try {
+    const snapshot = await get(userRef);
+    if (!snapshot.exists()) {
+    setTimeout(() => $("#darkModal10").iziModal("open"), 300);
+      iziToast.error({ title: "Error", message: "User data not found!", position: "topRight" });
+      return;
+    }
+    const userData = snapshot.val() || {};
+    const investmentAmount = parseNumber(userData.investment?.investmentAmount);
+    const currency = userData.settings?.currency || "USD";
+
+    if (investmentAmount <= 0) {
+      iziToast.error({ title: "Error", message: "No active investment to cancel!", position: "topRight" });
+      return;
+    }
+
+    // Calculate breakout fee in user's currency
+    const breakoutFeeUSD = 50;
+    const breakoutFee = breakoutFeeUSD * (conversionRates.USD[currency] || 1);
+    if (isNaN(breakoutFee)) {
+      iziToast.error({ title: "Error", message: `Invalid fee calculation for currency: ${currency}`, position: "topRight" });
+      return;
+    }
+
+    $("#cancel-fee-amount").text(breakoutFee.toFixed(currency === "BTC" || currency === "ETH" ? 6 : 2));
+    $("#cancel-fee-currency").text(currency);
+    $("#darkModal10").iziModal("open");
+  } catch (error) {
+    iziToast.error({ title: "Error", message: `Failed to load investment data: ${error.message}`, position: "topRight" });
+  }
+});
+
+// Confirm Cancel Investment Handler
+$("#confirm-cancel-investment-btn").on("click", async function () {
+  const submitButton = $(this);
+  submitButton.prop("disabled", true).html('<i class="fas fa-spinner fa-spin-pulse"></i> Canceling...');
+
+  try {
+    const investmentRef = ref(database, `users/${userId}/investment`);
+    const snapshot = await get(userRef);
+    if (!snapshot.exists()) throw new Error("User data not found");
+    const userData = snapshot.val() || {};
+    const investmentSnapshot = await get(investmentRef);
+    const investmentData = investmentSnapshot.exists() ? investmentSnapshot.val() || {} : {};
+    const investmentAmount = parseNumber(investmentData.investmentAmount, 0);
+    if (investmentAmount <= 0) throw new Error("No active investment");
+
+    const currency = userData.settings?.currency || "USD";
+    const currentBalance = parseNumber(userData.balance, 0);
+    const breakoutFeeUSD = 50;
+    const breakoutFee = breakoutFeeUSD * (conversionRates.USD[currency] || 1);
+
+    if (currentBalance < breakoutFee) throw new Error(`Insufficient balance for breakout fee: ${breakoutFee.toFixed(2)} ${currency}`);
+
+    const updates = {
+      [`users/${userId}/investment`]: {
+        investmentAmount: 0,
+        startDate: null,
+        lastClaim: null,
+      },
+      [`users/${userId}/balance`]: currentBalance - breakoutFee,
+      [`users/${userId}/transactions/${push(ref(database, `users/${userId}/transactions`)).key}`]: {
+        amount: breakoutFee,
+        currency,
+        wallet: userData.wallet || userWalletAddress,
+        network: userData.settings?.network || "ERC20",
+        type: "Investment Cancellation Fee",
+        status: "completed",
+        timestamp: new Date().toISOString(),
+      },
+      [`users/${userId}/notifications/${Date.now()}`]: {
+        title: "Investment Cancelled",
+        message: `Investment of ${investmentAmount.toFixed(2)} ${currency} cancelled. Breakout fee: ${breakoutFee.toFixed(2)} ${currency}.`,
+        timestamp: new Date().toISOString(),
+      },
+    };
+
+    await update(ref(database), updates);
+    iziToast.success({
+      title: "Success",
+      message: `Investment cancelled. Breakout fee: ${breakoutFee.toFixed(2)} ${currency}.`,
+      position: "topRight",
+    });
+
+    $("#investment-status").html("Select an investment amount to start trading.");
+    $("#investment-status-title").text("No Active Investment");
+    $("#investment-status-amount").text("");
+    $(".investment-btn").prop("disabled", false);
+    $("#claim-reward").prop("disabled", true);
+    $("#cancel-investment").prop("disabled", true);
+    $("#countdown-timer").text("24:00:00");
+    $("#darkModal10").iziModal("close");
+    $("#darkModal4").iziModal("close");
+  } catch (error) {
+    iziToast.error({ title: "Error", message: `Failed to cancel investment: ${error.message}`, position: "topRight" });
+  } finally {
+    submitButton.prop("disabled", false).html("Confirm Cancellation");
+  }
+});
+        $("#claim-reward").on("click", async function () {
+  const submitButton = $(this);
+  submitButton.prop("disabled", true).html('<i class="fas fa-spinner fa-spin-pulse"></i> Claiming...');
+
+  try {
+    const investmentRef = ref(database, `users/${userId}/investment`);
+    const userSnapshot = await get(userRef);
+    if (!userSnapshot.exists()) throw new Error("User data not found");
+    const userData = userSnapshot.val() || {};
+    const investmentSnapshot = await get(investmentRef);
+    const investmentData = investmentSnapshot.exists() ? investmentSnapshot.val() || {} : {};
+    const investmentAmount = parseNumber(investmentData.investmentAmount, 0);
+    if (investmentAmount <= 0) throw new Error("No active investment");
+
+    const currency = userData.settings?.currency || "USD";
+    const currentBalance = parseNumber(userData.balance, 0);
+    const reward = (investmentAmount / 2) * (conversionRates.USD[currency] || 1);
+
+    const updates = {
+      [`users/${userId}/investment/lastClaim`]: new Date().toISOString(),
+      [`users/${userId}/balance`]: currentBalance + reward,
+      [`users/${userId}/transactions/${push(ref(database, `users/${userId}/transactions`)).key}`]: {
+        amount: reward,
+        currency,
+        wallet: userData.wallet || userWalletAddress,
+        network: userData.settings?.network || "ERC20",
+        type: "Reward Claim",
+        status: "completed",
+        timestamp: new Date().toISOString(),
+      },
+      [`users/${userId}/notifications/${Date.now()}`]: {
+        title: "Reward Claimed",
+        message: `You claimed ${reward.toFixed(2)} ${currency}!`,
+        timestamp: new Date().toISOString(),
+      },
+    };
+
+    await update(ref(database), updates);
+    iziToast.success({ title: "Success", message: `Claimed ${reward.toFixed(2)} ${currency}!`, position: "topRight" });
+    updateCountdown();
+  } catch (error) {
+    iziToast.error({ title: "Error", message: `Failed to claim reward: ${error.message}`, position: "topRight" });
+  } finally {
+    submitButton.prop("disabled", true).html("Claim Reward");
+  }
+});
 
         $("#send-form").on("submit", async (e) => {
           e.preventDefault();
