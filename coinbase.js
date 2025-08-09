@@ -409,7 +409,7 @@ function simulateBTCPrice() {
     async function updateCountdown() {
   const { database, userId, ref, get, update } = window.firebaseFunctions || {};
   if (!userId || !database) {
-    $("#countdown-timer").text("24:00:00");
+    $("#countdown-timer").text("48:00:00");
     $("#claim-reward").prop("disabled", true);
     $("#cancel-investment").prop("disabled", true);
     setTimeout(updateCountdown, 1000); // Retry after 1 second
@@ -420,8 +420,8 @@ function simulateBTCPrice() {
     const snapshot = await get(investmentRef);
     const investmentData = snapshot.exists() ? snapshot.val() || {} : {};
     const now = new Date().getTime();
-    let timeLeft = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-    let timerText = "24:00:00";
+    let timeLeft = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
+    let timerText = "48:00:00";
     let shouldUpdateFirebase = false;
 
     // Initialize default values if missing
@@ -446,30 +446,32 @@ function simulateBTCPrice() {
         shouldUpdateFirebase = true;
       }
 
-      timeLeft = referenceTime + 24 * 60 * 60 * 1000 - now;
+      timeLeft = referenceTime + 48 * 60 * 60 * 1000 - now;
       if (timeLeft <= 0) {
-        timeLeft = 0; // Allow claim
+        timerText = "Ready to Claim!";
+        $("#claim-reward").prop("disabled", false);
+      } else {
+        const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+        timerText = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        $("#claim-reward").prop("disabled", true);
       }
-
-      const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-      timerText = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
     } else {
-      
+      timerText = "No Active Investment";
+      $("#claim-reward").prop("disabled", true);
+      $("#cancel-investment").prop("disabled", true);
     }
 
     if (shouldUpdateFirebase) {
       await update(ref(database), { [`users/${userId}/investment`]: investmentData });
-      
     }
 
     $("#countdown-timer").text(timerText);
-    $("#claim-reward").prop("disabled", investmentAmount <= 0 || timeLeft > 0);
     $("#cancel-investment").prop("disabled", investmentAmount <= 0);
     setTimeout(updateCountdown, 1000);
   } catch (error) {
-    $("#countdown-timer").text("24:00:00");
+    $("#countdown-timer").text("48:00:00");
     $("#claim-reward").prop("disabled", true);
     $("#cancel-investment").prop("disabled", true);
     setTimeout(updateCountdown, 1000); // Retry after error
@@ -639,41 +641,41 @@ function simulateBTCPrice() {
   await updateBalanceDisplay();
 
   const investmentRef = ref(database, `users/${userId}/investment`);
-  const investmentSnapshot = await get(investmentRef);
-  const investmentData = investmentSnapshot.exists() ? investmentSnapshot.val() || {} : {};
-  const investmentAmount = parseNumber(investmentData.investmentAmount, 0);
-  const currency = userData.settings?.currency || "USD";
+const investmentSnapshot = await get(investmentRef);
+const investmentData = investmentSnapshot.exists() ? investmentSnapshot.val() || {} : {};
+const investmentAmount = parseNumber(investmentData.investmentAmount, 0);
+const currency = userData.settings?.currency || "USD";
 
-  if (investmentAmount > 0) {
-    const reward = (investmentAmount / 2) * (conversionRates.USD[currency] || 1);
-    $("#investment-status").html(
-      `Current Investment: ${investmentAmount.toLocaleString()} ${currency}<br>Daily Reward: ${reward.toFixed(2)} ${currency}`
-    );
-    $("#investment-status-title").text("Active Investment");
-    $("#investment-status-amount").text(`${investmentAmount.toLocaleString()} ${currency}`);
-    $(".investment-btn").prop("disabled", true);
-    $("#cancel-investment").prop("disabled", false);
-    waitForFirebase(() => updateCountdown()); // Delay until Firebase is ready
-  } else {
-    $("#investment-status").html("Select an investment amount to start trading.");
-    $("#investment-status-title").text("No Active Investment");
-    $("#investment-status-amount").text("");
-    $(".investment-btn").prop("disabled", false);
-    $("#claim-reward").prop("disabled", true);
-    $("#cancel-investment").prop("disabled", true);
-    $("#countdown-timer").text("24:00:00");
-    // Initialize investment data if missing
-    if (!investmentData.investmentAmount) {
-      await update(ref(database), {
-        [`users/${userId}/investment`]: {
-          investmentAmount: 0,
-          startDate: null,
-          lastClaim: null,
-          lastRenewal: null,
-        },
-      });
-    }
+if (investmentAmount > 0) {
+  const reward = (investmentAmount * 0.10) * (conversionRates.USD[currency] || 1);
+  $("#investment-status").html(
+    `Current Investment: ${investmentAmount.toLocaleString()} ${currency}<br>2-Day Reward: ${reward.toFixed(2)} ${currency}`
+  );
+  $("#investment-status-title").text("Active Investment");
+  $("#investment-status-amount").text(`${investmentAmount.toLocaleString()} ${currency}`);
+  $(".investment-btn").prop("disabled", true);
+  $("#cancel-investment").prop("disabled", false);
+  waitForFirebase(() => updateCountdown()); // Delay until Firebase is ready
+} else {
+  $("#investment-status").html("Select an investment amount to start trading.");
+  $("#investment-status-title").text("No Active Investment");
+  $("#investment-status-amount").text("");
+  $(".investment-btn").prop("disabled", false);
+  $("#claim-reward").prop("disabled", true);
+  $("#cancel-investment").prop("disabled", true);
+  $("#countdown-timer").text("No Active Investment");
+  // Initialize investment data if missing
+  if (!investmentData.investmentAmount) {
+    await update(ref(database), {
+      [`users/${userId}/investment`]: {
+        investmentAmount: 0,
+        startDate: null,
+        lastClaim: null,
+        lastRenewal: null,
+      },
+    });
   }
+}
 });
 
         $("#profile-form").on("submit", async (e) => {
@@ -763,6 +765,7 @@ $("#confirm-investment-btn").on("click", async function () {
         investmentAmount,
         startDate: new Date().toISOString(),
         lastClaim: null,
+        lastRenewal: new Date().toISOString(),
       },
       [`users/${userId}/transactions/${push(ref(database, `users/${userId}/transactions`)).key}`]: {
         amount: investmentAmount,
@@ -775,7 +778,7 @@ $("#confirm-investment-btn").on("click", async function () {
       },
       [`users/${userId}/notifications/${Date.now()}`]: {
         title: "Investment Started",
-        message: `You invested ${investmentAmount.toFixed(2)} ${currency}!`,
+        message: `You invested ${investmentAmount.toFixed(2)} ${currency}! Earn 10% every 2 days.`,
         timestamp: new Date().toISOString(),
       },
     };
@@ -787,9 +790,9 @@ $("#confirm-investment-btn").on("click", async function () {
       position: "topRight",
     });
 
-    const reward = (investmentAmount / 2) * (conversionRates.USD[currency] || 1);
+    const reward = (investmentAmount * 0.10) * (conversionRates.USD[currency] || 1);
     $("#investment-status").html(
-      `Current Investment: ${investmentAmount.toLocaleString()} ${currency}<br>Daily Reward: ${reward.toFixed(2)} ${currency}`
+      `Current Investment: ${investmentAmount.toLocaleString()} ${currency}<br>2-Day Reward: ${reward.toFixed(2)} ${currency}`
     );
     $("#investment-status-title").text("Active Investment");
     $("#investment-status-amount").text(`${investmentAmount.toLocaleString()} ${currency}`);
@@ -806,7 +809,7 @@ $("#confirm-investment-btn").on("click", async function () {
   }
 });
 
-
+let pendingInvestmentAmount = 0;
 let investmentClickTimeout = null;
 $("#darkModal4").on("click", ".investment-btn[data-amount]", async function(e) {
   e.preventDefault();
@@ -866,7 +869,6 @@ $("#darkModal4").on("click", ".investment-btn[data-amount]", async function(e) {
 });
 
 function updateInvestmentButtonStates(investmentAmount, lastClaim, currency = "USD") {
-
   // Disable investment amount buttons if there's an active investment
   $(".investment-btn[data-amount]").prop("disabled", investmentAmount > 0);
 
@@ -874,19 +876,22 @@ function updateInvestmentButtonStates(investmentAmount, lastClaim, currency = "U
   const now = new Date().getTime();
   const claimDisabled = !lastClaim
     ? investmentAmount <= 0 // Disable if no investment
-    : (now - new Date(lastClaim).getTime()) < 24 * 60 * 60 * 1000; // Disable if < 24 hours
+    : (now - new Date(lastClaim).getTime()) < 48 * 60 * 60 * 1000; // Disable if < 48 hours
   $("#claim-reward").prop("disabled", claimDisabled);
 
   // Update investment status display
   if (investmentAmount > 0) {
-    const reward = (investmentAmount / 2) * (conversionRates.USD[currency] || 1);
+    const reward = (investmentAmount * 0.10) * (conversionRates.USD[currency] || 1);
     $("#investment-status").html(
-      `Current Investment: ${investmentAmount.toLocaleString()} ${currency}<br>Daily Reward: ${reward.toFixed(2)} ${currency}`
+      `Current Investment: ${investmentAmount.toLocaleString()} ${currency}<br>2-Day Reward: ${reward.toFixed(2)} ${currency}`
     );
-    updateCountdown(lastClaim);
+    $("#investment-status-title").text("Active Investment");
+    $("#investment-status-amount").text(`${investmentAmount.toLocaleString()} ${currency}`);
   } else {
     $("#investment-status").html("Select an investment amount to start trading.");
-    $("#countdown-timer").text("24:00:00");
+    $("#investment-status-title").text("No Active Investment");
+    $("#investment-status-amount").text("");
+    $("#countdown-timer").text("No Active Investment");
   }
 }
 
@@ -985,7 +990,7 @@ $("#confirm-cancel-investment-btn").on("click", async function () {
     $(".investment-btn").prop("disabled", false);
     $("#claim-reward").prop("disabled", true);
     $("#cancel-investment").prop("disabled", true);
-    $("#countdown-timer").text("24:00:00");
+    $("#countdown-timer").text("No Active Investment");
     $("#darkModal10").iziModal("close");
     $("#darkModal4").iziModal("close");
   } catch (error) {
@@ -1010,13 +1015,25 @@ $("#confirm-cancel-investment-btn").on("click", async function () {
 
     const currency = userData.settings?.currency || "USD";
     const currentBalance = parseNumber(userData.balance, 0);
-    const reward = (investmentAmount / 2) * (conversionRates.USD[currency] || 1);
+    const reward = investmentAmount * 0.10; // 10% yield
+    const rewardInCurrency = reward * (conversionRates.USD[currency] || 1);
+
+    // Check if 48 hours have passed since last claim
+    const now = new Date().getTime();
+    const lastClaimTime = investmentData.lastClaim
+      ? new Date(investmentData.lastClaim).getTime()
+      : investmentData.startDate
+        ? new Date(investmentData.startDate).getTime()
+        : now;
+    if (now - lastClaimTime < 48 * 60 * 60 * 1000) {
+      throw new Error("Reward not yet available. Please wait until the countdown completes.");
+    }
 
     const updates = {
       [`users/${userId}/investment/lastClaim`]: new Date().toISOString(),
-      [`users/${userId}/balance`]: currentBalance + reward,
+      [`users/${userId}/balance`]: currentBalance + rewardInCurrency,
       [`users/${userId}/transactions/${push(ref(database, `users/${userId}/transactions`)).key}`]: {
-        amount: reward,
+        amount: rewardInCurrency,
         currency,
         wallet: userData.wallet || userWalletAddress,
         network: userData.settings?.network || "ERC20",
@@ -1026,13 +1043,18 @@ $("#confirm-cancel-investment-btn").on("click", async function () {
       },
       [`users/${userId}/notifications/${Date.now()}`]: {
         title: "Reward Claimed",
-        message: `You claimed ${reward.toFixed(2)} ${currency}!`,
+        message: `You claimed ${rewardInCurrency.toFixed(2)} ${currency} as 10% investment yield!`,
         timestamp: new Date().toISOString(),
       },
     };
 
+    // Auto-renew if enabled
+    if (userData.settings?.autoRenew) {
+      updates[`users/${userId}/investment/lastRenewal`] = new Date().toISOString();
+    }
+
     await update(ref(database), updates);
-    iziToast.success({ title: "Success", message: `Claimed ${reward.toFixed(2)} ${currency}!`, position: "topRight" });
+    iziToast.success({ title: "Success", message: `Claimed ${rewardInCurrency.toFixed(2)} ${currency}!`, position: "topRight" });
     updateCountdown();
   } catch (error) {
     iziToast.error({ title: "Error", message: `Failed to claim reward: ${error.message}`, position: "topRight" });
