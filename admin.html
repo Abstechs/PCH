@@ -611,7 +611,7 @@
   <!-- Sidebar -->
   <div class="sidebar hidden" id="sidebar">
     <div class="logo">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDAaw4l8JGDm5-GkzwJuNd9m7vsxf9-5ZtXeN-akM1A82LJq7Re5MOYa0v-3xKpUd4NdM&usqp=CAU" alt="Coinbase" width="20">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:cdn:CAU" alt="Coinbase" width="20">
       <strong>Coinbase Admin</strong>
     </div>
     <ul>
@@ -1072,10 +1072,7 @@
     const usersRef = ref(database, 'users');
     const settingsRef = ref(database, 'settings');
     const logsRef = ref(database, 'logs');
-    const notificationsRef = ref(database, 'notifications');
-
-    // Security Warning
-    console.warn("WARNING: Firebase configuration is exposed in client-side code. Move to a secure backend for production use.");
+    const notificationsRef = ref(database, 'notifications');    
 
     // Utility Functions
     window.truncateAddress = function(address) {
@@ -1823,11 +1820,6 @@
         const email = $("#new-email").val().trim();
         const fullName = $("#new-fullName").val().trim();
 
-        if (!username) {
-          iziToast.error({ title: "Error", message: "Username is required!", position: "topRight" });
-          submitButton.removeClass("loading").prop("disabled", false).text("Add User");
-          return;
-        }
         if (pin && !/^[0-9]{4}$|^[0-9]{6}$/.test(pin)) {
           iziToast.error({ title: "Error", message: "PIN must be 4 or 6 digits!", position: "topRight" });
           submitButton.removeClass("loading").prop("disabled", false).text("Add User");
@@ -1840,8 +1832,7 @@
         }
 
         try {
-          const userRef = ref(database, `users/${userId}`);
-          await set(userRef, {
+          await set(ref(database, `users/${userId}`), {
             username,
             wallet,
             balance,
@@ -1851,17 +1842,19 @@
             status: "Active",
             createdAt: new Date().toISOString(),
             settings: { theme: "dark", currency: "USD" },
-            notifications: {[`welcome_${Date.now()}`]: {
+            notifications: {
+              [`welcome_${Date.now()}`]: {
                 title: "Welcome!",
-                message: "Your account has been created by an admin.",
+                message: "Your account has been created.",
                 timestamp: new Date().toISOString(),
-                read: false,
-              },
-            },
+                read: false
+              }
+            }
           });
-          await logAdminAction("Add User", `Created user ${userId} (${username})`);
+          await logAdminAction('Add User', `Added user ${userId} (${username})`);
           iziToast.success({ title: "Success", message: "User added successfully!", position: "topRight" });
           $("#add-user-modal").iziModal("close");
+          $("#add-user-form")[0].reset();
         } catch (error) {
           iziToast.error({ title: "Error", message: `Failed to add user: ${error.message}`, position: "topRight" });
           console.error("Add user error:", error);
@@ -1870,237 +1863,137 @@
         }
       });
 
-      // Auto-generate wallet address for new user
-      $("#new-wallet").val(generateEthAddress());
-
       // Suspend/Unsuspend User
-      $(document).on("click", ".suspend-user", async function() {
+      $(document).on("click", ".suspend-user", function() {
         const userId = $(this).data("user-id");
         const currentStatus = $(this).data("status");
         const newStatus = currentStatus === "Suspended" ? "Active" : "Suspended";
-        try {
-          const userRef = ref(database, `users/${userId}`);
-          const snapshot = await get(userRef);
-          const user = snapshot.val();
-          await update(userRef, {
-            status: newStatus,
-            notifications: {
-              ...user.notifications,
-              [`status_${Date.now()}`]: {
-                title: `Account ${newStatus}`,
-                message: `Your account was ${newStatus.toLowerCase()} by an admin.`,
-                timestamp: new Date().toISOString(),
-                read: false,
-              },
-            },
-          });
-          await logAdminAction(
-            `${newStatus} User`,
-            `${newStatus} user ${userId} (${user.username || "Anonymous"})`
-          );
-          iziToast.success({
-            title: "Success",
-            message: `User ${newStatus.toLowerCase()} successfully!`,
-            position: "topRight",
-          });
-        } catch (error) {
-          iziToast.error({
-            title: "Error",
-            message: `Failed to update user status: ${error.message}`,
-            position: "topRight",
-          });
-          console.error("Suspend user error:", error);
-        }
+        const userRef = ref(database, `users/${userId}`);
+
+        update(userRef, {
+          status: newStatus,
+          notifications: {
+            [`status_${Date.now()}`]: {
+              title: `Account ${newStatus}`,
+              message: `Your account has been ${newStatus.toLowerCase()} by an admin.`,
+              timestamp: new Date().toISOString(),
+              read: false
+            }
+          }
+        }).then(() => {
+          logAdminAction(`${newStatus} User`, `User ${userId} status changed to ${newStatus}`);
+          iziToast.success({ title: "Success", message: `User ${newStatus.toLowerCase()} successfully!`, position: "topRight" });
+        }).catch(error => {
+          iziToast.error({ title: "Error", message: `Failed to update user status: ${error.message}`, position: "topRight" });
+          console.error("Status update error:", error);
+        });
       });
 
-      // Bulk Suspend/Unsuspend Users
-      $("#bulk-suspend, #bulk-unsuspend").on("click", async function() {
-        const isSuspend = $(this).attr("id") === "bulk-suspend";
+      // Bulk Suspend/Unsuspend
+      $("#bulk-suspend, #bulk-unsuspend").on("click", function() {
+        const action = $(this).attr("id") === "bulk-suspend" ? "Suspended" : "Active";
         const selectedUsers = $(".user-checkbox:checked").map(function() {
           return $(this).data("user-id");
         }).get();
+
         if (selectedUsers.length === 0) {
           iziToast.warning({ title: "Warning", message: "No users selected!", position: "topRight" });
           return;
         }
-        try {
-          const updates = {};
-          for (const userId of selectedUsers) {
-            const userRef = ref(database, `users/${userId}`);
-            const snapshot = await get(userRef);
-            const user = snapshot.val();
-            updates[`users/${userId}/status`] = isSuspend ? "Suspended" : "Active";
-            updates[`users/${userId}/notifications/status_${Date.now()}_${userId}`] = {
-              title: `Account ${isSuspend ? "Suspended" : "Active"}`,
-              message: `Your account was ${isSuspend ? "suspended" : "activated"} by an admin.`,
-              timestamp: new Date().toISOString(),
-              read: false,
-            };
-            await logAdminAction(
-              `${isSuspend ? "Suspend" : "Unsuspend"} User`,
-              `${isSuspend ? "Suspended" : "Unsuspened"} user ${userId} (${user.username || "Anonymous"})`
-            );
-          }
-          await update(ref(database), updates);
-          iziToast.success({
-            title: "Success",
-            message: `${selectedUsers.length} user(s) ${isSuspend ? "suspended" : "unsuspended"}!`,
-            position: "topRight",
+
+        selectedUsers.forEach(userId => {
+          const userRef = ref(database, `users/${userId}`);
+          update(userRef, {
+            status: action,
+            notifications: {
+              [`bulk_status_${Date.now()}`]: {
+                title: `Account ${action}`,
+                message: `Your account has been ${action.toLowerCase()} by an admin.`,
+                timestamp: new Date().toISOString(),
+                read: false
+              }
+            }
+          }).then(() => {
+            logAdminAction(`Bulk ${action}`, `User ${userId} status changed to ${action}`);
+          }).catch(error => {
+            iziToast.error({ title: "Error", message: `Failed to update user ${userId}: ${error.message}`, position: "topRight" });
+            console.error("Bulk status error:", error);
           });
-        } catch (error) {
-          iziToast.error({
-            title: "Error",
-            message: `Failed to update users: ${error.message}`,
-            position: "topRight",
-          });
-          console.error("Bulk suspend error:", error);
-        }
+        });
+
+        iziToast.success({ title: "Success", message: `${selectedUsers.length} users ${action.toLowerCase()}!`, position: "topRight" });
       });
 
       // Approve/Reject Transaction
-      $(document).on("click", ".approve-tx, .reject-tx", async function() {
+      $(document).on("click", ".approve-tx, .reject-tx", function() {
         const txId = $(this).data("txid");
-        const uid = $(this).data("uid");
+        const userId = $(this).data("uid");
         const action = $(this).hasClass("approve-tx") ? "approved" : "rejected";
-        const button = $(this);
-        button
-          .addClass("loading")
-          .prop("disabled", true)
-          .html('<i class="fas fa-spin-pulse fa-spinner"></i>');
+        const txRef = ref(database, `users/${userId}/transactions/${txId}`);
 
-        try {
-          const txRef = ref(database, `users/${uid}/transactions/${txId}`);
-          const snapshot = await get(txRef);
-          const tx = snapshot.val();
-          const userRef = ref(database, `users/${uid}`);
-          const userSnapshot = await get(userRef);
-          const user = userSnapshot.val();
-
-          if (tx.status !== "pending") {
-            iziToast.warning({
-              title: "Warning",
-              message: "Transaction is no longer pending!",
-              position: "topRight",
-            });
-            return;
-          }
-
-          const updates = {
-            [`users/${uid}/transactions/${txId}/status`]: action,
-            [`users/${uid}/notifications/tx_${txId}_${Date.now()}`]: {
-              title: `Transaction ${action.charAt(0).toUpperCase() + action.slice(1)}`,
-              message: `Your ${tx.type.toLowerCase()} of $${tx.amount.toFixed(2)} was ${action}.`,
-              timestamp: new Date().toISOString(),
-              read: false,
-            },
-          };
-
-          if (action === "approved" && tx.type === "Withdraw") {
-            updates[`users/${uid}/balance`] = (user.balance || 0) - tx.amount;
-          } else if (action === "rejected" && (tx.type === "Send" || tx.type === "Withdraw")) {
-            updates[`users/${uid}/balance`] = (user.balance || 0) + tx.amount;
-          }
-
-          await update(ref(database), updates);
-          await logAdminAction(
-            `${action.charAt(0).toUpperCase() + action.slice(1)} Transaction`,
-            `${action.charAt(0).toUpperCase() + action.slice(1)} transaction ${txId} for user ${uid}`
-          );
-          iziToast.success({
-            title: "Success",
-            message: `Transaction ${action}!`,
-            position: "topRight",
-          });
-        } catch (error) {
-          iziToast.error({
-            title: "Error",
-            message: `Failed to ${action} transaction: ${error.message}`,
-            position: "topRight",
-          });
+        update(txRef, {
+          status: action,
+          updatedAt: new Date().toISOString()
+        }).then(() => {
+          logAdminAction(`${action.charAt(0).toUpperCase() + action.slice(1)} Transaction`, `Transaction ${txId} for user ${userId} ${action}`);
+          iziToast.success({ title: "Success", message: `Transaction ${action}!`, position: "topRight" });
+          updateTransactionsTable();
+        }).catch(error => {
+          iziToast.error({ title: "Error", message: `Failed to ${action} transaction: ${error.message}`, position: "topRight" });
           console.error(`${action} transaction error:`, error);
-        } finally {
-          button.removeClass("loading").prop("disabled", false);
-          button.html(`<i class="fas fa-${action === "approved" ? "check" : "times"}"></i>`);
-        }
+        });
       });
 
       // Bulk Approve/Reject Transactions
-      $("#bulk-approve, #bulk-reject").on("click", async function() {
-        const isApprove = $(this).attr("id") === "bulk-approve";
-        const selectedTxs = $(".transaction-checkbox:checked").map(function() {
-          return { txId: $(this).data("txid"), uid: $(this).data("uid") };
+      $("#bulk-approve, #bulk-reject").on("click", function() {
+        const action = $(this).attr("id") === "bulk-approve" ? "approved" : "rejected";
+        const selectedTx = $(".transaction-checkbox:checked").map(function() {
+          return { txId: $(this).data("txid"), userId: $(this).data("uid") };
         }).get();
-        if (selectedTxs.length === 0) {
+
+        if (selectedTx.length === 0) {
           iziToast.warning({ title: "Warning", message: "No transactions selected!", position: "topRight" });
           return;
         }
-        try {
-          const updates = {};
-          for (const { txId, uid } of selectedTxs) {
-            const txRef = ref(database, `users/${uid}/transactions/${txId}`);
-            const snapshot = await get(txRef);
-            const tx = snapshot.val();
-            if (tx.status !== "pending") continue;
-            const userRef = ref(database, `users/${uid}`);
-            const userSnapshot = await get(userRef);
-            const user = userSnapshot.val();
-            updates[`users/${uid}/transactions/${txId}/status`] = isApprove ? "approved" : "rejected";
-            updates[`users/${uid}/notifications/tx_${txId}_${Date.now()}`] = {
-              title: `Transaction ${isApprove ? "Approved" : "Rejected"}`,
-              message: `Your ${tx.type.toLowerCase()} of $${tx.amount.toFixed(2)} was ${isApprove ? "approved" : "rejected"}.`,
-              timestamp: new Date().toISOString(),
-              read: false,
-            };
-            if (isApprove && tx.type === "Withdraw") {
-              updates[`users/${uid}/balance`] = (user.balance || 0) - tx.amount;
-            } else if (!isApprove && (tx.type === "Send" || tx.type === "Withdraw")) {
-              updates[`users/${uid}/balance`] = (user.balance || 0) + tx.amount;
-            }
-            await logAdminAction(
-              `${isApprove ? "Approve" : "Reject"} Transaction`,
-              `${isApprove ? "Approved" : "Rejected"} transaction ${txId} for user ${uid}`
-            );
-          }
-          await update(ref(database), updates);
-          iziToast.success({
-            title: "Success",
-            message: `${selectedTxs.length} transaction(s) ${isApprove ? "approved" : "rejected"}!`,
-            position: "topRight",
+
+        selectedTx.forEach(({ txId, userId }) => {
+          const txRef = ref(database, `users/${userId}/transactions/${txId}`);
+          update(txRef, {
+            status: action,
+            updatedAt: new Date().toISOString()
+          }).then(() => {
+            logAdminAction(`Bulk ${action.charAt(0).toUpperCase() + action.slice(1)}`, `Transaction ${txId} for user ${userId} ${action}`);
+          }).catch(error => {
+            iziToast.error({ title: "Error", message: `Failed to ${action} transaction ${txId}: ${error.message}`, position: "topRight" });
+            console.error(`Bulk ${action} error:`, error);
           });
-        } catch (error) {
-          iziToast.error({
-            title: "Error",
-            message: `Failed to process transactions: ${error.message}`,
-            position: "topRight",
-          });
-          console.error("Bulk transaction error:", error);
-        }
+        });
+
+        iziToast.success({ title: "Success", message: `${selectedTx.length} transactions ${action}!`, position: "topRight" });
+        updateTransactionsTable();
       });
 
       // Edit Investment
-      $(document).on("click", ".edit-investment", async function() {
+      $(document).on("click", ".edit-investment", function() {
         const userId = $(this).data("user-id");
         const userRef = ref(database, `users/${userId}`);
-        try {
-          const snapshot = await get(userRef);
+        get(userRef).then((snapshot) => {
           const user = snapshot.val();
-          if (user.investment) {
+          if (user && user.investment) {
             $("#edit-investment-user-id").val(userId);
             $("#edit-investment-amount").val(user.investment.amount || 0);
-            $("#edit-investment-last-claim").val(
-              user.investment.lastClaim ? new Date(user.investment.lastClaim).toISOString().slice(0, 16) : ""
-            );
+            $("#edit-investment-last-claim").val(user.investment.lastClaim ? new Date(user.investment.lastClaim).toISOString().slice(0, 16) : "");
             $("#edit-investment-auto-renew").val(user.investment.autoRenew ? "true" : "false");
             $("#edit-investment-modal").iziModal("open");
           }
-        } catch (error) {
+        }).catch(error => {
           iziToast.error({ title: "Error", message: `Failed to load investment: ${error.message}`, position: "topRight" });
           console.error("Edit investment load error:", error);
-        }
+        });
       });
 
       // Save Investment
-      $("#edit-investment-form").on("submit", async function(e) {
+      $("#edit-investment-form").on("submit", function(e) {
         e.preventDefault();
         const submitButton = $(this).find(".btn-save");
         submitButton
@@ -2109,8 +2002,9 @@
           .html('<i class="fas fa-spin-pulse fa-spinner"></i> Saving...');
 
         const userId = $("#edit-investment-user-id").val();
+        const userRef = ref(database, `users/${userId}`);
         const amount = parseFloat($("#edit-investment-amount").val());
-        const lastClaim = $("#edit-investment-last-claim").val() || null;
+        const lastClaim = $("#edit-investment-last-claim").val();
         const autoRenew = $("#edit-investment-auto-renew").val() === "true";
 
         if (isNaN(amount) || amount < 0) {
@@ -2119,35 +2013,36 @@
           return;
         }
 
-        try {
-          const userRef = ref(database, `users/${userId}`);
-          const snapshot = await get(userRef);
-          const user = snapshot.val();
-          await update(userRef, {
-            investment: { amount, lastClaim, autoRenew },
-            notifications: {
-              ...user.notifications,
-              [`investment_${Date.now()}`]: {
-                title: "Investment Updated",
-                message: `Your investment of $${amount.toFixed(2)} was updated by an admin.`,
-                timestamp: new Date().toISOString(),
-                read: false,
-              },
-            },
-          });
-          await logAdminAction("Edit Investment", `Updated investment for user ${userId} to $${amount.toFixed(2)}`);
+        update(userRef, {
+          investment: {
+            amount,
+            lastClaim: lastClaim || null,
+            autoRenew,
+            updatedAt: new Date().toISOString()
+          },
+          notifications: {
+            [`investment_${Date.now()}`]: {
+              title: "Investment Updated",
+              message: "Your investment details have been updated by an admin.",
+              timestamp: new Date().toISOString(),
+              read: false
+            }
+          }
+        }).then(() => {
+          logAdminAction('Edit Investment', `Updated investment for user ${userId}`);
           iziToast.success({ title: "Success", message: "Investment updated!", position: "topRight" });
           $("#edit-investment-modal").iziModal("close");
-        } catch (error) {
+          updateInvestmentsTable();
+        }).catch(error => {
           iziToast.error({ title: "Error", message: `Failed to update investment: ${error.message}`, position: "topRight" });
           console.error("Edit investment error:", error);
-        } finally {
+        }).finally(() => {
           submitButton.removeClass("loading").prop("disabled", false).text("Save Investment");
-        }
+        });
       });
 
       // Broadcast Notification
-      $("#broadcast-form").on("submit", async function(e) {
+      $("#broadcast-form").on("submit", function(e) {
         e.preventDefault();
         const submitButton = $(this).find(".btn-primary");
         submitButton
@@ -2158,52 +2053,42 @@
         const title = $("#broadcast-title").val().trim();
         const message = $("#broadcast-message").val().trim();
         const target = $("#broadcast-target").val();
+        const notificationId = push(notificationsRef).key;
 
-        if (!title || !message) {
-          iziToast.error({ title: "Error", message: "Title and message are required!", position: "topRight" });
-          submitButton.removeClass("loading").prop("disabled", false).text("Send Notification");
-          return;
-        }
-
-        try {
-          const usersSnapshot = await get(usersRef);
-          const users = usersSnapshot.val() || {};
-          const updates = {};
-          for (const uid in users) {
-            if (
-              target === "all" ||
-              (target === "active" && users[uid].status !== "Suspended") ||
-              (target === "suspended" && users[uid].status === "Suspended")
-            ) {
-              updates[`users/${uid}/notifications/broadcast_${Date.now()}_${uid}`] = {
-                title,
-                message,
-                timestamp: new Date().toISOString(),
-                read: false,
-              };
+        set(ref(database, `notifications/${notificationId}`), {
+          title,
+          message,
+          target,
+          timestamp: new Date().toISOString()
+        }).then(() => {
+          get(usersRef).then(snapshot => {
+            const users = snapshot.val() || {};
+            for (const uid in users) {
+              if (target === "all" || users[uid].status === target) {
+                const userNotifRef = ref(database, `users/${uid}/notifications/${notificationId}`);
+                set(userNotifRef, {
+                  title,
+                  message,
+                  timestamp: new Date().toISOString(),
+                  read: false
+                });
+              }
             }
-          }
-          await update(ref(database), updates);
-          const notificationRef = push(notificationsRef);
-          await set(notificationRef, {
-            title,
-            message,
-            target,
-            timestamp: new Date().toISOString(),
+            logAdminAction('Broadcast Notification', `Sent notification "${title}" to ${target} users`);
+            iziToast.success({ title: "Success", message: "Notification sent!", position: "topRight" });
+            $("#broadcast-form")[0].reset();
+            updateNotificationsTable();
           });
-          await logAdminAction("Broadcast Notification", `Sent notification "${title}" to ${target} users`);
-          iziToast.success({ title: "Success", message: "Notification sent!", position: "topRight" });
-          $("#broadcast-form")[0].reset();
-        } catch (error) {
+        }).catch(error => {
           iziToast.error({ title: "Error", message: `Failed to send notification: ${error.message}`, position: "topRight" });
           console.error("Broadcast error:", error);
-        } finally {
+        }).finally(() => {
           submitButton.removeClass("loading").prop("disabled", false).text("Send Notification");
-        }
+        });
       });
 
-      // System Settings
-      $("#settings-form").on("submit", async function(e) {
+      // Save System Settings
+      $("#settings-form").on("submit", function(e) {
         e.preventDefault();
         const submitButton = $(this).find(".btn-primary");
         submitButton
@@ -2216,40 +2101,31 @@
         const referralBonus = parseFloat($("#referralBonus").val());
         const investmentRewardRate = parseFloat($("#investmentRewardRate").val());
 
-        if (
-          isNaN(minWithdrawal) ||
-          isNaN(feeAmount) ||
-          isNaN(referralBonus) ||
-          isNaN(investmentRewardRate) ||
-          minWithdrawal < 0 ||
-          feeAmount < 0 ||
-          referralBonus < 0 ||
-          investmentRewardRate < 0
-        ) {
-          iziToast.error({ title: "Error", message: "Invalid settings values!", position: "topRight" });
+        if (isNaN(minWithdrawal) || isNaN(feeAmount) || isNaN(referralBonus) || isNaN(investmentRewardRate)) {
+          iziToast.error({ title: "Error", message: "Invalid input values!", position: "topRight" });
           submitButton.removeClass("loading").prop("disabled", false).text("Save Settings");
           return;
         }
 
-        try {
-          await update(settingsRef, {
-            minWithdrawal,
-            feeAmount,
-            referralBonus,
-            investmentRewardRate,
-          });
-          await logAdminAction("Update Settings", `Updated system settings: minWithdrawal=$${minWithdrawal}, feeAmount=${feeAmount} TON, referralBonus=$${referralBonus}, investmentRewardRate=${investmentRewardRate}%`);
+        update(settingsRef, {
+          minWithdrawal,
+          feeAmount,
+          referralBonus,
+          investmentRewardRate,
+          updatedAt: new Date().toISOString()
+        }).then(() => {
+          logAdminAction('Update Settings', `Updated system settings`);
           iziToast.success({ title: "Success", message: "Settings updated!", position: "topRight" });
-        } catch (error) {
+        }).catch(error => {
           iziToast.error({ title: "Error", message: `Failed to update settings: ${error.message}`, position: "topRight" });
           console.error("Settings update error:", error);
-        } finally {
+        }).finally(() => {
           submitButton.removeClass("loading").prop("disabled", false).text("Save Settings");
-        }
+        });
       });
 
-      // Security Settings
-      $("#security-form").on("submit", async function(e) {
+      // Save Security Settings
+      $("#security-form").on("submit", function(e) {
         e.preventDefault();
         const submitButton = $(this).find(".btn-primary");
         submitButton
@@ -2260,19 +2136,18 @@
         const twoFactor = $("#twoFactor").val();
         const ipWhitelist = $("#ipWhitelist").val().trim().split(",").map(ip => ip.trim()).filter(ip => ip);
 
-        try {
-          await update(ref(database, "security"), {
-            twoFactor,
-            ipWhitelist,
-          });
-          await logAdminAction("Update Security", `Updated security settings: twoFactor=${twoFactor}, ipWhitelist=${ipWhitelist.join(", ")}`);
+        update(settingsRef, {
+          security: { twoFactor, ipWhitelist },
+          updatedAt: new Date().toISOString()
+        }).then(() => {
+          logAdminAction('Update Security', `Updated security settings`);
           iziToast.success({ title: "Success", message: "Security settings updated!", position: "topRight" });
-        } catch (error) {
+        }).catch(error => {
           iziToast.error({ title: "Error", message: `Failed to update security settings: ${error.message}`, position: "topRight" });
-          console.error("Security settings update error:", error);
-        } finally {
+          console.error("Security update error:", error);
+        }).finally(() => {
           submitButton.removeClass("loading").prop("disabled", false).text("Save Security Settings");
-        }
+        });
       });
 
       // Copy Wallet Address
@@ -2292,16 +2167,29 @@
       });
 
       // Logout
-      $("#logout-btn").on("click", async function() {
-        try {
-          await logAdminAction("Logout", "Admin logged out");
-          window.Telegram.WebApp.close();
-        } catch (error) {
-          console.error("Logout error:", error);
-        }
+      $("#logout-btn").on("click", function() {
+        iziToast.info({ title: "Logged Out", message: "You have been logged out.", position: "topRight" });
+        logAdminAction('Logout', 'Admin logged out');
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       });
 
-      // Initialize Dashboard
+      // Load System Settings
+      get(settingsRef).then(snapshot => {
+        const settings = snapshot.val() || {};
+        $("#minWithdrawal").val(settings.minWithdrawal || 70.01);
+        $("#feeAmount").val(settings.feeAmount || 2.00);
+        $("#referralBonus").val(settings.referralBonus || 10.00);
+        $("#investmentRewardRate").val(settings.investmentRewardRate || 50.00);
+        $("#twoFactor").val(settings.security?.twoFactor || "disabled");
+        $("#ipWhitelist").val(settings.security?.ipWhitelist?.join(", ") || "");
+      }).catch(error => {
+        iziToast.error({ title: "Error", message: `Failed to load settings: ${error.message}`, position: "topRight" });
+        console.error("Settings load error:", error);
+      });
+
+      // Initialize Dashboard on Load
       initializeDashboard();
     });
   </script>
