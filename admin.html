@@ -624,6 +624,7 @@
       <li><a href="#settings"><i class="fas fa-cog"></i> System Settings</a></li>
       <li><a href="#security"><i class="fas fa-shield-alt"></i> Security</a></li>
       <li><a href="#logs"><i class="fas fa-file-alt"></i> Activity Logs</a></li>
+      <li><a href="#support-chat"><i class="fas fa-comments"></i> Support Chat</a></li>
     </ul>
   </div>
 
@@ -948,6 +949,31 @@
           </div>
         </div>
       </section>
+      
+      <!-- Support Chat Section -->
+<section id="support-chat" class="section d-none">
+  <h2>Support Chat</h2>
+  <div class="filter-group">
+    <input type="text" class="search-bar" id="search-chats" placeholder="Search users by username or ID...">
+  </div>
+  <div class="card">
+    <h4>User Chats</h4>
+    <div class="table-container">
+      <table id="chats-table" class="table">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Last Message</th>
+            <th>Unread Messages</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="chats-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
     </div>
   </div>
 
@@ -1037,6 +1063,20 @@
       <button class="close-btn" data-izimodal-close="#edit-investment-modal">Close</button>
     </div>
   </div>
+  
+  <!-- Admin Chat Modal -->
+<div id="admin-chat-modal" class="iziModal">
+  <div class="dark-content">
+    <div id="admin-chat-messages" style="max-height: 400px; overflow-y: auto; padding: 10px; background: #333; border-radius: 6px; margin-bottom: 15px;"></div>
+    <form id="admin-chat-form" class="wallet-form">
+  <input type="hidden" id="admin-chat-user-id">
+  <label for="admin-chat-input" class="visually-hidden">Message</label>
+  <textarea id="admin-chat-input" placeholder="Type your message..." required style="resize: none; height: 60px;"></textarea>
+  <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Send</button>
+  <button type="button" class="btn-cancel" data-izimodal-close="#admin-chat-modal"><i class="fas fa-times"></i> Close</button>
+</form>
+  </div>
+</div>
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

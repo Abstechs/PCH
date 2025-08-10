@@ -119,7 +119,7 @@ const platformMetricsChart = new Chart(document.getElementById('platform-metrics
 
 $(document).ready(function() {
   // Initialize Modals
-  $("#add-user-modal, #edit-user-modal, #edit-investment-modal").iziModal({
+  $("#add-user-modal, #edit-user-modal, #edit-investment-modal, #admin-chat-modal").iziModal({
     background: '#222',
     headerColor: '#333',
     width: '90%',
@@ -556,6 +556,7 @@ $(document).ready(function() {
     await updateReferrersTable();
     await updateActivityTable();
     await updateLogsTable();
+    await updateChatsTable();
   }
 
   // Search and Filter Users
@@ -1443,4 +1444,164 @@ $("#bulk-approve, #bulk-reject").on("click", async function() {
 
   // Initialize Dashboard on Load
   initializeDashboard();
+    
+  // chat started
+  // Initialize Chats Table
+const chatsTable = $('#chats-table').DataTable({
+  pageLength: 10,
+  responsive: true,
+  columnDefs: [{ orderable: false, targets: [4] }],
+  order: [[3, 'desc'], [2, 'desc']], // Sort by unread messages, then last message
+});
+
+// Fetch and Display User Chats
+async function updateChatsTable() {
+  try {
+    chatsTable.clear();
+    const usersSnapshot = await get(usersRef);
+    const users = usersSnapshot.val() || {};
+    for (const userId in users) {
+      const user = users[userId];
+      const chatRef = ref(database, `users/${userId}/chat`);
+      const chatSnapshot = await get(query(chatRef, limitToLast(100)));
+      const chats = chatSnapshot.val() || {};
+      let lastMessage = null;
+      let unreadCount = 0;
+
+      // Find last message and count unread messages
+      for (const chatId in chats) {
+        const chat = chats[chatId];
+        if (!lastMessage || chat.timestamp > lastMessage.timestamp) {
+          lastMessage = chat;
+        }
+        if (chat.sender === 'user' && chat.status === 'pending') {
+          unreadCount++;
+        }
+      }
+
+      chatsTable.row.add([
+        userId,
+        user.username || 'Anonymous',
+        lastMessage ? formatDate(lastMessage.timestamp) : 'N/A',
+        unreadCount,
+        `<button class="btn btn-primary btn-sm open-chat" data-user-id="${userId}"><i class="fas fa-comments"></i> Chat</button>`
+      ]);
+    }
+    chatsTable.draw();
+  } catch (error) {
+    iziToast.error({ title: 'Error', message: `Failed to fetch chats: ${error.message}`, position: 'topRight' });
+    console.error('Chats fetch error:', error);
+    await logAdminAction('Chats Fetch Error', `Failed to fetch chats: ${error.message}`);
+  }
+}
+
+// Search Chats
+const debouncedChatSearch = debounce(function() {
+  const query = $('#search-chats').val();
+  chatsTable.search(query).draw();
+}, 300);
+
+$('#search-chats').on('input', debouncedChatSearch);
+
+// Open Chat Modal
+$(document).on('click', '.open-chat', async function() {
+  const userId = $(this).data('user-id');
+  $('#admin-chat-user-id').val(userId);
+  $('#admin-chat-messages').empty();
+  $('#admin-chat-input').val('');
+
+  try {
+    const userSnapshot = await get(ref(database, `users/${userId}`));
+    const user = userSnapshot.val();
+    if (!user) {
+      iziToast.error({ title: 'Error', message: 'User not found!', position: 'topRight' });
+      return;
+    }
+
+    $('#admin-chat-modal').iziModal('setTitle', `Chat with ${user.username || 'Anonymous'}`);
+    $('#admin-chat-modal').iziModal('open');
+
+    // Load chat history
+    const chatRef = ref(database, `users/${userId}/chat`);
+    onValue(chatRef, (snapshot) => {
+      const messages = snapshot.val() || {};
+      $('#admin-chat-messages').empty();
+      const messageArray = Object.entries(messages).map(([id, msg]) => ({ id, ...msg }));
+      messageArray.sort((a, b) => a.timestamp - b.timestamp);
+      messageArray.forEach(msg => {
+        const isUser = msg.sender === 'user';
+        const messageClass = isUser ? 'text-start bg-dark p-2 rounded mb-2 ms-2' : 'text-end bg-primary p-2 rounded mb-2 me-2';
+        const senderLabel = isUser ? (user.username || 'Anonymous') : 'Support';
+        $('#admin-chat-messages').append(`
+          <div class="${messageClass}">
+            <strong>${senderLabel}:</strong> ${msg.message}
+            <small class="d-block text-muted">${formatDate(msg.timestamp)}</small>
+          </div>
+        `);
+      });
+
+      // Mark pending messages as sent
+      const updates = {};
+      for (const msgId in messages) {
+        if (messages[msgId].sender === 'user' && messages[msgId].status === 'pending') {
+          updates[`users/${userId}/chat/${msgId}/status`] = 'sent';
+        }
+      }
+      if (Object.keys(updates).length > 0) {
+        update(ref(database), updates).then(() => {
+          updateChatsTable(); // Refresh table to update unread count
+        });
+      }
+
+      // Scroll to bottom
+      $('#admin-chat-messages').scrollTop($('#admin-chat-messages')[0].scrollHeight);
+    }, { onlyOnce: false });
+  } catch (error) {
+    iziToast.error({ title: 'Error', message: `Failed to load chat: ${error.message}`, position: 'topRight' });
+    console.error('Chat load error:', error);
+    await logAdminAction('Chat Load Error', `Failed to load chat for user ${userId}: ${error.message}`);
+  }
+});
+
+// Send Admin Message
+$('#admin-chat-form').on('submit', async function(e) {
+  e.preventDefault();
+  const submitButton = $(this).find('.btn-primary');
+  submitButton
+    .addClass('loading')
+    .prop('disabled', true)
+    .html('<i class="fas fa-spin-pulse fa-spinner"></i> Sending...');
+
+  const userId = $('#admin-chat-user-id').val();
+  const message = $('#admin-chat-input').val().trim();
+
+  if (!message) {
+    iziToast.error({ title: 'Error', message: 'Message cannot be empty!', position: 'topRight' });
+    submitButton.removeClass('loading').prop('disabled', false).text('Send');
+    return;
+  }
+
+  try {
+    const chatRef = ref(database, `users/${userId}/chat`);
+    const newMessageRef = push(chatRef);
+    await set(newMessageRef, {
+      message,
+      sender: 'support',
+      timestamp: new Date().toISOString(),
+      status: 'sent'
+    });
+
+    await logAdminAction('Send Message', `Sent message to user ${userId}: ${message}`);
+    iziToast.success({ title: 'Success', message: 'Message sent!', position: 'topRight' });
+    $('#admin-chat-input').val('');
+  } catch (error) {
+    iziToast.error({ title: 'Error', message: `Failed to send message: ${error.message}`, position: 'topRight' });
+    console.error('Send message error:', error);
+    await logAdminAction('Send Message Error', `Failed to send message to user ${userId}: ${error.message}`);
+  } finally {
+    submitButton.removeClass('loading').prop('disabled', false).text('Send');
+  }
+});
+// chat features ended
+  
 });
